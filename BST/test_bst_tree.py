@@ -79,19 +79,23 @@ def run_case(request_queue, response_queue):
             tree = RedBlackTree() if request.clazz == "RedBlackTree" else AVLTree()
             for o in operations:
                 if o.inserting:
-                    tree.put(o.key)
+                    successful = tree.put(o.key)
+                    assert successful
                     assert o.key in tree
                 else:
                     assert o.key in tree
                     del tree[o.key]
+                    assert o.key not in tree
 
             for v in input:
-                tree.put(v)
+                successful = tree.put(v)
+                assert successful
                 assert v in tree
                 assert tree.valid()
             rinput = input[:]
             random.shuffle(rinput)
             for v in rinput:
+                assert v in tree
                 del tree[v]
                 assert v not in tree
                 assert tree.valid()
@@ -110,22 +114,54 @@ class BSTTester(unittest.TestCase):
         self.workers = [Process(target=run_case, args=(self.request_queue, self.response_queue)) for _ in range(cpu)]
 
     def test_trees(self):
-        CASE_NUMBER = 32
+        REPEAT = 32
         LOWER_LIMIT = 512
-        UPPER_LIMIT = 1024*4
-        for _ in range(CASE_NUMBER):
-            input = [_ for _ in range(random.randint(LOWER_LIMIT, UPPER_LIMIT))]
+        UPPER_LIMIT = 1024*2
+        case_number = 0
+        lens = set()
+        for _ in range(REPEAT):
+            while True:
+                l = random.randint(LOWER_LIMIT, UPPER_LIMIT)
+                if l not in lens:
+                    lens.add(l)
+                    break
+            input = [_ for _ in range(l)]
             r = Request(input, "RedBlackTree")
             self.request_queue.put(r)
+            case_number += 1
             r = Request(input, "AVLTree")
             self.request_queue.put(r)
+            case_number += 1
+
+            input.reverse()
+            r = Request(input, "RedBlackTree")
+            self.request_queue.put(r)
+            case_number += 1
+            r = Request(input, "AVLTree")
+            self.request_queue.put(r)
+            case_number += 1
+
             random.shuffle(input)
+            r = Request(input, "RedBlackTree")
+            self.request_queue.put(r)
+            case_number += 1
+            r = Request(input, "AVLTree")
+            self.request_queue.put(r)
+            case_number += 1
+
+            random.shuffle(input)
+            r = Request(input, "RedBlackTree")
+            self.request_queue.put(r)
+            case_number += 1
+            r = Request(input, "AVLTree")
+            self.request_queue.put(r)
+            case_number += 1
 
         for w in self.workers:
             w.start()
 
         wrong = False
-        for _ in range(CASE_NUMBER * 2):
+        for _ in range(case_number):
             r = self.response_queue.get()
             if not r.ok:
                 print(r)
