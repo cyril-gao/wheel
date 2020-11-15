@@ -14,7 +14,7 @@ class RedBlackTree
 
     union ColorAndParentPointer
     {
-		uintptr_t color;
+        uintptr_t color;
         Node *    parent;
 
         ColorAndParentPointer(): parent(nullptr) {}
@@ -57,7 +57,7 @@ class RedBlackTree
     };
 
     struct Node
-	{
+    {
         T data;
         ColorAndParentPointer color_and_parent;
         Node * left_child;
