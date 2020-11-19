@@ -187,7 +187,7 @@ public class ArrayOperations {
                 int index = value - 1;
                 if (index != i) {
                     nums[i] = 0;
-                    while (index >= 0 && index < nums.length && nums[index] != (index+1)) {
+                    while (index >= 0 && index < nums.length && nums[index] != (index + 1)) {
                         int tmp = nums[index];
                         nums[index] = value;
                         value = tmp;
@@ -207,7 +207,7 @@ public class ArrayOperations {
 
     // https://leetcode.com/problems/set-matrix-zeroes/
     public void setZeroes(int[][] matrix) {
-        
+
     }
 
     // https://leetcode.com/problems/trapping-rain-water/
@@ -246,63 +246,62 @@ public class ArrayOperations {
         return retval;
     }
 
-    private int toNumber(char a)
-    {
+    private int toNumber(char a) {
         switch (a) {
-        case '0':
-            return 0;
-        case '1':
-            return 1;
-        case '2':
-            return 2;
-        case '3':
-            return 3;
-        case '4':
-            return 4;
-        case '5':
-            return 5;
-        case '6':
-            return 6;
-        case '7':
-            return 7;
-        case '8':
-            return 8;
-        case '9':
-            return 9;
-        default:
-            return 0;
+            case '0':
+                return 0;
+            case '1':
+                return 1;
+            case '2':
+                return 2;
+            case '3':
+                return 3;
+            case '4':
+                return 4;
+            case '5':
+                return 5;
+            case '6':
+                return 6;
+            case '7':
+                return 7;
+            case '8':
+                return 8;
+            case '9':
+                return 9;
+            default:
+                return 0;
         }
     }
-    private char toChar(int n)
-    {
-        assert(n >= 0 && n <= 9);
+
+    private char toChar(int n) {
+        assert (n >= 0 && n <= 9);
         switch (n) {
-        case 0:
-            return '0';
-        case 1:
-            return '1';
-        case 2:
-            return '2';
-        case 3:
-            return '3';
-        case 4:
-            return '4';
-        case 5:
-            return '5';
-        case 6:
-            return '6';
-        case 7:
-            return '7';
-        case 8:
-            return '8';
-        case 9:
-            return '9';
-        default:
-            return '\0';
+            case 0:
+                return '0';
+            case 1:
+                return '1';
+            case 2:
+                return '2';
+            case 3:
+                return '3';
+            case 4:
+                return '4';
+            case 5:
+                return '5';
+            case 6:
+                return '6';
+            case 7:
+                return '7';
+            case 8:
+                return '8';
+            case 9:
+                return '9';
+            default:
+                return '\0';
         }
     }
-    private void multiply(int[] num1, int b, int offset, int[] output)
-    {
+
+    private void multiply(int[] num1, int b, int offset, int[] output) {
         Arrays.fill(output, 0, offset, 0);
         int carry = 0;
         for (int i = num1.length - 1; i >= 0; --i) {
@@ -316,9 +315,9 @@ public class ArrayOperations {
         }
         output[offset] = -1;
     }
-    private void add(int[] num1, int[] num2)
-    {
-        assert(num1.length == num2.length);
+
+    private void add(int[] num1, int[] num2) {
+        assert (num1.length == num2.length);
         int inc = 0, i = 0;
         while (num1[i] >= 0 && num2[i] >= 0) {
             int s = num1[i] + num2[i] + inc;
@@ -347,8 +346,8 @@ public class ArrayOperations {
         }
         num1[i] = -1;
     }
-    private int[] toArray(String num)
-    {
+
+    private int[] toArray(String num) {
         int n = num.length();
         int[] retval = new int[n];
         for (int i = 0; i < n; ++i) {
@@ -356,12 +355,11 @@ public class ArrayOperations {
         }
         return retval;
     }
+
     public String multiply(String num1, String num2) {
         String retval = "0";
-        if (
-            num1 != null && num1.length() > 0 && !num1.equals("0") &&
-            num2 != null && num2.length() > 0 && !num2.equals("0")
-        ) {
+        if (num1 != null && num1.length() > 0 && !num1.equals("0") && num2 != null && num2.length() > 0
+                && !num2.equals("0")) {
             int bufferSize = num1.length() + num2.length() + 3;
             int[] buf1 = new int[bufferSize];
             Arrays.fill(buf1, -1);
@@ -398,7 +396,7 @@ public class ArrayOperations {
                 Arrays.fill(cache, 0);
                 for (int i = 1; i < input.length; ++i) {
                     if (input[i] == ')') {
-                        int prefixLen = cache[i-1];
+                        int prefixLen = cache[i - 1];
                         if (prefixLen > 0) {
                             int j = i - prefixLen - 1;
                             if (j >= 0 && input[j] == '(') {
@@ -408,7 +406,7 @@ public class ArrayOperations {
                                     cache[i] += cache[j];
                                 }
                             }
-                        } else if (input[i-1] == '(') {
+                        } else if (input[i - 1] == '(') {
                             cache[i] = 2;
                             int j = i - 2;
                             if (j >= 0 && cache[j] > 0) {
@@ -536,6 +534,7 @@ public class ArrayOperations {
         }
         return i;
     }
+
     public boolean isNumber(String toBeExamined) {
         boolean retval = false;
         if (toBeExamined != null && !toBeExamined.isEmpty()) {
@@ -589,56 +588,128 @@ public class ArrayOperations {
         return retval;
     }
 
-    /*
-     * public List<Integer> findSubstring(String s, String[] words) {
-     * 
-     * }
-     */
-}
+    // https://leetcode.com/problems/count-and-say/
+    private String countAndSay(String input) {
+        int n = input.length();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n;) {
+            char c = input.charAt(i);
+            int count = 1, j = i + 1;
+            while (j < n && input.charAt(j) == c) {
+                ++j;
+                ++count;
+            }
+            sb.append(Integer.valueOf(count).toString());
+            sb.append(c);
+            i = j;
+        }
+        return sb.toString();
+    }
 
-/*
- * private int[] positionOnLeft(int row, int col, int diff) {
- * //System.out.print(row + ", " + col + " ->\t");
- * 
- * for (int i = 0; i < diff; ++i) { if (col > row) { --col; } else { ++row; } }
- * System.out.println("left: " + row + ", " + col); return new int[] {row, col};
- * 
- * 
- * //int colLeft = row; //int rowLeft = row + (diff - (col - colLeft));
- * //System.out.println("left: " + rowLeft + ", " + colLeft); return new int[]
- * {row + (diff - (col - row)), row}; } private int[] positionOnBottom(int row,
- * int col, int diff, int rowBottom) { for (int i = 0; i < diff; ++i) { if (row
- * < rowBottom) { ++row; } else { ++col; } } return new int[] {row, col};
- * 
- * 
- * return new int[] { rowBottom, col + (diff - (rowBottom - row)) }; } private
- * int[] positionOnRight(int row, int col, int diff, int colRight) { for (int i
- * = 0; i < diff; ++i) { if (col < colRight) { ++col; } else { --row; } } return
- * new int[] {row, col};
- * 
- * 
- * return new int[] { row - (diff - (colRight - col)), colRight }; }
- * 
- * int[] left = positionOnLeft(row, col, diff); matrix[row][col] =
- * matrix[left[0]][left[1]]; int[] bottom = positionOnBottom(left[0], left[1],
- * diff, rowBottom); matrix[left[0]][left[1]] = matrix[bottom[0]][bottom[1]];
- * int[] right = positionOnRight(bottom[0], bottom[1], diff, colRight);
- * matrix[bottom[0]][bottom[1]] = matrix[right[0]][right[1]];
- * matrix[right[0]][right[1]] = tmp;
- * 
- * 
- * 
- * 
- * if (target < nums[begin]) { int pm = begin; int firstElement = nums[begin++];
- * for (int _begin = begin, _end = end;;) { m = (_begin + _end) / 2; while (m <
- * _end && firstElement <= nums[m]) { pm = m; m = (m + 1 + _end) / 2; } if (m <
- * _end) { _end = m; _begin = pm; } else { end = _end; break; } } m =
- * binarySeaarch(nums, begin, end, target); if (m == end || nums[m] != target) {
- * m = binarySeaarch(nums, end, originalEnd, target); } } else if (target >
- * nums[begin]) { int pm = begin; int firstElement = nums[begin++]; for (int
- * _begin = begin, _end = end;;) { m = (_begin + _end) / 2; while (m < _end &&
- * firstElement >= nums[m]) { pm = m; m = (m + 1 + _end) / 2; } if (m < _end) {
- * _begin = pm; _end = m; } else { begin = _end; break; } } m =
- * binarySeaarch(nums, begin, end, target); } else { m = begin; } if (m ==
- * originalEnd || nums[m] != target) { m = -1; }
- */
+    public String countAndSay(int n) {
+        assert (n > 0);
+        if (n > 1) {
+            return countAndSay(countAndSay(n - 1));
+        } else {
+            return "1";
+        }
+    }
+
+    private static class SudokuValiator {
+        private int[] counters;
+
+        public SudokuValiator() {
+            counters = new int[10];
+        }
+
+        public boolean check(char c) {
+            int i = -1;
+            switch (c) {
+            case '1':
+                i = 1;
+                break;
+            case '2':
+                i = 2;
+                break;
+            case '3':
+                i = 3;
+                break;
+            case '4':
+                i = 4;
+                break;
+            case '5':
+                i = 5;
+                break;
+            case '6':
+                i = 6;
+                break;
+            case '7':
+                i = 7;
+                break;
+            case '8':
+                i = 8;
+                break;
+            case '9':
+                i = 9;
+                break;
+            case '.':
+                return true;
+            default:
+                break;
+            }
+            boolean retval = false;
+            if (i >= 1 && i <= 9) {
+                retval = (++counters[i] <= 1);
+            }
+            return retval;
+        }
+    }
+
+    private boolean gridsValid(char[][] board) {
+        for (int row = 0; row < 9; row += 3) {
+            for (int col = 0; col < 9; col += 3) {
+                SudokuValiator sv = new SudokuValiator();
+                for (int i = 0; i < 3; ++i) {
+                    for (int j = 0; j < 3; ++j) {
+                        if (!sv.check(board[row + i][col + j])) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean columnsValid(char[][] board) {
+        for (int i = 0; i < 9; ++i) {
+            SudokuValiator sv = new SudokuValiator();
+            for (int j = 0; j < 9; ++j) {
+                if (!sv.check(board[j][i])) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean rowsValid(char[][] board) {
+        for (int i = 0; i < 9; ++i) {
+            SudokuValiator sv = new SudokuValiator();
+            for (int j = 0; j < 9; ++j) {
+                if (!sv.check(board[i][j])) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean isValidSudoku(char[][] board) {
+        boolean itIs = board.length == 9 && board[0].length == 9;
+        if (itIs) {
+            itIs = (rowsValid(board) && columnsValid(board) && gridsValid(board));
+        }
+        return itIs;
+    }
+}

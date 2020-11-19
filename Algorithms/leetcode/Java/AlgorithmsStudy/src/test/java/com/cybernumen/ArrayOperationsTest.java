@@ -339,4 +339,15 @@ public class ArrayOperationsTest {
             assertTrue(equals(nums, expection));
         }
     }
+
+    @Test
+    public void testCountAndSay() {
+        var ao = new ArrayOperations();
+        assertEquals(ao.countAndSay(1), "1");
+        assertEquals(ao.countAndSay(2), "11");
+        assertEquals(ao.countAndSay(3), "21");
+        assertEquals(ao.countAndSay(4), "1211");
+        assertEquals(ao.countAndSay(5), "111221");
+        assertEquals(ao.countAndSay(6), "312211");
+    }
 }
