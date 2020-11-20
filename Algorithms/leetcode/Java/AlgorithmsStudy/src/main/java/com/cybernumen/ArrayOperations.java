@@ -712,4 +712,13 @@ public class ArrayOperations {
         }
         return itIs;
     }
+
+    public int singleNumber(int[] nums) {
+        assert(nums != null && nums.length % 2 == 1);
+        int retval = nums[0];
+        for (int i = 1; i < nums.length; ++i) {
+            retval ^= nums[i];
+        }
+        return retval;
+    }
 }

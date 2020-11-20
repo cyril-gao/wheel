@@ -255,4 +255,21 @@ public class AppTest {
             assertTrue(equals(swc.findSubstring("cccabaacca", words), result));
         }
     }
+
+    @Test
+    public void testSingleNumber() {
+        var ao = new ArrayOperations();
+        {
+            int[] nums = {2, 2, 1};
+            assertEquals(ao.singleNumber(nums), 1);
+        }
+        {
+            int[] nums = {4,1,2,1,2};
+            assertEquals(ao.singleNumber(nums), 4);
+        }
+        {
+            int[] nums = {1};
+            assertEquals(ao.singleNumber(nums), 1);
+        }
+    }
 }
