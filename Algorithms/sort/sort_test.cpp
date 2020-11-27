@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <time.h>
 #include <algorithm>
 #include <vector>
 #include <random>
@@ -28,6 +29,11 @@
             printf("%37s: %f seconds\n", #function, duration);                \
         }                                                                     \
     } while (false)
+
+inline void print_separator()
+{
+	printf("_______________________________________________________\n");
+}
 
 template <typename T>
 void verification_test()
@@ -68,7 +74,7 @@ void cache_test()
         {
             v = dist(rd);
         }
-        printf("_______________________________________________________\n");
+        print_separator();
         printf("%zu %zu-byte integers:\n", i, sizeof(T));
         EXECUTE(data, insertion_sort, true);
         EXECUTE(data, heap_sort, true);
@@ -89,12 +95,40 @@ void heap_sort_vs_merge_sort()
         {
             v = dist(rd);
         }
-        printf("_______________________________________________________\n");
+        print_separator();
         printf("%zu %zu-byte integers:\n", i, sizeof(T));
         EXECUTE(data, heap_sort, true);
         EXECUTE(data, merge_sort, true);
         printf("\n");
     }
+}
+
+template <typename T>
+void quick_sort_extreme_cases(const size_t buf_size)
+{
+	srand(static_cast<unsigned int>(time(nullptr)));
+	for (unsigned int i = 10; i > 0; --i)
+	{
+		std::vector<T> data(buf_size);
+		for (auto &v : data)
+		{
+			v = static_cast<T>(rand()) % i;
+		}
+		print_separator();
+		printf("1/%u:\n", i);
+		EXECUTE(data, std::sort, true);
+		EXECUTE(data, three_way_quick_sort<V3_1Partitioner>, true);
+		EXECUTE(data, three_way_quick_sort<V3_2Partitioner>, true);
+		EXECUTE(data, three_way_quick_sort<V3_3Partitioner>, true);
+		EXECUTE(data, three_way_quick_sort<V3_4Partitioner>, true);
+		EXECUTE(data, two_way_quick_sort<V1_1Partitioner>, true);
+		EXECUTE(data, two_way_quick_sort<V1_2Partitioner>, true);
+		EXECUTE(data, two_way_quick_sort<V1_3Partitioner>, true);
+		EXECUTE(data, two_way_quick_sort<V1_4Partitioner>, true);
+		EXECUTE(data, two_way_quick_sort<V2_1Partitioner>, true);
+		EXECUTE(data, two_way_quick_sort<V2_2Partitioner>, true);
+		printf("\n");
+	}
 }
 
 template <typename T>
@@ -108,7 +142,7 @@ void performance_test(const size_t buf_size, const double factor)
         v = dist(rd);
     }
 
-    printf("_______________________________________________________\n");
+    print_separator();
     printf("factor: %f\n", factor);
     EXECUTE(data, two_way_quick_sort<V1_1Partitioner>, true);
     EXECUTE(data, two_way_quick_sort<V1_2Partitioner>, true);
@@ -148,6 +182,8 @@ int main()
             performance_test<int64_t>(BUF_SIZE, i + dis(gen));
             printf("\n");
         }
+
+		quick_sort_extreme_cases<int64_t>(BUF_SIZE/10);
     }
     catch (std::exception const &e)
     {
