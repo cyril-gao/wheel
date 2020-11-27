@@ -103,6 +103,80 @@ public class SinglyLinkedList {
         return retval;
     }
 
+    public int length(ListNode head) {
+        int retval = 0;
+        for (ListNode i = head; i != null; i = i.next) {
+            ++retval;
+        }
+        return retval;
+    }
+
+    public ListNode sort(ListNode head) {
+        if (head != null && head.next != null) {
+            int count = length(head);
+            int[] tmp = new int[count];
+            int j = 0;
+            for (ListNode i = head; i != null; i = i.next) {
+                tmp[j++] = i.val;
+            }
+            java.util.Arrays.sort(tmp);
+            j = 0;
+            for (ListNode i = head; i != null; i = i.next) {
+                i.val = tmp[j++];
+            }
+        }
+        return head;
+    }
+
+    private ListNode mergeSort(ListNode head, int count) {
+        if (count > 1) {
+            int half = count / 2;
+            ListNode i = head;
+            for (int j = 1; j < half; ++j) {
+                i = i.next;
+            }
+            ListNode tail = i.next;
+            i.next = null;
+            i = mergeSort(head, half);
+            ListNode j = mergeSort(tail, count - half);
+            head = null;
+            tail = null;
+            while (i != null && j != null) {
+                if (i.val <= j.val) {
+                    if (tail != null) {
+                        tail.next = i;
+                        tail = i;
+                    } else {
+                        tail = i;
+                        head = i;
+                    }
+                    i = i.next;
+                } else {
+                    if (tail != null) {
+                        tail.next = j;
+                        tail = j;
+                    } else {
+                        tail = j;
+                        head = j;
+                    }
+                    j = j.next;
+                }
+            }
+            if (j != null) {
+                assert (i == null);
+                i = j;
+            }
+            tail.next = i;
+            return head;
+        } else {
+            return head;
+        }
+    }
+
+    public ListNode mergeSort(ListNode head) {
+        return mergeSort(head, length(head));
+    }
+
     public static void main(String[] args) {
         SinglyLinkedList sll = new SinglyLinkedList();
         {

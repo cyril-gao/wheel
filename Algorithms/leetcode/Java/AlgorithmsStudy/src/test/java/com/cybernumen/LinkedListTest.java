@@ -87,6 +87,17 @@ public class LinkedListTest {
             var r = sll.insertionSortList(n4);
             assertEquals(r, n1);
             assertTrue(sll.isSorted(r));
+
+            assertTrue(sll.isSorted(sll.sort(n4)));
+            {
+                n1.next = null;
+                n2.next = n1;
+                n3.next = n2;
+                n4.next = n3;
+                r = sll.mergeSort(n4);
+                assertTrue(sll.isSorted(r));
+                assertEquals(sll.length(r), 4);
+            }
         }
         {
             var n1 = new SinglyLinkedList.ListNode(1);
@@ -99,6 +110,15 @@ public class LinkedListTest {
             var r = sll.insertionSortList(n4);
             assertEquals(r, n1);
             assertTrue(sll.isSorted(r));
+            {
+                n4.next = n2;
+                n2.next = n1;
+                n1.next = n3;
+                n3.next = null;
+                r = sll.mergeSort(n4);
+                assertTrue(sll.isSorted(r));
+                assertEquals(sll.length(r), 4);
+            }
         }
         {
             var n_1 = new SinglyLinkedList.ListNode(-1);
@@ -107,13 +127,25 @@ public class LinkedListTest {
             var n4 = new SinglyLinkedList.ListNode(4);
             var n0 = new SinglyLinkedList.ListNode(0);
 
-            n_1.next = n5;
-            n5.next = n3;
-            n3.next = n4;
-            n4.next = n0;
-            var r = sll.insertionSortList(n_1);
-            assertEquals(r, n_1);
-            assertTrue(sll.isSorted(r));
+            {
+                n_1.next = n5;
+                n5.next = n3;
+                n3.next = n4;
+                n4.next = n0;
+                var r = sll.insertionSortList(n_1);
+                assertEquals(r, n_1);
+                assertTrue(sll.isSorted(r));
+            }
+            {
+                n_1.next = n5;
+                n5.next = n3;
+                n3.next = n4;
+                n4.next = n0;
+                n0.next = null;
+                var r = sll.mergeSort(n_1);
+                assertTrue(sll.isSorted(r));
+                assertEquals(sll.length(r), 5);
+            }
         }
     }
 }
