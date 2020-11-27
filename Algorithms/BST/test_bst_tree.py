@@ -38,6 +38,7 @@ def get_hybrid_operations(input):
         def __init__(self, key, inserting=True):
             self.key = key
             self.inserting = inserting
+
         def __repr__(self):
             return "%s %s" % ("insert" if self.inserting else "delete", self.key)
 
@@ -101,8 +102,8 @@ def run_case(request_queue, response_queue):
                 assert tree.valid()
             r = Response(id, True)
             response_queue.put(r)
-        except AttributeError as ae:
-            r = Response(id, False, input, rinput, v, ae)
+        except Exception as e:
+            r = Response(id, False, input, rinput, v, e)
             response_queue.put(r)
 
 
@@ -111,7 +112,8 @@ class BSTTester(unittest.TestCase):
         self.request_queue = Queue()
         self.response_queue = Queue()
         cpu = cpu_count()
-        self.workers = [Process(target=run_case, args=(self.request_queue, self.response_queue)) for _ in range(cpu)]
+        self.workers = [Process(target=run_case, args=(
+            self.request_queue, self.response_queue)) for _ in range(cpu)]
 
     def test_trees(self):
         REPEAT = 32
