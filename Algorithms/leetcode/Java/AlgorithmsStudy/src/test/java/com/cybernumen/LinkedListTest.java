@@ -47,7 +47,7 @@ public class LinkedListTest {
     }
 
     @Test
-    public void testInsertion() {
+    public void testSort() {
         SinglyLinkedList sll = new SinglyLinkedList();
         {
             assertEquals(sll.insertionSortList(null), null);
@@ -146,6 +146,32 @@ public class LinkedListTest {
                 assertTrue(sll.isSorted(r));
                 assertEquals(sll.length(r), 5);
             }
+        }
+    }
+
+    @Test
+    public void testReorderList() {
+        SinglyLinkedList sll = new SinglyLinkedList();
+        var n1 = new SinglyLinkedList.ListNode(1);
+        var n2 = new SinglyLinkedList.ListNode(2);
+        var n3 = new SinglyLinkedList.ListNode(3);
+        var n4 = new SinglyLinkedList.ListNode(4);
+        {
+            n1.next = n2;
+            n2.next = n3;
+            n3.next = n4;
+            sll.reorderList(n1);
+            assertTrue(sll.length(n1) == 4 && n1.next.val == 4 && n1.next.next.val == 2 && n1.next.next.next.val == 3);
+        }
+        var n5 = new SinglyLinkedList.ListNode(5);
+        {
+            n1.next = n2;
+            n2.next = n3;
+            n3.next = n4;
+            n4.next = n5;
+            sll.reorderList(n1);
+            assertTrue(sll.length(n1) == 5 && n1.next.val == 5 && n1.next.next.val == 2 && n1.next.next.next.val == 4
+                    && n1.next.next.next.next.val == 3);
         }
     }
 }

@@ -177,19 +177,46 @@ public class SinglyLinkedList {
         return mergeSort(head, length(head));
     }
 
+    public void reorderList(ListNode head) {
+        int count = length(head);
+        if (count > 1) {
+            int half = count / 2;
+            ListNode tail = head;
+            for (int i = 1; i < half; ++i) {
+                tail = tail.next;
+            }
+            ListNode j = tail.next;
+            tail.next = null;
+            j = reverse(j);
+            ListNode i = head;
+
+            head = tail = null;
+            while (i != null && j != null) {
+                if (tail != null) {
+                    tail.next = i;
+                    tail = i;
+                } else {
+                    head = tail = i;
+                }
+                i = i.next;
+                tail.next = j;
+                tail = j;
+                j = j.next;
+            }
+        }
+    }
+
     public static void main(String[] args) {
         SinglyLinkedList sll = new SinglyLinkedList();
+        var n1 = new SinglyLinkedList.ListNode(1);
+        var n2 = new SinglyLinkedList.ListNode(2);
+        var n3 = new SinglyLinkedList.ListNode(3);
+        var n4 = new SinglyLinkedList.ListNode(4);
         {
-            var n1 = new SinglyLinkedList.ListNode(1);
-            var n2 = new SinglyLinkedList.ListNode(2);
-            var n3 = new SinglyLinkedList.ListNode(3);
-            var n4 = new SinglyLinkedList.ListNode(4);
-            n2.next = n1;
-            sll.insertionSortList(n2);
-            n3.next = n2;
-            sll.insertionSortList(n3);
-            n4.next = n3;
-            sll.insertionSortList(n4);
+            n1.next = n2;
+            n2.next = n3;
+            n3.next = n4;
+            sll.reorderList(n1);
         }
     }
 }
