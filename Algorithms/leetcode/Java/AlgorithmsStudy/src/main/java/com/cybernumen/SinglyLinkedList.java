@@ -206,17 +206,73 @@ public class SinglyLinkedList {
         }
     }
 
-    public static void main(String[] args) {
-        SinglyLinkedList sll = new SinglyLinkedList();
-        var n1 = new SinglyLinkedList.ListNode(1);
-        var n2 = new SinglyLinkedList.ListNode(2);
-        var n3 = new SinglyLinkedList.ListNode(3);
-        var n4 = new SinglyLinkedList.ListNode(4);
-        {
-            n1.next = n2;
-            n2.next = n3;
-            n3.next = n4;
-            sll.reorderList(n1);
+    public ListNode deleteDuplicates(ListNode head) {
+        for (ListNode i = head; i != null;) {
+            ListNode j = i.next;
+            while (j != null && j.val == i.val) {
+                j = j.next;
+            }
+            i.next = j;
+            i = j;
         }
+        return head;
+    }
+
+    public ListNode rotateRight(ListNode head, int k) {
+        int len = length(head);
+        if (len > 1) {
+            k = k % len;
+            if (k > 0) {
+                int i = len - k;
+                ListNode j = head;
+                for (int l = 1; l < i; ++l) {
+                    j = j.next;
+                }
+                ListNode newHead = j.next;
+                j.next = null;
+
+                j = newHead;
+                while (j.next != null) {
+                    j = j.next;
+                }
+                j.next = head;
+                head = newHead;
+            }
+        }
+        return head;
+    }
+
+    public ListNode partition(ListNode head, int x) {
+        if (head != null && head.next != null) {
+            ListNode lh = null, lt = null;
+            ListNode bh = null, bt = null;
+            for (ListNode i = head; i != null; i = i.next) {
+                if (i.val < x) {
+                    if (lt != null) {
+                        lt.next = i;
+                        lt = i;
+                    } else {
+                        lh = lt = i;
+                    }
+                } else {
+                    if (bt != null) {
+                        bt.next = i;
+                        bt = i;
+                    } else {
+                        bh = bt = i;
+                    }
+                }
+            }
+            if (lt != null) {
+                lt.next = bh;
+                if (bt != null) {
+                    bt.next = null;
+                }
+                head = lh;
+            } else {
+                head = bh;
+            }
+        }
+        return head;
     }
 }

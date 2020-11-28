@@ -174,4 +174,128 @@ public class LinkedListTest {
                     && n1.next.next.next.next.val == 3);
         }
     }
+
+    @Test
+    public void testRotateRight() {
+        SinglyLinkedList sll = new SinglyLinkedList();
+        var n1 = new SinglyLinkedList.ListNode(1);
+        var n2 = new SinglyLinkedList.ListNode(2);
+        var n3 = new SinglyLinkedList.ListNode(3);
+        var n4 = new SinglyLinkedList.ListNode(4);
+        var n5 = new SinglyLinkedList.ListNode(5);
+        {
+            n1.next = n2;
+            n2.next = n3;
+            n3.next = n4;
+            n4.next = n5;
+            n5.next = null;
+            var r = sll.rotateRight(n1, 1);
+            assertEquals(r, n5);
+        }
+        {
+            n1.next = n2;
+            n2.next = n3;
+            n3.next = n4;
+            n4.next = n5;
+            n5.next = null;
+            var r = sll.rotateRight(n1, 2);
+            assertEquals(r, n4);
+        }
+        {
+            n1.next = n2;
+            n2.next = n3;
+            n3.next = n4;
+            n4.next = n5;
+            n5.next = null;
+            var r = sll.rotateRight(n1, 3);
+            assertEquals(r, n3);
+        }
+        {
+            n1.next = n2;
+            n2.next = n3;
+            n3.next = n4;
+            n4.next = n5;
+            n5.next = null;
+            var r = sll.rotateRight(n1, 4);
+            assertEquals(r, n2);
+        }
+        {
+            n1.next = n2;
+            n2.next = n3;
+            n3.next = n4;
+            n4.next = n5;
+            n5.next = null;
+            var r = sll.rotateRight(n1, 5);
+            assertEquals(r, n1);
+        }
+        {
+            n1.next = n2;
+            n2.next = n3;
+            n3.next = n4;
+            n4.next = n5;
+            n5.next = null;
+            var r = sll.rotateRight(n1, 6);
+            assertEquals(r, n5);
+        }
+    }
+
+    @Test
+    public void testPartition() {
+        SinglyLinkedList sll = new SinglyLinkedList();
+        var n1 = new SinglyLinkedList.ListNode(1);
+        var n2i = new SinglyLinkedList.ListNode(2);
+        var n2ii = new SinglyLinkedList.ListNode(2);
+        var n3 = new SinglyLinkedList.ListNode(3);
+        var n4 = new SinglyLinkedList.ListNode(4);
+        var n5 = new SinglyLinkedList.ListNode(5);
+
+        {
+            n1.next = n4;
+            n4.next = n3;
+            n3.next = n2i;
+            n2i.next = n5;
+            n5.next = n2ii;
+            n2ii.next = null;
+            var r = sll.partition(n1, 3);
+            assertTrue(r.val == 1 && r.next.val == 2 && r.next.next.val == 2 && r.next.next.next.val == 4
+                    && r.next.next.next.next.val == 3 && r.next.next.next.next.next.val == 5
+                    && r.next.next.next.next.next.next == null);
+        }
+        {
+            n1.next = n4;
+            n4.next = n3;
+            n3.next = n2i;
+            n2i.next = n5;
+            n5.next = n2ii;
+            n2ii.next = null;
+            var r = sll.partition(n1, 2);
+            assertTrue(r.val == 1 && r.next.val == 4 && r.next.next.val == 3 && r.next.next.next.val == 2
+                    && r.next.next.next.next.val == 5 && r.next.next.next.next.next.val == 2
+                    && r.next.next.next.next.next.next == null);
+        }
+        {
+            n1.next = n4;
+            n4.next = n3;
+            n3.next = n2i;
+            n2i.next = n5;
+            n5.next = n2ii;
+            n2ii.next = null;
+            var r = sll.partition(n1, 1);
+            assertTrue(r.val == 1 && r.next.val == 4 && r.next.next.val == 3 && r.next.next.next.val == 2
+                    && r.next.next.next.next.val == 5 && r.next.next.next.next.next.val == 2
+                    && r.next.next.next.next.next.next == null);
+        }
+        {
+            n1.next = n4;
+            n4.next = n3;
+            n3.next = n2i;
+            n2i.next = n5;
+            n5.next = n2ii;
+            n2ii.next = null;
+            var r = sll.partition(n1, 6);
+            assertTrue(r.val == 1 && r.next.val == 4 && r.next.next.val == 3 && r.next.next.next.val == 2
+                    && r.next.next.next.next.val == 5 && r.next.next.next.next.next.val == 2
+                    && r.next.next.next.next.next.next == null);
+        }
+    }
 }

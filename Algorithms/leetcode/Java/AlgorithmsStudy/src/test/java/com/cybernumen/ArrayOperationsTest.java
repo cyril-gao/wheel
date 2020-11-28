@@ -39,6 +39,27 @@ public class ArrayOperationsTest {
             assertEquals(result, 5);
         }
         {
+            int[] nums = { 1, 1, 2 };
+            var result = ao.removeDuplicates2(nums);
+            assertEquals(result, 3);
+        }
+        {
+            int[] nums = { 0, 0, 1, 1, 1, 2, 2, 3, 3, 4 };
+            var result = ao.removeDuplicates2(nums);
+            assertEquals(result, 9);
+        }
+        {
+            int[] nums = { 1, 1, 1, 2, 2, 3 };
+            var result = ao.removeDuplicates2(nums);
+            assertEquals(result, 5);
+        }
+        {
+            int[] nums = { 0, 0, 1, 1, 1, 1, 2, 3, 3 };
+            var result = ao.removeDuplicates2(nums);
+            assertEquals(result, 7);
+        }
+
+        {
             int[] nums = { 3, 2, 2, 3 };
             var result = ao.removeElement(nums, 3);
             assertEquals(result, 2);

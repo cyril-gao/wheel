@@ -625,37 +625,37 @@ public class ArrayOperations {
         public boolean check(char c) {
             int i = -1;
             switch (c) {
-            case '1':
-                i = 1;
-                break;
-            case '2':
-                i = 2;
-                break;
-            case '3':
-                i = 3;
-                break;
-            case '4':
-                i = 4;
-                break;
-            case '5':
-                i = 5;
-                break;
-            case '6':
-                i = 6;
-                break;
-            case '7':
-                i = 7;
-                break;
-            case '8':
-                i = 8;
-                break;
-            case '9':
-                i = 9;
-                break;
-            case '.':
-                return true;
-            default:
-                break;
+                case '1':
+                    i = 1;
+                    break;
+                case '2':
+                    i = 2;
+                    break;
+                case '3':
+                    i = 3;
+                    break;
+                case '4':
+                    i = 4;
+                    break;
+                case '5':
+                    i = 5;
+                    break;
+                case '6':
+                    i = 6;
+                    break;
+                case '7':
+                    i = 7;
+                    break;
+                case '8':
+                    i = 8;
+                    break;
+                case '9':
+                    i = 9;
+                    break;
+                case '.':
+                    return true;
+                default:
+                    break;
             }
             boolean retval = false;
             if (i >= 1 && i <= 9) {
@@ -714,11 +714,37 @@ public class ArrayOperations {
     }
 
     public int singleNumber(int[] nums) {
-        assert(nums != null && nums.length % 2 == 1);
+        assert (nums != null && nums.length % 2 == 1);
         int retval = nums[0];
         for (int i = 1; i < nums.length; ++i) {
             retval ^= nums[i];
         }
         return retval;
+    }
+
+    public int removeDuplicates2(int[] nums) {
+        int len = nums != null ? nums.length : 0;
+        int o = len > 0 ? -1 : 0;
+        for (int i = 0; i < len;) {
+            int count = 1;
+            int j = i + 1;
+            while (j < len && nums[i] == nums[j]) {
+                ++count;
+                ++j;
+            }
+            if (o >= 0) {
+                nums[o++] = nums[i];
+                if (count > 1) {
+                    nums[o++] = nums[i + 1];
+                }
+            } else {
+                o = j;
+                if (count > 2) {
+                    o = i + 2;
+                }
+            }
+            i = j;
+        }
+        return o;
     }
 }
