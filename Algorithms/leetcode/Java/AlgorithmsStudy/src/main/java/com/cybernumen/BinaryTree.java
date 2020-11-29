@@ -92,4 +92,29 @@ public class BinaryTree {
         }
         return retval;
     }
+
+    public void preorderTraversalRecursively(TreeNode root, List<Integer> output) {
+        if (root != null) {
+            output.add(root.val);
+            preorderTraversalRecursively(root.left, output);
+            preorderTraversalRecursively(root.right, output);
+        }
+    }
+
+    public List<Integer> preorderTraversal(TreeNode root) {
+        List<Integer> retval = new LinkedList<>();
+        if (root != null) {
+            Stack<TreeNode> stack = new Stack<>();
+            for (TreeNode p = root; p != null || !stack.isEmpty();) {
+                while (p != null) {
+                    retval.add(p.val);
+                    stack.push(p);
+                    p = p.left;
+                }
+                p = stack.pop();
+                p = p.right;
+            }
+        }
+        return retval;
+    }
 }
