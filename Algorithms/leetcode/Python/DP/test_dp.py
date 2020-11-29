@@ -1,5 +1,5 @@
 import unittest
-from unique_paths import unique_paths, unique_paths_2
+from unique_paths import unique_paths, unique_paths_2, unique_paths_with_obstacles
 from minimum_path_sum import minimum_path_sum
 
 
@@ -38,3 +38,14 @@ class DPTester(unittest.TestCase):
         input = [[1, 2, 3], [4, 5, 6]]
         r = minimum_path_sum(input)
         self.assertEqual(r, 12)
+
+    def test_unique_paths_with_obstacles(self):
+        input = [[0,0,0],[0,1,0],[0,0,0]]
+        r = unique_paths_with_obstacles(input)
+        self.assertEqual(r, 2)
+        input = [[0,1],[0,0]]
+        r = unique_paths_with_obstacles(input)
+        self.assertEqual(r, 1)
+        input = [[0,0], [1,1], [0,0]]
+        r = unique_paths_with_obstacles(input)
+        self.assertEqual(r, 0)
