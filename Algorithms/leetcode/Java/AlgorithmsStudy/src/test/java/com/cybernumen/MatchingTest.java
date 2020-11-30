@@ -1,23 +1,21 @@
 package com.cybernumen;
 
+import org.testng.annotations.*;
+
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
-import org.testng.annotations.*;
 
-interface Matcher
-{
+interface Matcher {
     boolean isMatch(String txt, String pattern);
 }
 
-class MatcherParameters
-{
+class MatcherParameters {
     public String txt;
     public String pattern;
     public boolean matched;
 
-    public MatcherParameters(String s, String p, boolean m)
-    {
+    public MatcherParameters(String s, String p, boolean m) {
         this.txt = s;
         this.pattern = p;
         this.matched = m;
@@ -25,37 +23,25 @@ class MatcherParameters
 }
 
 public class MatchingTest {
-    private void testWildcardMatching(Matcher method)
-    {
-        var data = new MatcherParameters[] {
-            new MatcherParameters("c", "*?*", true),
-            new MatcherParameters("hi", "*?", true),
-            new MatcherParameters("", "", true),
-            new MatcherParameters("", "a*", false),
-            new MatcherParameters("", "a*.*c*a*", false),
-            new MatcherParameters("", "?*", false),
-            new MatcherParameters("ab", "a", false),
-            new MatcherParameters("ab", "?*", true),
-            new MatcherParameters("aa", "*", true),
-            new MatcherParameters("aa", "a*", true),
-            new MatcherParameters("aaa", "a*a", true),
-            new MatcherParameters("a", "ab*a", false),
-            new MatcherParameters("aaa", "ab*ac*a", false),
-            new MatcherParameters("ab", "*??", true),
-            new MatcherParameters("cb", "?a", false),
-            new MatcherParameters("acdcb", "a*c?b", false),
-            new MatcherParameters("aaabbbaabaaaaababaabaaabbabbbbbbbbaabababbabbbaaaaba", "a*******b", false),
-            new MatcherParameters(
-                "bbaaaababaaabaabbbbbaaaaaaaababbbababbbbbababbaababaabbbbababbaaaababbbbbaaabbbbababababbbaababaabbaabbababababbbbaabbbbaabbbababaaaabbbbbbaabababbaababababbbabababaaaaababbbabbbabbbbbabbabaabbabbaaababba",
-                "bb*b*a**bb*bb*ab*a***bbb*ab********a*aaaaaaaaa**b*b*bbabb**aaaa*a***aaaaaa*a****ba*aa**bb*a*ab*****aa**",
-                false
-            ),
-            new MatcherParameters(
-                "abbabaaabbabbaababbabbbbbabbbabbbabaaaaababababbbabababaabbababaabbbbbbaaaabababbbaabbbbaabbbbababababbaabbaababaabbbababababbbbaaabbbbbabaaaabbababbbbaababaabbababbbbbababbbabaaaaaaaabbbbbaabaaababaaaabb",
-                "**aa*****ba*a*bb**aa*ab****a*aaaaaa***a*aaaa**bbabb*b*b**aaaaaaaaa*a********ba*bbb***a*ba*bb*bb**a*b*bb",
-                false
-            )
-        };
+    private void testWildcardMatching(Matcher method) {
+        var data = new MatcherParameters[] { new MatcherParameters("c", "*?*", true),
+                new MatcherParameters("hi", "*?", true), new MatcherParameters("", "", true),
+                new MatcherParameters("", "a*", false), new MatcherParameters("", "a*.*c*a*", false),
+                new MatcherParameters("", "?*", false), new MatcherParameters("ab", "a", false),
+                new MatcherParameters("ab", "?*", true), new MatcherParameters("aa", "*", true),
+                new MatcherParameters("aa", "a*", true), new MatcherParameters("aaa", "a*a", true),
+                new MatcherParameters("a", "ab*a", false), new MatcherParameters("aaa", "ab*ac*a", false),
+                new MatcherParameters("ab", "*??", true), new MatcherParameters("cb", "?a", false),
+                new MatcherParameters("acdcb", "a*c?b", false),
+                new MatcherParameters("aaabbbaabaaaaababaabaaabbabbbbbbbbaabababbabbbaaaaba", "a*******b", false),
+                new MatcherParameters(
+                        "bbaaaababaaabaabbbbbaaaaaaaababbbababbbbbababbaababaabbbbababbaaaababbbbbaaabbbbababababbbaababaabbaabbababababbbbaabbbbaabbbababaaaabbbbbbaabababbaababababbbabababaaaaababbbabbbabbbbbabbabaabbabbaaababba",
+                        "bb*b*a**bb*bb*ab*a***bbb*ab********a*aaaaaaaaa**b*b*bbabb**aaaa*a***aaaaaa*a****ba*aa**bb*a*ab*****aa**",
+                        false),
+                new MatcherParameters(
+                        "abbabaaabbabbaababbabbbbbabbbabbbabaaaaababababbbabababaabbababaabbbbbbaaaabababbbaabbbbaabbbbababababbaabbaababaabbbababababbbbaaabbbbbabaaaabbababbbbaababaabbababbbbbababbbabaaaaaaaabbbbbaabaaababaaaabb",
+                        "**aa*****ba*a*bb**aa*ab****a*aaaaaa***a*aaaa**bbabb*b*b**aaaaaaaaa*a********ba*bbb***a*ba*bb*bb**a*b*bb",
+                        false) };
         for (var mp : data) {
             var result = method.isMatch(mp.txt, mp.pattern);
             assertEquals(result, mp.matched);
@@ -63,8 +49,7 @@ public class MatchingTest {
     }
 
     @Test
-    public void testWildcardMatching()
-    {
+    public void testWildcardMatching() {
         var wm = new WildcardMatching();
         {
             testWildcardMatching(wm::isMatch);
@@ -111,40 +96,3 @@ public class MatchingTest {
         assertEquals(kmp.find("ABABAAAAABABABABAABABAAAA", "ABABABABB"), -1);
     }
 }
-
-        /*
-        {
-            Matcher method = wm::isMatch;
-
-            assertTrue(method.isMatch("c", "*?*"));
-            assertTrue(method.isMatch("hi", "*?"));
-            assertTrue(method.isMatch("", ""));
-            assertFalse(method.isMatch("", "a*"));
-            assertFalse(method.isMatch("", "a*.*c*a*"));
-            assertFalse(method.isMatch("", "?*"));
-            assertFalse(method.isMatch("ab", "a"));
-            assertTrue(method.isMatch("ab", "?*"));
-            assertTrue(method.isMatch("aa", "*"));
-            assertTrue(method.isMatch("aa", "a*"));
-            assertTrue(method.isMatch("aaa", "a*a"));
-            assertFalse(method.isMatch("a", "ab*a"));
-            assertFalse(method.isMatch("aaa", "ab*ac*a"));
-            assertTrue(method.isMatch("ab", "*??"));
-            assertFalse(method.isMatch("cb", "?a"));
-            assertFalse(method.isMatch("acdcb", "a*c?b"));
-            assertFalse(method.isMatch("aaabbbaabaaaaababaabaaabbabbbbbbbbaabababbabbbaaaaba", "a*******b"));
-            // the performance is really bad !!!
-            assertFalse(
-                method.isMatch(
-                    "bbaaaababaaabaabbbbbaaaaaaaababbbababbbbbababbaababaabbbbababbaaaababbbbbaaabbbbababababbbaababaabbaabbababababbbbaabbbbaabbbababaaaabbbbbbaabababbaababababbbabababaaaaababbbabbbabbbbbabbabaabbabbaaababba",
-                    "bb*b*a**bb*bb*ab*a***bbb*ab********a*aaaaaaaaa**b*b*bbabb**aaaa*a***aaaaaa*a****ba*aa**bb*a*ab*****aa**"
-                )
-            );
-            assertFalse(
-                method.isMatch(
-                    "abbabaaabbabbaababbabbbbbabbbabbbabaaaaababababbbabababaabbababaabbbbbbaaaabababbbaabbbbaabbbbababababbaabbaababaabbbababababbbbaaabbbbbabaaaabbababbbbaababaabbababbbbbababbbabaaaaaaaabbbbbaabaaababaaaabb",
-                    "**aa*****ba*a*bb**aa*ab****a*aaaaaa***a*aaaa**bbabb*b*b**aaaaaaaaa*a********ba*bbb***a*ba*bb*bb**a*b*bb"
-                )
-            );
-        }
-        */
