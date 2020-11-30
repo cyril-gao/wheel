@@ -2,6 +2,7 @@ import unittest
 from unique_paths import unique_paths, unique_paths_2, unique_paths_with_obstacles
 from minimum_path_sum import minimum_path_sum
 from climbing_stairs import climbing_stairs
+from decode_ways import number_of_decodings
 
 
 class DPTester(unittest.TestCase):
@@ -55,3 +56,13 @@ class DPTester(unittest.TestCase):
         result = [1, 2, 3, 5, 8, 13, 21, 34, 55]
         for i in range(len(result)):
             self.assertEqual(climbing_stairs(i+1), result[i])
+
+    def test_number_of_decodings(self):
+        self.assertEqual(number_of_decodings("12"), 2)
+        self.assertEqual(number_of_decodings("226"), 3)
+        self.assertEqual(number_of_decodings("227"), 2)
+        self.assertEqual(number_of_decodings("207"), 1)
+        self.assertEqual(number_of_decodings("0"), 0)
+        self.assertEqual(number_of_decodings("1"), 1)
+        self.assertEqual(number_of_decodings("2101"), 1)
+        self.assertEqual(number_of_decodings("123123"), 9)
