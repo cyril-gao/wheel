@@ -3,6 +3,7 @@ from unique_paths import unique_paths, unique_paths_2, unique_paths_with_obstacl
 from minimum_path_sum import minimum_path_sum
 from climbing_stairs import climbing_stairs
 from decode_ways import number_of_decodings
+from edit_distance import minimum_distance, minimum_distance_2
 
 
 class DPTester(unittest.TestCase):
@@ -66,3 +67,22 @@ class DPTester(unittest.TestCase):
         self.assertEqual(number_of_decodings("1"), 1)
         self.assertEqual(number_of_decodings("2101"), 1)
         self.assertEqual(number_of_decodings("123123"), 9)
+
+    def test_minimum_distance(self):
+        self.assertEqual(minimum_distance("", ""), 0)
+        self.assertEqual(minimum_distance("123456", "12"), 4)
+        self.assertEqual(minimum_distance("12", "123456"), 4)
+        self.assertEqual(minimum_distance("123456", "123456"), 0)
+        self.assertEqual(minimum_distance("123456", "12356"), 1)
+        self.assertEqual(minimum_distance("12456", "123456"), 1)
+        self.assertEqual(minimum_distance("horse", "ros"), 3)
+        self.assertEqual(minimum_distance("intention", "execution"), 5)
+
+        self.assertEqual(minimum_distance_2("", ""), 0)
+        self.assertEqual(minimum_distance_2("123456", "12"), 4)
+        self.assertEqual(minimum_distance_2("12", "123456"), 4)
+        self.assertEqual(minimum_distance_2("123456", "123456"), 0)
+        self.assertEqual(minimum_distance_2("123456", "12356"), 1)
+        self.assertEqual(minimum_distance_2("12456", "123456"), 1)
+        self.assertEqual(minimum_distance_2("horse", "ros"), 3)
+        self.assertEqual(minimum_distance_2("intention", "execution"), 5)
