@@ -1,8 +1,8 @@
 Implement many different algorithms for study:
 
-1. BinaryTreeTraversal
+1. BinaryTreeTraversal <br>
    |_ traverse a binary tree: preorder, inorder, postorder, levelorder iteratively or recursively.
-2. BST (binary search tree)
+2. BST (binary search tree) <br>
    |_ insert new node into or remove a node from a red-black/AVL tree;
    |_ document about how to rebalance the irregular red-black/AVL trees.
 3. graph
