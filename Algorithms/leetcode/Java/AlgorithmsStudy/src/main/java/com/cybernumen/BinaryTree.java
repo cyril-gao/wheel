@@ -271,4 +271,91 @@ public class BinaryTree {
         BstInternal bi = getBstInternal(root);
         return bi.valid;
     }
+
+    private TreeNode buildBST(int[] nums, int start, int end) {
+        TreeNode retval = null;
+        int diff = end - start;
+        if (diff > 0) {
+            int mid = (diff / 2) + start;
+            retval = new TreeNode(nums[mid]);
+            retval.left = buildBST(nums, start, mid);
+            retval.right = buildBST(nums, mid + 1, end);
+        }
+        return retval;
+    }
+
+    public TreeNode sortedArrayToBST(int[] nums) {
+        TreeNode retval = null;
+        if (nums != null && nums.length > 0) {
+            retval = buildBST(nums, 0, nums.length);
+        }
+        return retval;
+    }
+
+    public int minDepth(TreeNode root) {
+        if (root != null) {
+            if (root.left == null && root.right == null) {
+                return 1;
+            }
+            if (root.left != null && root.right != null) {
+                return Math.min(minDepth(root.left), minDepth(root.right)) + 1;
+            }
+            if (root.left != null) {
+                return minDepth(root.left) + 1;
+            }
+            if (root.right != null) {
+                return minDepth(root.right) + 1;
+            }
+        }
+        return 0;
+    }
+
+    private TreeNode buildTreeFromPreorderAndInorderTraversal(int[] preorder, int pstart, int pend, int[] inorder,
+            int istart, int iend) {
+        TreeNode retval = null;
+        int diff = pend - pstart;
+        if (diff > 0) {
+            int v = preorder[pstart];
+            int imid = istart;
+            while (inorder[imid] != v) {
+                ++imid;
+            }
+            diff = imid - istart;
+            retval = new TreeNode(v);
+            retval.left = buildTreeFromPreorderAndInorderTraversal(preorder, pstart + 1, pstart + 1 + diff, inorder,
+                    istart, imid);
+            retval.right = buildTreeFromPreorderAndInorderTraversal(preorder, pstart + 1 + diff, pend, inorder,
+                    imid + 1, iend);
+        }
+        return retval;
+    }
+
+    public TreeNode buildTreeFromPreorderAndInorderTraversal(int[] preorder, int[] inorder) {
+        return buildTreeFromPreorderAndInorderTraversal(preorder, 0, preorder.length, inorder, 0, inorder.length);
+    }
+
+    private TreeNode buildTreeFromInorderAndPostorderTraversal(int[] postorder, int pstart, int pend, int[] inorder,
+            int istart, int iend) {
+        TreeNode retval = null;
+        int diff = pend - pstart;
+        if (diff > 0) {
+            int plast = pend - 1;
+            int v = postorder[plast];
+            retval = new TreeNode(v);
+            int imid = istart;
+            while (inorder[imid] != v) {
+                ++imid;
+            }
+            diff = imid - istart;
+            retval.left = buildTreeFromInorderAndPostorderTraversal(postorder, pstart, pstart + diff, inorder, istart,
+                    istart + diff);
+            retval.right = buildTreeFromInorderAndPostorderTraversal(postorder, pstart + diff, plast, inorder,
+                    istart + diff + 1, iend);
+        }
+        return retval;
+    }
+
+    public TreeNode buildTreeFromInorderAndPostorderTraversal(int[] inorder, int[] postorder) {
+        return buildTreeFromInorderAndPostorderTraversal(postorder, 0, postorder.length, inorder, 0, inorder.length);
+    }
 }

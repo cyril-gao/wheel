@@ -129,4 +129,35 @@ public class BinaryTreeTest {
             assertTrue(bt.isValidBST(n15));
         }
     }
+
+    @Test
+    public void testMinDepth() {
+        BinaryTree bt = new BinaryTree();
+        {
+            var n3 = new BinaryTree.TreeNode(3);
+            var n9 = new BinaryTree.TreeNode(9);
+            var n20 = new BinaryTree.TreeNode(20);
+            var n15 = new BinaryTree.TreeNode(15);
+            var n7 = new BinaryTree.TreeNode(7);
+            n3.left = n9;
+            n3.right = n20;
+            n20.left = n15;
+            n20.right = n7;
+            assertEquals(bt.minDepth(n3), 2);
+        }
+        {
+            var n1 = new BinaryTree.TreeNode(1);
+            var n2 = new BinaryTree.TreeNode(2);
+            var n3 = new BinaryTree.TreeNode(3);
+            var n4 = new BinaryTree.TreeNode(4);
+            var n5 = new BinaryTree.TreeNode(5);
+            var n6 = new BinaryTree.TreeNode(6);
+            n1.right = n2;
+            n2.right = n3;
+            n3.right = n4;
+            n4.right = n5;
+            n5.right = n6;
+            assertEquals(bt.minDepth(n1), 6);
+        }
+    }
 }
