@@ -54,6 +54,7 @@ void verification_test()
     EXECUTE(data, two_way_quick_sort<V1_2Partitioner>, false);
     EXECUTE(data, two_way_quick_sort<V1_3Partitioner>, false);
     EXECUTE(data, two_way_quick_sort<V1_4Partitioner>, false);
+    EXECUTE(data, v2::two_way_quick_sort, false);
     EXECUTE(data, two_way_quick_sort<V2_1Partitioner>, false);
     EXECUTE(data, two_way_quick_sort<V2_2Partitioner>, false);
     EXECUTE(data, three_way_quick_sort<V3_1Partitioner>, false);
@@ -121,12 +122,19 @@ void quick_sort_extreme_cases(const size_t buf_size)
         EXECUTE(data, three_way_quick_sort<V3_2Partitioner>, true);
         EXECUTE(data, three_way_quick_sort<V3_3Partitioner>, true);
         EXECUTE(data, three_way_quick_sort<V3_4Partitioner>, true);
-        EXECUTE(data, two_way_quick_sort<V1_1Partitioner>, true);
-        EXECUTE(data, two_way_quick_sort<V1_2Partitioner>, true);
-        EXECUTE(data, two_way_quick_sort<V1_3Partitioner>, true);
-        EXECUTE(data, two_way_quick_sort<V1_4Partitioner>, true);
+        EXECUTE(data, v2::two_way_quick_sort, true);
+        if (i > 4) {
+            // may crash !!!
+            EXECUTE(data, two_way_quick_sort<V1_1Partitioner>, true);
+            EXECUTE(data, two_way_quick_sort<V1_2Partitioner>, true);
+            EXECUTE(data, two_way_quick_sort<V1_3Partitioner>, true);
+            EXECUTE(data, two_way_quick_sort<V1_4Partitioner>, true);
+        }
         EXECUTE(data, two_way_quick_sort<V2_1Partitioner>, true);
-        EXECUTE(data, two_way_quick_sort<V2_2Partitioner>, true);
+        if (i > 4) {
+            // may crash !!!
+            EXECUTE(data, two_way_quick_sort<V2_2Partitioner>, true);
+        }
         printf("\n");
     }
 }
@@ -144,6 +152,7 @@ void performance_test(const size_t buf_size, const double factor)
 
     print_separator();
     printf("factor: %f\n", factor);
+    EXECUTE(data, v2::two_way_quick_sort, true);
     EXECUTE(data, two_way_quick_sort<V1_1Partitioner>, true);
     EXECUTE(data, two_way_quick_sort<V1_2Partitioner>, true);
     EXECUTE(data, two_way_quick_sort<V1_3Partitioner>, true);
@@ -183,7 +192,7 @@ int main()
             printf("\n");
         }
 
-        quick_sort_extreme_cases<int64_t>(BUF_SIZE/10);
+        quick_sort_extreme_cases<int64_t>(BUF_SIZE / 10);
     }
     catch (std::exception const &e)
     {
@@ -192,4 +201,3 @@ int main()
     }
     return 0;
 }
-//Standard mersenne_twister_engine seeded with rd()

@@ -57,16 +57,16 @@ struct V1_3Partitioner
         RandomIt last = begin + distance - 1;
         auto sentinel = *last;
 
-        int64_t smaller = -1;
+        int64_t le = -1;
         for (RandomIt i = begin; i != last; ++i)
         {
             if (*i <= sentinel)
             {
-                ++smaller;
-                std::iter_swap(begin + smaller, i);
+                ++le;
+                std::iter_swap(begin + le, i);
             }
         }
-        RandomIt separator = begin + (smaller + 1);
+        RandomIt separator = begin + (le + 1);
         std::iter_swap(separator, last);
         return separator;
     }
@@ -105,26 +105,9 @@ struct V1_4Partitioner
 template <typename RandomIt>
 struct V2_1Partitioner
 {
-    RandomIt max(RandomIt begin, RandomIt end)
-    {
-        auto sentinel = *begin;
-        RandomIt maxIndex = begin;
-        for (RandomIt i = begin + 1; i != end; ++i)
-        {
-            if (sentinel < *i)
-            {
-                sentinel = *i;
-                maxIndex = i;
-            }
-        }
-        return maxIndex;
-    }
-
     RandomIt operator()(RandomIt begin, RandomIt end)
     {
         auto distance = std::distance(begin, end);
-        //RandomIt maxIndex = max(begin, end);
-        //std::iter_swap(maxIndex, begin + distance - 1);
         auto sentinel = *begin;
 
         RandomIt smaller = begin;
@@ -384,5 +367,98 @@ void three_way_quick_sort(RandomIt begin, RandomIt end)
         insertion_sort(begin, end);
     }
 }
+
+namespace v2
+{
+    namespace details
+    {
+        template <typename RandomIt>
+        RandomIt max(RandomIt begin, RandomIt end)
+        {
+            //auto sentinel = *begin;
+            RandomIt maxIndex = begin;
+            for (RandomIt i = begin + 1; i != end; ++i)
+            {
+                //if (sentinel < *i)
+                if (*maxIndex < *i)
+                {
+                    //sentinel = *i;
+                    maxIndex = i;
+                }
+            }
+            return maxIndex;
+        }
+
+        template <typename RandomIt>
+        RandomIt partition(RandomIt begin, RandomIt end)
+        {
+            auto distance = std::distance(begin, end);
+            auto sentinel = *begin;
+
+            RandomIt smaller = begin;
+            RandomIt bigger = begin + distance;
+            for (;;)
+            {
+                for (++smaller; *smaller < sentinel; ++smaller)
+                {
+                }
+                for (--bigger; sentinel < *bigger; --bigger)
+                {
+                }
+                if (smaller < bigger)
+                {
+                    std::iter_swap(smaller, bigger);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            std::iter_swap(begin, bigger);
+            return bigger;
+        }
+
+        template <typename RandomIt>
+        void two_way_quick_sort(RandomIt begin, RandomIt end)
+        {
+            enum
+            {
+                THRESHOLD = 512 / sizeof(typename std::iterator_traits<RandomIt>::value_type)
+            };
+            auto diff = std::distance(begin, end);
+            if (diff > THRESHOLD)
+            {
+                auto m = partition<RandomIt>(begin, end);
+                two_way_quick_sort<RandomIt>(begin, m);
+                two_way_quick_sort<RandomIt>(m + 1, end);
+            }
+            else
+            {
+                insertion_sort(begin, end);
+            }
+        }
+    } // namespace details
+
+    template <typename RandomIt>
+    void two_way_quick_sort(RandomIt begin, RandomIt end)
+    {
+        enum
+        {
+            THRESHOLD = 512 / sizeof(typename std::iterator_traits<RandomIt>::value_type)
+        };
+        auto diff = std::distance(begin, end);
+        if (diff > THRESHOLD)
+        {
+            RandomIt last = begin + diff - 1;
+            RandomIt imax = details::max(begin, end);
+            std::iter_swap(imax, last);
+            details::two_way_quick_sort<RandomIt>(begin, last);
+        }
+        else
+        {
+            insertion_sort(begin, end);
+        }
+    }
+} // namespace v2
 
 #endif //QUICK_SORT_H_F02ABCD3_2DDF_4127_815F_84FDF6A80E00
