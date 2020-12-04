@@ -371,4 +371,33 @@ public class ArrayOperationsTest {
         assertEquals(ao.countAndSay(5), "111221");
         assertEquals(ao.countAndSay(6), "312211");
     }
+
+    @Test
+    public void testSearchInRotatedSortedArray() {
+        var ao = new ArrayOperations();
+        {
+            int[] nums = { 2, 5, 6, 0, 0, 1, 2 };
+            assertTrue(ao.searchInRotatedSortedArray(nums, 0));
+            assertTrue(ao.searchInRotatedSortedArray(nums, 1));
+            assertTrue(ao.searchInRotatedSortedArray(nums, 2));
+            assertFalse(ao.searchInRotatedSortedArray(nums, 3));
+            assertFalse(ao.searchInRotatedSortedArray(nums, 4));
+            assertFalse(ao.searchInRotatedSortedArray(nums, 7));
+            assertFalse(ao.searchInRotatedSortedArray(nums, -1));
+            assertFalse(ao.searchInRotatedSortedArray(nums, -10));
+            assertTrue(ao.searchInRotatedSortedArray(nums, 6));
+        }
+        {
+            int[] nums = { 1, 1, 1, 3, 1, 1, 1, 1 };
+            assertFalse(ao.searchInRotatedSortedArray(nums, 0));
+            assertTrue(ao.searchInRotatedSortedArray(nums, 1));
+            assertFalse(ao.searchInRotatedSortedArray(nums, 2));
+            assertTrue(ao.searchInRotatedSortedArray(nums, 3));
+            assertFalse(ao.searchInRotatedSortedArray(nums, 4));
+            assertFalse(ao.searchInRotatedSortedArray(nums, 7));
+            assertFalse(ao.searchInRotatedSortedArray(nums, -1));
+            assertFalse(ao.searchInRotatedSortedArray(nums, -10));
+            assertFalse(ao.searchInRotatedSortedArray(nums, 6));
+        }
+    }
 }

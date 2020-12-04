@@ -298,4 +298,139 @@ public class LinkedListTest {
                     && r.next.next.next.next.next.next == null);
         }
     }
+
+    private int[] goThrough(SinglyLinkedList.ListNode node, int n) {
+        int[] result = new int[n];
+        int c = 0;
+        for (var i = node; i != null; i = i.next) {
+            result[c++] = i.val;
+        }
+        assertEquals(c, n);
+        return result;
+    }
+
+    private void reverseBetween(int[] inout, int m, int n) {
+        --m;
+        --n;
+        while (m < n) {
+            int v = inout[m];
+            inout[m] = inout[n];
+            inout[n] = v;
+            ++m;
+            --n;
+        }
+    }
+
+    @Test
+    public void testReverseBetween() {
+        SinglyLinkedList sll = new SinglyLinkedList();
+        var n1 = new SinglyLinkedList.ListNode(1);
+        var n2 = new SinglyLinkedList.ListNode(2);
+        var n3 = new SinglyLinkedList.ListNode(3);
+        var n4 = new SinglyLinkedList.ListNode(4);
+        var n5 = new SinglyLinkedList.ListNode(5);
+        int limit = 5;
+
+        for (int distance = 0; distance < limit; ++distance) {
+            int m = 1, n = m + distance;
+            while (n <= limit) {
+                n1.next = n2;
+                n2.next = n3;
+                n3.next = n4;
+                n4.next = n5;
+                n5.next = null;
+                var r = sll.reverseBetween(n1, m, n);
+                var result = goThrough(r, limit);
+                int[] expection = { 1, 2, 3, 4, 5 };
+                reverseBetween(expection, m, n);
+
+                if (java.util.Arrays.compare(result, expection) != 0) {
+                    System.out.printf("m: %d, n: %d%n", m, n);
+                    assertEquals(result, expection);
+                }
+                ++m;
+                ++n;
+            }
+        }
+    }
+
+    @Test
+    public void testDeleteDuplicates2() {
+        SinglyLinkedList sll = new SinglyLinkedList();
+        {
+            var n1 = new SinglyLinkedList.ListNode(1);
+            var n2 = new SinglyLinkedList.ListNode(2);
+            var n3_1 = new SinglyLinkedList.ListNode(3);
+            var n3_2 = new SinglyLinkedList.ListNode(3);
+            var n4_1 = new SinglyLinkedList.ListNode(4);
+            var n4_2 = new SinglyLinkedList.ListNode(4);
+            var n5_1 = new SinglyLinkedList.ListNode(5);
+            var n5_2 = new SinglyLinkedList.ListNode(5);
+
+            {
+                n1.next = n2;
+                n2.next = n3_1;
+                n3_1.next = n3_2;
+                n3_2.next = n4_1;
+                n4_1.next = n4_2;
+                n4_2.next = n5_1;
+                var r = sll.deleteDuplicates2(n1);
+                var result = goThrough(r, 3);
+                int[] expection = { 1, 2, 5 };
+                assertEquals(result, expection);
+            }
+            {
+                n1.next = n2;
+                n2.next = n3_1;
+                n3_1.next = n3_2;
+                n3_2.next = n4_1;
+                n4_1.next = n4_2;
+                n4_2.next = n5_1;
+                n5_1.next = n5_2;
+                n5_2.next = null;
+                var r = sll.deleteDuplicates2(n1);
+                var result = goThrough(r, 2);
+                int[] expection = { 1, 2 };
+                assertEquals(result, expection);
+            }
+            {
+                var n1_2 = new SinglyLinkedList.ListNode(1);
+                n1_2.next = n1;
+                n1.next = n2;
+                n2.next = n3_1;
+                n3_1.next = n3_2;
+                n3_2.next = n4_1;
+                n4_1.next = n4_2;
+                n4_2.next = n5_1;
+                n5_1.next = n5_2;
+                n5_2.next = null;
+                var r = sll.deleteDuplicates2(n1_2);
+                var result = goThrough(r, 1);
+                int[] expection = { 2 };
+                assertEquals(result, expection);
+            }
+            {
+                var n1_2 = new SinglyLinkedList.ListNode(1);
+                n1_2.next = n1;
+                n1.next = n2;
+                n2.next = n3_1;
+                n3_1.next = n4_1;
+                n4_1.next = n4_2;
+                n4_2.next = n5_1;
+                n5_1.next = n5_2;
+                n5_2.next = null;
+                var r = sll.deleteDuplicates2(n1_2);
+                var result = goThrough(r, 2);
+                int[] expection = { 2, 3 };
+                assertEquals(result, expection);
+            }
+            {
+                var n1_2 = new SinglyLinkedList.ListNode(1);
+                n1_2.next = n1;
+                n1.next = null;
+                var r = sll.deleteDuplicates2(n1_2);
+                assertEquals(r, null);
+            }
+        }
+    }
 }

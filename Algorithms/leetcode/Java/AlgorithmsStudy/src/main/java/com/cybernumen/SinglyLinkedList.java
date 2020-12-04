@@ -275,4 +275,63 @@ public class SinglyLinkedList {
         }
         return head;
     }
+
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        ListNode previous = null;
+        ListNode next = head;
+        int i = 1;
+        while (i < m) {
+            previous = next;
+            next = next.next;
+            ++i;
+        }
+        ListNode sectionTail = next;
+        ListNode sectionHead = next;
+        next = next.next;
+        sectionTail.next = null;
+
+        for (++i; i <= n; ++i) {
+            ListNode tmp = next;
+            next = next.next;
+            tmp.next = sectionHead;
+            sectionHead = tmp;
+        }
+        sectionTail.next = next;
+        if (previous != null) {
+            previous.next = sectionHead;
+            return head;
+        } else {
+            return sectionHead;
+        }
+    }
+
+    public ListNode deleteDuplicates2(ListNode head) {
+        if (head != null && head.next != null) {
+            ListNode newHead = null;
+            ListNode newTail = null;
+            ListNode sectionStart = head;
+            while (sectionStart != null) {
+                int count = 0;
+                ListNode next = sectionStart.next;
+                while (next != null && next.val == sectionStart.val) {
+                    next = next.next;
+                    ++count;
+                }
+                if (count == 0) {
+                    if (newTail != null) {
+                        newTail.next = sectionStart;
+                    } else {
+                        newHead = sectionStart;
+                    }
+                    newTail = sectionStart;
+                }
+                sectionStart = next;
+            }
+            if (newTail != null) {
+                newTail.next = null;
+            }
+            head = newHead;
+        }
+        return head;
+    }
 }

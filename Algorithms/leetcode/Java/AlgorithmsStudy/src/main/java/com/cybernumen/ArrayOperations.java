@@ -74,7 +74,7 @@ public class ArrayOperations {
      * 
      * Your algorithm's runtime complexity must be in the order of O(log n).
      */
-    private int binarySeaarch(int[] nums, int begin, int end, int target) {
+    private int binarySearch(int[] nums, int begin, int end, int target) {
         int m = end;
         while (begin < end) {
             m = (begin + end) / 2;
@@ -112,10 +112,10 @@ public class ArrayOperations {
                         break;
                     }
                 }
-                m = binarySeaarch(nums, begin, end, target);
+                m = binarySearch(nums, begin, end, target);
                 if (m == end || nums[m] != target) {
                     if (target < firstElement) {
-                        m = binarySeaarch(nums, end, originalEnd, target);
+                        m = binarySearch(nums, end, originalEnd, target);
                     }
                 }
                 if (m == originalEnd || nums[m] != target) {
@@ -746,5 +746,79 @@ public class ArrayOperations {
             i = j;
         }
         return o;
+    }
+
+    private boolean searchInRotatedSortedArray(int[] nums, int begin, int end, int target) {
+        if (begin < end) {
+            int front = nums[begin];
+            if (target < front) {
+                int back = nums[--end];
+                if (back < target) {
+                    return false;
+                }
+                if (back == target) {
+                    return true;
+                }
+                ++begin;
+                while (begin < end) {
+                    int mid = (begin + end) / 2;
+                    if (nums[mid] > front) {
+                        begin = mid + 1;
+                    } else if (nums[mid] < front) {
+                        if (nums[mid] > target) {
+                            end = mid;
+                        } else if (nums[mid] < target) {
+                            begin = mid + 1;
+                            int r = binarySearch(nums, begin, end, target);
+                            return (r != end) && (nums[r] == target);
+                        } else {
+                            return true;
+                        }
+                    } else {
+                        if (searchInRotatedSortedArray(nums, begin, mid, target)) {
+                            return true;
+                        }
+                        return searchInRotatedSortedArray(nums, mid + 1, end, target);
+                    }
+                }
+            } else if (target > front) {
+                int back = nums[end - 1];
+                while (begin < end) {
+                    int mid = (begin + end) / 2;
+                    if (nums[mid] < front) {
+                        end = mid;
+                    } else if (nums[mid] > front) {
+                        if (nums[mid] > target) {
+                            end = mid;
+                            int r = binarySearch(nums, begin, end, target);
+                            return (r != end) && (nums[r] == target);
+                        } else if (nums[mid] < target) {
+                            begin = mid + 1;
+                        } else {
+                            return true;
+                        }
+                    } else {
+                        if (nums[mid] <= back) {
+                            if (searchInRotatedSortedArray(nums, begin, mid, target)) {
+                                return true;
+                            }
+                            return searchInRotatedSortedArray(nums, mid + 1, end, target);
+                        } else {
+                            begin = mid + 1;
+                        }
+                    }
+                }
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean searchInRotatedSortedArray(int[] nums, int target) {
+        if (nums != null && nums.length > 0) {
+            return searchInRotatedSortedArray(nums, 0, nums.length, target);
+        }
+        return false;
     }
 }
