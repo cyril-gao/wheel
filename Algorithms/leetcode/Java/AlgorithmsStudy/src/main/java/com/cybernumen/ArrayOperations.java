@@ -873,4 +873,30 @@ public class ArrayOperations {
             }
         }
     }
+
+    public boolean isPalindrome(String s) {
+        if (s != null && s.length() > 1) {
+            char[] input = s.toCharArray();
+            int i = 0, j = input.length - 1;
+            while (i < j) {
+                boolean bi = Character.isLetterOrDigit(input[i]);
+                boolean bj = Character.isLetterOrDigit(input[j]);
+                if (bi && bj && Character.toLowerCase(input[i]) != Character.toLowerCase(input[j])) {
+                    return false;
+                }
+                if (bi && bj) {
+                    ++i;
+                    --j;
+                } else {
+                    if (!bi) {
+                        ++i;
+                    }
+                    if (!bj) {
+                        --j;
+                    }
+                }
+            }
+        }
+        return true;
+    }
 }

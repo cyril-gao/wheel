@@ -32,3 +32,5 @@ enable_testing()
 
 add_executable(intervals_test intervals_test.cpp check.h)
 add_test(NAME intervals_test COMMAND intervals_test)
+add_executable(reverse_words_test reverse_words_test.cpp check.h)
+add_test(NAME reverse_words_test COMMAND reverse_words_test)

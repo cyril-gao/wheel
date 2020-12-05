@@ -501,4 +501,11 @@ public class ArrayOperationsTest {
             assertTrue(isSorted(array) && array[0] == 2);
         }
     }
+
+    @Test
+    public void testIsPalindrome() {
+        var ao = new ArrayOperations();
+        assertTrue(ao.isPalindrome("A man, a plan, a canal: Panama"));
+        assertFalse(ao.isPalindrome("race a car"));
+    }
 }

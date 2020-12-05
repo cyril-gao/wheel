@@ -46,4 +46,34 @@ public class Number {
             return dividend == divisor ? 1 : 0;
         }
     }
+
+    public int getBits(int x) {
+        int retval = 0;
+        while (x != 0) {
+            ++retval;
+            x >>>= 1;
+        }
+        return retval;
+    }
+
+    public int mySqrt(int x) {
+        assert (x >= 0);
+        int end = Math.min((1 << ((getBits(x) + 1) / 2)), 46341);
+        int begin = 0;
+        int retval = begin;
+        while (begin < end) {
+            int mid = (begin + end) / 2;
+            int m2 = mid * mid;
+            if (m2 > x) {
+                end = mid;
+            } else if (m2 < x) {
+                retval = mid;
+                begin = mid + 1;
+            } else {
+                retval = mid;
+                break;
+            }
+        }
+        return retval;
+    }
 }

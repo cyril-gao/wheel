@@ -18,4 +18,26 @@ public class NumberTest {
         assertEquals(n.divide(24, -44), 24 / -44);
         assertEquals(n.divide(-24, 44), -24 / 44);
     }
+
+    @Test
+    public void testSqrt() {
+        Number n = new Number();
+        int retry = 1234567;
+        for (int i = 0; i < retry; ++i) {
+            int v1 = n.mySqrt(i);
+            int v2 = (int) Math.floor(Math.sqrt(i));
+            if (v1 != v2) {
+                System.out.printf("sqrt of %d: %d <-> %d%n", i, v1, v2);
+                assertEquals(n.mySqrt(i), (int) Math.floor(Math.sqrt(i)));
+            }
+        }
+        for (int i = Integer.MAX_VALUE; i > (Integer.MAX_VALUE - retry); --i) {
+            int v1 = n.mySqrt(i);
+            int v2 = (int) Math.floor(Math.sqrt(i));
+            if (v1 != v2) {
+                System.out.printf("sqrt of %d: %d <-> %d%n", i, v1, v2);
+                assertEquals(n.mySqrt(i), (int) Math.floor(Math.sqrt(i)));
+            }
+        }
+    }
 }
