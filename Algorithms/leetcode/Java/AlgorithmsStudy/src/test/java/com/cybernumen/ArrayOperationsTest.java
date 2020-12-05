@@ -25,6 +25,15 @@ public class ArrayOperationsTest {
         // System.out.println();
     }
 
+    private boolean isSorted(int[] array) {
+        for (int i = 0; i < array.length - 1; ++i) {
+            if (array[i] > array[i + 1]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Test
     public void testArrayOperations() {
         var ao = new ArrayOperations();
@@ -398,6 +407,98 @@ public class ArrayOperationsTest {
             assertFalse(ao.searchInRotatedSortedArray(nums, -1));
             assertFalse(ao.searchInRotatedSortedArray(nums, -10));
             assertFalse(ao.searchInRotatedSortedArray(nums, 6));
+        }
+    }
+
+    private boolean equals(int[][] a, int[][] b) {
+        if (a != b) {
+            if (a != null && b != null && a.length == b.length && a[0].length == b[0].length) {
+                for (int i = 0; i < a.length; ++i) {
+                    for (int j = 0; j < a[0].length; ++j) {
+                        if (a[i][j] != b[i][j]) {
+                            return false;
+                        }
+                    }
+                }
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Test
+    public void testGenerateMatrix() {
+        var ao = new ArrayOperations();
+        {
+            int[][] expection = { { 1 } };
+            var r = ao.generateMatrix(1);
+            assertTrue(equals(expection, r));
+        }
+        {
+            int[][] expection = { { 1, 2 }, { 4, 3 } };
+            var r = ao.generateMatrix(2);
+            assertTrue(equals(expection, r));
+        }
+        {
+            int[][] expection = { { 1, 2, 3 }, { 8, 9, 4 }, { 7, 6, 5 } };
+            var r = ao.generateMatrix(3);
+            assertTrue(equals(expection, r));
+        }
+        {
+            int[][] expection = { { 1, 2, 3, 4 }, { 12, 13, 14, 5 }, { 11, 16, 15, 6 }, { 10, 9, 8, 7 } };
+            var r = ao.generateMatrix(4);
+            assertTrue(equals(expection, r));
+        }
+    }
+
+    @Test
+    public void testSortColors() {
+        var ao = new ArrayOperations();
+        {
+            int[] array = { 2, 0, 0, 0, 0, 1, 0, 0, 1 };
+            ao.sortColors(array);
+            assertTrue(isSorted(array));
+        }
+        {
+            int[] array = { 0, 0, 0, 0, 0 };
+            ao.sortColors(array);
+            assertTrue(isSorted(array));
+        }
+        {
+            int[] array = { 1, 1, 1, 1, 1 };
+            ao.sortColors(array);
+            assertTrue(isSorted(array));
+        }
+        {
+            int[] array = { 2, 2, 2, 2, 2 };
+            ao.sortColors(array);
+            assertTrue(isSorted(array));
+        }
+        {
+            int[] array = { 2, 0, 2, 1, 1, 0 };
+            ao.sortColors(array);
+            assertTrue(isSorted(array));
+        }
+        {
+            int[] array = { 2, 0, 1 };
+            ao.sortColors(array);
+            assertTrue(isSorted(array));
+        }
+        {
+            int[] array = { 0 };
+            ao.sortColors(array);
+            assertTrue(isSorted(array) && array[0] == 0);
+        }
+        {
+            int[] array = { 1 };
+            ao.sortColors(array);
+            assertTrue(isSorted(array) && array[0] == 1);
+        }
+        {
+            int[] array = { 2 };
+            ao.sortColors(array);
+            assertTrue(isSorted(array) && array[0] == 2);
         }
     }
 }

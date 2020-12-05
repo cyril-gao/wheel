@@ -821,4 +821,56 @@ public class ArrayOperations {
         }
         return false;
     }
+
+    public int[][] generateMatrix(int n) {
+        int[][] retval = new int[n][n];
+        int rowTop = 0, rowBottom = n - 1;
+        int colLeft = 0, colRight = rowBottom;
+        int v = 1;
+        for (int count = 0; count < n; count += 2) {
+            for (int i = colLeft; i <= colRight; ++i) {
+                retval[rowTop][i] = v++;
+            }
+            for (int i = rowTop + 1; i <= rowBottom; ++i) {
+                retval[i][colRight] = v++;
+            }
+            for (int i = colRight - 1; i >= colLeft; --i) {
+                retval[rowBottom][i] = v++;
+            }
+            for (int i = rowBottom - 1; i > rowTop; --i) {
+                retval[i][colLeft] = v++;
+            }
+            ++rowTop;
+            --rowBottom;
+            ++colLeft;
+            --colRight;
+        }
+        return retval;
+    }
+
+    private void swap(int[] nums, int i, int j) {
+        if (i != j) {
+            int v = nums[i];
+            nums[i] = nums[j];
+            nums[j] = v;
+        }
+    }
+
+    public void sortColors(int[] nums) {
+        if (nums != null && nums.length > 1) {
+            int zero = -1;
+            int two = nums.length;
+            for (int i = 0; i < two;) {
+                int v = nums[i];
+                assert (v >= 0 && v <= 2);
+                if (v == 0) {
+                    swap(nums, ++zero, i++);
+                } else if (v == 2) {
+                    swap(nums, --two, i);
+                } else {
+                    ++i;
+                }
+            }
+        }
+    }
 }
