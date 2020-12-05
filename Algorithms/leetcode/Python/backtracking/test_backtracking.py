@@ -1,6 +1,7 @@
 import unittest
 from permutation import *
 import word_search
+from ip_addresses import restore_ip4_addresses
 
 
 class BacktrackingTester(unittest.TestCase):
@@ -20,3 +21,15 @@ class BacktrackingTester(unittest.TestCase):
         self.assertTrue(word_search.exist(board, "ABCCED"))
         self.assertTrue(word_search.exist(board, "SEE"))
         self.assertFalse(word_search.exist(board, "ABCB"))
+
+    def test_restore_ip4_addresses(self):
+        self.assertEqual(restore_ip4_addresses("25525511135"),
+                         ["255.255.11.135", "255.255.111.35"])
+        self.assertEqual(restore_ip4_addresses("0000"),
+                         ["0.0.0.0"])
+        self.assertEqual(restore_ip4_addresses("1111"),
+                         ["1.1.1.1"])
+        self.assertEqual(restore_ip4_addresses("010010"),
+                         ["0.10.0.10", "0.100.1.0"])
+        self.assertEqual(restore_ip4_addresses("101023"),
+                         ["1.0.10.23", "1.0.102.3", "10.1.0.23", "10.10.2.3", "101.0.2.3"])
