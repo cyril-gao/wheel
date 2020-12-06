@@ -2,6 +2,8 @@ package com.cybernumen;
 
 import java.util.*;
 
+import javax.swing.text.AbstractDocument.ElementEdit;
+
 public class BinaryTree {
     public static class TreeNode {
         int val;
@@ -357,5 +359,148 @@ public class BinaryTree {
 
     public TreeNode buildTreeFromInorderAndPostorderTraversal(int[] inorder, int[] postorder) {
         return buildTreeFromInorderAndPostorderTraversal(postorder, 0, postorder.length, inorder, 0, inorder.length);
+    }
+
+    public void postorderTraversalRecursively(TreeNode root, List<Integer> output) {
+        if (root != null) {
+            postorderTraversalRecursively(root.left, output);
+            postorderTraversalRecursively(root.right, output);
+            output.add(root.val);
+        }
+    }
+
+    enum Where {
+        PARENT, SIBLING
+    };
+
+    static class Element {
+        TreeNode node;
+        Where where;
+
+        Element(TreeNode n, Where w) {
+            node = n;
+            where = w;
+        }
+
+        Element(TreeNode n) {
+            this(n, Where.SIBLING);
+        }
+    }
+
+    public List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> retval = new LinkedList<>();
+        Stack<Element> stack = new Stack<>();
+        stack.push(new Element(root));
+        while (!stack.isEmpty()) {
+            for (Element i = stack.peek(); i.node != null;) {
+                stack.push(new Element(i.node.left));
+                i = stack.peek();
+            }
+            stack.pop();
+            while (!stack.isEmpty()) {
+                Element i = stack.peek();
+                if (i.where == Where.PARENT) {
+                    retval.add(i.node.val);
+                    stack.pop();
+                } else {
+                    i.where = Where.PARENT;
+                    stack.push(new Element(i.node.right));
+                    break;
+                }
+            }
+        }
+        return retval;
+    }
+
+    private List<TreeNode> generateTree(int start, int count) {
+        assert (count > 0);
+        List<TreeNode> retval = new LinkedList<>();
+        if (count > 1) {
+            final int count_1 = count - 1;
+            {
+                List<TreeNode> rr = generateTree(start + 1, count_1);
+                for (TreeNode t : rr) {
+                    TreeNode root = new TreeNode(start);
+                    root.right = t;
+                    retval.add(root);
+                }
+            }
+            {
+                int v = start + count_1;
+                List<TreeNode> lr = generateTree(start, count_1);
+                for (TreeNode t : lr) {
+                    TreeNode root = new TreeNode(v);
+                    root.left = t;
+                    retval.add(root);
+                }
+            }
+            {
+                for (int first = start + 1, end = start + count - 1, i = first; i < end; ++i) {
+                    List<TreeNode> lr = generateTree(start, i - start);
+                    for (TreeNode l : lr) {
+                        List<TreeNode> rr = generateTree(i + 1, end - i);
+                        for (TreeNode r : rr) {
+                            TreeNode root = new TreeNode(i);
+                            root.left = l;
+                            root.right = r;
+                            retval.add(root);
+                        }
+                    }
+                }
+            }
+        } else {
+            retval.add(new TreeNode(start));
+        }
+        return retval;
+    }
+
+    public List<TreeNode> generateTrees(int n) {
+        List<TreeNode> retval = new LinkedList<>();
+        if (n > 0) {
+            retval = generateTree(1, n);
+        }
+        return retval;
+    }
+
+    private int numTrees(int start, int count) {
+        assert (count > 0);
+        if (count > 1) {
+            int retval = 0;
+            final int count_1 = count - 1;
+            {
+                retval += numTrees(start + 1, count_1);
+                retval += numTrees(start, count_1);
+            }
+            {
+                for (int first = start + 1, end = start + count - 1, i = first; i < end; ++i) {
+                    int v1 = numTrees(start, i - start);
+                    int v2 = numTrees(i + 1, end - i);
+                    retval += (v1 * v2);
+                }
+            }
+            return retval;
+        } else {
+            return 1;
+        }
+    }
+
+    private int numTrees2(int count) {
+        assert (count >= 0);
+        int[] cache = new int[count + 1];
+        cache[1] = 1;
+        for (int i = 1; i < count;) {
+            int v = cache[i] * 2;
+            ++i;
+            for (int n = i - 2, j = 0, left = 1, right = i - 1 - left; j < n; ++j, ++left, --right) {
+                v += (cache[left] * cache[right]);
+            }
+            cache[i] = v;
+        }
+        return cache[count];
+    }
+
+    public int numTrees(int n) {
+        // return numTrees(1, n);
+        return numTrees2(n);
     }
 }
