@@ -2,6 +2,8 @@ import unittest
 from permutation import *
 import word_search
 from ip_addresses import restore_ip4_addresses
+from partition import palindrome_partition, word_break
+from sudoku import fill_empty_cells
 
 
 class BacktrackingTester(unittest.TestCase):
@@ -33,3 +35,53 @@ class BacktrackingTester(unittest.TestCase):
                          ["0.10.0.10", "0.100.1.0"])
         self.assertEqual(restore_ip4_addresses("101023"),
                          ["1.0.10.23", "1.0.102.3", "10.1.0.23", "10.10.2.3", "101.0.2.3"])
+
+    def test_palindrome_partition(self):
+        self.assertEqual(
+            palindrome_partition("aab"),
+            [["a", "a", "b"], ["aa", "b"]]
+        )
+        self.assertEqual(
+            palindrome_partition("aaba"),
+            [["a", "a", "b", "a"], ["a", "aba"], ["aa", "b", "a"]]
+        )
+
+    def test_word_break(self):
+        word_dict = set(["cat", "cats", "and", "sand", "dog"])
+        self.assertEqual(
+            word_break("catsanddog", word_dict),
+            ["cat sand dog", "cats and dog"]
+        )
+        word_dict = set(["apple", "pen", "applepen", "pine", "pineapple"])
+        self.assertEqual(
+            word_break("pineapplepenapple", word_dict),
+            ["pine apple pen apple", "pine applepen apple", "pineapple pen apple"]
+        )
+        word_dict = set(["cats", "dog", "sand", "and", "cat"])
+        self.assertEqual(word_break("catsandog", word_dict), [])
+
+    def test_fill_empty_cells(self):
+        board = [
+            ["5", "3", ".", ".", "7", ".", ".", ".", "."],
+            ["6", ".", ".", "1", "9", "5", ".", ".", "."],
+            [".", "9", "8", ".", ".", ".", ".", "6", "."],
+            ["8", ".", ".", ".", "6", ".", ".", ".", "3"],
+            ["4", ".", ".", "8", ".", "3", ".", ".", "1"],
+            ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
+            [".", "6", ".", ".", ".", ".", "2", "8", "."],
+            [".", ".", ".", "4", "1", "9", ".", ".", "5"],
+            [".", ".", ".", ".", "8", ".", ".", "7", "9"]
+        ]
+        result = [
+            ["5", "3", "4", "6", "7", "8", "9", "1", "2"],
+            ["6", "7", "2", "1", "9", "5", "3", "4", "8"],
+            ["1", "9", "8", "3", "4", "2", "5", "6", "7"],
+            ["8", "5", "9", "7", "6", "1", "4", "2", "3"],
+            ["4", "2", "6", "8", "5", "3", "7", "9", "1"],
+            ["7", "1", "3", "9", "2", "4", "8", "5", "6"],
+            ["9", "6", "1", "5", "3", "7", "2", "8", "4"],
+            ["2", "8", "7", "4", "1", "9", "6", "3", "5"],
+            ["3", "4", "5", "2", "8", "6", "1", "7", "9"]
+        ]
+        fill_empty_cells(board)
+        self.assertEqual(board, result)
