@@ -14,4 +14,4 @@ Implement many different algorithms for study:
    |_ Java: use Java to resolve those problems;<br>
    |_ Python: use Python to resolve those problems.<br>
 5. matrix: algorithms about matrix;<br>
-6. sort: merge sort, heap sort, quick sort (10 different versions).
+6. <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/sort">sort</a>: merge sort, heap sort, quick sort (10 different versions).
