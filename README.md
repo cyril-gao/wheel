@@ -7,8 +7,8 @@
     <dd>- insert new node into or remove a node from a red-black/AVL tree</dd>
     <dd>- document about how to rebalance the irregular red-black/AVL trees:</dd>
     <ol>
-        <li><a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/BST/The%20rebalancing%20process%20of%20AVL%20trees.pdf">AVL trees</a></li>
         <li><a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/BST/The%20rebalancing%20process%20of%20red-black%20trees.pdf">red-black trees</a></li>
+        <li><a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/BST/The%20rebalancing%20process%20of%20AVL%20trees.pdf">AVL trees</a></li>
     </ol>
     <dt>graph</dt>
     <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/ElementaryGraphAlgorithms">ElementaryGraphAlgorithms</a>: BFS, DFS, Topological sort, Strongly connected components</dd>
