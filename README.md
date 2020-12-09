@@ -1,7 +1,7 @@
 <h2>Implement many different algorithms for study</h2>
 
 <dl>
-    <dt><a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/sort">sort</a>: merge sort, heap sort, quick sort (10 different versions)</dt>
+    <dt><a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/sort">sort</a>: merge sort, heap sort, <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/sort/quick_sort.h">quick sort (10 different versions)</a></dt>
     <dt><a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BinaryTreeTraversal">BinaryTreeTraversal</a></dt>
     <dd>- traverse a binary tree: preorder, inorder, postorder, levelorder iteratively or recursively.</dd>
     <dt><a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BST">BST (binary search tree)</a>
