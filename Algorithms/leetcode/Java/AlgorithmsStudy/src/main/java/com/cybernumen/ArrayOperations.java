@@ -899,4 +899,117 @@ public class ArrayOperations {
         }
         return true;
     }
+
+    public int findMinInUniqueElements(int[] nums) {
+        int start = nums[0];
+        int back = nums[nums.length - 1];
+        if (start > back) {
+            int begin = 1;
+            int end = nums.length;
+            while (begin < end) {
+                int mid = (begin + end) / 2;
+                int v = nums[mid];
+                if (v > back) {
+                    begin = mid + 1;
+                } else {
+                    end = mid;
+                }
+            }
+            return nums[begin];
+        } else {
+            return start;
+        }
+    }
+
+    private int findMinInRotatedSortedArray(int[] nums, int begin, int end) {
+        assert (begin < end && end <= nums.length);
+        int front = nums[begin];
+        int back = nums[end - 1];
+        if (front >= back) {
+            int retval = back;
+            for (++begin; begin < end;) {
+                int mid = (begin + end) / 2;
+                int middle = nums[mid];
+                if (middle > front) {
+                    begin = mid + 1;
+                } else if (middle < front) {
+                    retval = middle;
+                    end = mid;
+                } else {
+                    if (begin < mid) {
+                        int r = findMinInRotatedSortedArray(nums, begin, mid);
+                        if (retval > r) {
+                            retval = r;
+                        }
+                    }
+                    if ((mid + 1) < end) {
+                        int r = findMinInRotatedSortedArray(nums, mid + 1, end);
+                        if (retval > r) {
+                            retval = r;
+                        }
+                    }
+                    break;
+                }
+            }
+            return retval;
+        } else {
+            return front;
+        }
+    }
+
+    public int findMin(int[] nums) {
+        int retval = 0;
+        int n = nums != null ? nums.length : 0;
+        if (n > 1) {
+            retval = findMinInRotatedSortedArray(nums, 0, n);
+        } else {
+            if (n == 1) {
+                retval = nums[0];
+            }
+        }
+        return retval;
+    }
+
+    public void rotate(int[] nums, int k) {
+        int n = nums != null ? nums.length : 0;
+        if (n > 1) {
+            k %= n;
+            if (k > 0) {
+                int left = n - k;
+                int right = k;
+                if (left != right) {
+                    int left_begin = 0, left_end = left;
+                    int right_begin = left, right_end = n;
+                    while (true) {
+                        int original_left = left_end - left_begin;
+                        int original_right_begin = right_begin;
+                        while (left_begin < left_end && right_begin < right_end) {
+                            swap(nums, left_begin, right_begin);
+                            ++left_begin;
+                            ++right_begin;
+                        }
+                        left = left_end - left_begin;
+                        right = right_end - right_begin;
+                        if (left != right) {
+                            if (left != 0) {
+                                assert (right == 0);
+                                right_begin = original_right_begin;
+                            } else {
+                                assert (right != 0);
+                                left_begin = original_right_begin;
+                                left_end = left_begin + original_left;
+                            }
+                        } else {
+                            assert (left == 0);
+                            break;
+                        }
+                    }
+                } else {
+                    for (int i = 0, j = left; j < n; ++i, ++j) {
+                        swap(nums, i, j);
+                    }
+                }
+            }
+        }
+    }
 }

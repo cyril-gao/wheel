@@ -508,4 +508,86 @@ public class ArrayOperationsTest {
         assertTrue(ao.isPalindrome("A man, a plan, a canal: Panama"));
         assertFalse(ao.isPalindrome("race a car"));
     }
+
+    @Test
+    public void testfindMinInUniqueElements() {
+        var ao = new ArrayOperations();
+        {
+            int[] nums = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+            for (int i = 0; i < nums.length; ++i) {
+                assertEquals(ao.findMinInUniqueElements(nums), 0);
+                int v = nums[0];
+                for (int j = 1; j < nums.length; ++j) {
+                    nums[j - 1] = nums[j];
+                }
+                nums[nums.length - 1] = v;
+            }
+            assertEquals(ao.findMinInUniqueElements(nums), 0);
+            assertEquals(ao.findMin(nums), 0);
+        }
+        {
+            int[] nums = { 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 1, 1, 1, 2 };
+            for (int i = 0; i < nums.length; ++i) {
+                assertEquals(ao.findMin(nums), 0);
+                int v = nums[0];
+                for (int j = 1; j < nums.length; ++j) {
+                    nums[j - 1] = nums[j];
+                }
+                nums[nums.length - 1] = v;
+            }
+            assertEquals(ao.findMin(nums), 0);
+        }
+        {
+            int[] nums = { 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 2, 2 };
+            for (int i = 0; i < nums.length; ++i) {
+                assertEquals(ao.findMin(nums), 0);
+                int v = nums[0];
+                for (int j = 1; j < nums.length; ++j) {
+                    nums[j - 1] = nums[j];
+                }
+                nums[nums.length - 1] = v;
+            }
+            assertEquals(ao.findMin(nums), 0);
+        }
+        {
+            int[] nums = { 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2 };
+            for (int i = 0; i < nums.length; ++i) {
+                assertEquals(ao.findMin(nums), 0);
+                int v = nums[0];
+                for (int j = 1; j < nums.length; ++j) {
+                    nums[j - 1] = nums[j];
+                }
+                nums[nums.length - 1] = v;
+            }
+            assertEquals(ao.findMin(nums), 0);
+        }
+    }
+
+    private void rotateCase(ArrayOperations ao, int n, int k) {
+        k %= n;
+        int[] nums = new int[n];
+        for (int i = 0; i < n; ++i) {
+            nums[i] = i;
+        }
+        ao.rotate(nums, k);
+        int[] result = new int[n];
+        for (int i = 0; i < n; ++i) {
+            result[k++] = i;
+            if (k == n) {
+                k = 0;
+            }
+        }
+        assertEquals(nums, result);
+    }
+
+    @Test
+    public void testRotate() {
+        var ao = new ArrayOperations();
+        int[] limits = { 17, 128, 71, 97 };
+        for (int limit : limits) {
+            for (int i = 0; i < limit; ++i) {
+                rotateCase(ao, limit, i);
+            }
+        }
+    }
 }

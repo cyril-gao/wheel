@@ -433,4 +433,77 @@ public class LinkedListTest {
             }
         }
     }
+
+    @Test
+    public void testDetectCycle() {
+        SinglyLinkedList sll = new SinglyLinkedList();
+        {
+            var n3 = new SinglyLinkedList.ListNode(3);
+            var n2 = new SinglyLinkedList.ListNode(2);
+            var n0 = new SinglyLinkedList.ListNode(0);
+            var n4 = new SinglyLinkedList.ListNode(4);
+            n3.next = n2;
+            n2.next = n0;
+            n0.next = n4;
+            n4.next = n2;
+
+            var r = sll.detectCycle(n3);
+            assertEquals(r, n2);
+        }
+        {
+            var n1 = new SinglyLinkedList.ListNode(1);
+            var n2 = new SinglyLinkedList.ListNode(2);
+            n1.next = n2;
+            n2.next = n1;
+
+            var r = sll.detectCycle(n1);
+            assertEquals(r, n1);
+        }
+        {
+            var n3 = new SinglyLinkedList.ListNode(3);
+            var n2 = new SinglyLinkedList.ListNode(2);
+            var n0 = new SinglyLinkedList.ListNode(0);
+            var n4 = new SinglyLinkedList.ListNode(4);
+            n3.next = n2;
+            n2.next = n0;
+            n0.next = n4;
+
+            var r = sll.detectCycle(n3);
+            assertEquals(r, null);
+        }
+    }
+
+    @Test
+    public void testRemoveElements() {
+        SinglyLinkedList sll = new SinglyLinkedList();
+        {
+            var n1 = new SinglyLinkedList.ListNode(1);
+            var n2 = new SinglyLinkedList.ListNode(2);
+            var n3 = new SinglyLinkedList.ListNode(3);
+            var n4 = new SinglyLinkedList.ListNode(4);
+            var n5 = new SinglyLinkedList.ListNode(5);
+            var n6_1 = new SinglyLinkedList.ListNode(6);
+            var n6_2 = new SinglyLinkedList.ListNode(6);
+            var n6_3 = new SinglyLinkedList.ListNode(6);
+            var n6_4 = new SinglyLinkedList.ListNode(6);
+
+            n6_1.next = n1;
+            n1.next = n2;
+            n2.next = n6_2;
+            n6_2.next = n3;
+            n3.next = n4;
+            n4.next = n6_3;
+            n6_3.next = n5;
+            n5.next = n6_4;
+            n6_4.next = null;
+
+            var r = sll.removeElements(n6_1, 6);
+            assertEquals(r, n1);
+            assertEquals(r.next, n2);
+            assertEquals(r.next.next, n3);
+            assertEquals(r.next.next.next, n4);
+            assertEquals(r.next.next.next.next, n5);
+            assertEquals(r.next.next.next.next.next, null);
+        }
+    }
 }

@@ -209,12 +209,11 @@ public class BinaryTreeTest {
         BinaryTree bt = new BinaryTree();
         for (int n = 1; n < 9; ++n) {
             int l = bt.numTrees(n);
-            System.out.println(l);
+            // System.out.println(l);
             var r = bt.generateTrees(n);
-            for (var t : r) {
-                printTree(t);
-            }
-            System.out.println("\n\n");
+            /*
+             * for (var t : r) { printTree(t); } System.out.println("\n\n");
+             */
             assertEquals(l, r.size());
         }
     }

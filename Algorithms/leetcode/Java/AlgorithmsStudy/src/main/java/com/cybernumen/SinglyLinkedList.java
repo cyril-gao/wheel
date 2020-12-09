@@ -1,5 +1,7 @@
 package com.cybernumen;
 
+import java.util.*;
+
 public class SinglyLinkedList {
     public static class ListNode {
         int val;
@@ -333,5 +335,43 @@ public class SinglyLinkedList {
             head = newHead;
         }
         return head;
+    }
+
+    public ListNode detectCycle(ListNode head) {
+        ListNode retval = null;
+        if (head != null) {
+            Set<ListNode> set = new HashSet<>();
+            for (ListNode i = head; i != null; i = i.next) {
+                if (set.contains(i)) {
+                    retval = i;
+                    break;
+                }
+                set.add(i);
+            }
+        }
+        return retval;
+    }
+
+    public ListNode removeElements(ListNode head, int val) {
+        ListNode newHead = null;
+        ListNode newTail = null;
+        for (ListNode i = head; i != null;) {
+            while (i != null && i.val == val) {
+                i = i.next;
+            }
+            if (i != null) {
+                if (newTail != null) {
+                    newTail.next = i;
+                } else {
+                    newHead = i;
+                }
+                newTail = i;
+                i = i.next;
+            }
+        }
+        if (newTail != null) {
+            newTail.next = null;
+        }
+        return newHead;
     }
 }
