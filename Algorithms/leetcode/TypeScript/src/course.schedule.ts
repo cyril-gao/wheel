@@ -21,3 +21,32 @@ export function canFinish(numCourses: number, prerequisites: number[][]): boolea
         return false;
     }
 };
+
+export function findOrder(numCourses: number, prerequisites: number[][]): number[] {
+    let graph = new Graph(numCourses);
+    for (let pair of prerequisites) {
+        graph.addEdge(pair[1], pair[0]);
+    }
+    let orderedCourses: number[] = [];
+    let outConsumer: Consumer = {
+        accept: function(vertex: number, state: VertexState) {
+            orderedCourses.unshift(vertex);
+        }
+    }
+    let traversalConsumer: Consumer = {
+        accept: function(vertex: number, state: VertexState) {
+            if (state.color === Color.GRAY) {
+                throw new Error("There is a cycle");
+            }
+        }
+    };
+    let visitor = new DfsVisitor(graph);
+    visitor.setTraversalConsumer(traversalConsumer);
+    visitor.setOutConsumer(outConsumer);
+    try {
+        visitor.visit(...Array(numCourses).keys());
+    } catch (e) {
+        orderedCourses = [];
+    }
+    return orderedCourses;
+};
