@@ -1,6 +1,7 @@
 <h2>Implement many different algorithms for study</h2>
 
 <dl>
+    <dt><a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/sort">sort</a>: merge sort, heap sort, quick sort (10 different versions)</dt>
     <dt><a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BinaryTreeTraversal">BinaryTreeTraversal</a></dt>
     <dd>- traverse a binary tree: preorder, inorder, postorder, levelorder iteratively or recursively.</dd>
     <dt><a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BST">BST (binary search tree)</a>
@@ -20,6 +21,5 @@
     <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/leetcode/Java/AlgorithmsStudy">Java</a>: use Java to resolve those problems</dd>
     <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/leetcode/Python">Python</a>: use Python to resolve those problems</dd>
     <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/leetcode/TypeScript">TypeScript</a>: use TypeScript to resolve those problems</dd>
-    <dt><a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/matrix">matrix</a>: algorithms about matrix</dt>
-    <dt><a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/sort">sort</a>: merge sort, heap sort, quick sort (10 different versions)</dt>
+    <dt><a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/matrix">matrix</a>: algorithms about matrix</dt>    
 </dl>
