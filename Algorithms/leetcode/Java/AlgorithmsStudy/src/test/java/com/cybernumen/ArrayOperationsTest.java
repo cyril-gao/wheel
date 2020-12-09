@@ -590,4 +590,107 @@ public class ArrayOperationsTest {
             }
         }
     }
+
+    @Test
+    public void testSearchMatrix() {
+        var ao = new ArrayOperations();
+        int[][] matrix = { { 1, 3, 5, 7, 9, 11, 13 }, { 15, 17, 19, 21, 23, 25, 27 }, { 29, 31, 33, 35, 37, 39, 41 } };
+        for (int i = 0; i < 43; ++i) {
+            boolean r = ao.searchMatrix(matrix, i);
+            if ((i & 1) != 0) {
+                assertTrue(r);
+            } else {
+                assertFalse(r);
+            }
+        }
+    }
+
+    private void fillMatrix(int[][] matrix, int m, int n, int v) {
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                matrix[i][j] = v;
+            }
+        }
+    }
+
+    private Set<Coordinate> generateCoordinates(int count, int m, int n) {
+        Set<Coordinate> retval = new TreeSet<Coordinate>();
+        for (int i = 0; i < count;) {
+            var c = Coordinate.random(m, n);
+            if (retval.add(c)) {
+                ++i;
+            }
+        }
+        return retval;
+    }
+
+    private void print(int[] nums, java.io.PrintStream ps) {
+        StringBuffer sb = new StringBuffer();
+        sb.append('[');
+        for (int i = 0; i < nums.length; ++i) {
+            if (i != 0) {
+                sb.append(',');
+            }
+            sb.append(Integer.valueOf(nums[i]).toString());
+        }
+        sb.append(']');
+        ps.println(sb.toString());
+    }
+
+    private void print(int[][] matrix, java.io.PrintStream ps) {
+        ps.println("[");
+        for (int i = 0; i < matrix.length; ++i) {
+            ps.print('\t');
+            print(matrix[i], ps);
+        }
+        ps.println("]");
+    }
+
+    @Test
+    public void testSetZeroe() {
+        var ao = new ArrayOperations();
+        {
+            int[][] matrix2 = new int[1][1];
+            matrix2[0][0] = 1;
+            ao.setZeroes73(matrix2);
+            matrix2[0][0] = 0;
+            ao.setZeroes73(matrix2);
+            matrix2 = new int[2][1];
+            fillMatrix(matrix2, 2, 1, 1);
+            ao.setZeroes73(matrix2);
+            matrix2[0][0] = 0;
+            ao.setZeroes73(matrix2);
+            matrix2 = new int[2][2];
+            fillMatrix(matrix2, 2, 2, 1);
+            ao.setZeroes73(matrix2);
+            matrix2[0][1] = 0;
+            ao.setZeroes73(matrix2);
+        }
+        {
+            int m = 41, n = 91;
+            for (int i = 0; i < 10; ++i, m += 11, n += 3) {
+                int[][] matrix1 = new int[m][n];
+                int[][] matrix2 = new int[m][n];
+                for (int len = 1; len < 100; ++len) {
+                    for (int retry = 0; retry < 100; ++retry) {
+                        fillMatrix(matrix1, m, n, 1);
+                        fillMatrix(matrix2, m, n, 1);
+                        var sc = generateCoordinates(len, m, n);
+                        for (var c : sc) {
+                            matrix1[c.row][c.col] = 0;
+                            matrix2[c.row][c.col] = 0;
+                        }
+                        ao.setZeroesByBruteForce(matrix1);
+                        ao.setZeroes73(matrix2);
+                        if (!equals(matrix1, matrix2)) {
+                            System.out.printf("len: %d%n%s%n", len, sc.toString());
+                            print(matrix1, System.out);
+                            print(matrix2, System.out);
+                            assertTrue(false);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

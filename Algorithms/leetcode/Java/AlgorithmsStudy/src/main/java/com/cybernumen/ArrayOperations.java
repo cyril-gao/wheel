@@ -1012,4 +1012,128 @@ public class ArrayOperations {
             }
         }
     }
+
+    private static int getValue(int[][] matrix, int m, int n, int i) {
+        int row = i / n;
+        int col = i % n;
+        return matrix[row][col];
+    }
+
+    public boolean searchMatrix(int[][] matrix, int target) {
+        boolean retval = false;
+        int m = matrix.length;
+        if (m > 0) {
+            int n = matrix[0].length;
+            if (n > 0) {
+                int begin = 0;
+                int end = m * n;
+                int mid = end;
+                while (begin < end) {
+                    mid = (begin + end) / 2;
+                    int middle = getValue(matrix, m, n, mid);
+                    if (middle > target) {
+                        end = mid;
+                        mid = begin;
+                    } else if (middle < target) {
+                        begin = mid + 1;
+                        mid = end;
+                    } else {
+                        break;
+                    }
+                }
+                retval = (mid != end && getValue(matrix, m, n, mid) == target);
+            }
+        }
+        return retval;
+    }
+
+    public void setZeroesByBruteForce(int[][] matrix) {
+        int m = matrix.length;
+        if (m > 0) {
+            int n = matrix[0].length;
+            if (n > 0) {
+                List<int[]> records = new LinkedList<int[]>();
+                for (int i = 0; i < m; ++i) {
+                    for (int j = 0; j < n; ++j) {
+                        if (matrix[i][j] == 0) {
+                            int[] item = { i, j };
+                            records.add(item);
+                        }
+                    }
+                }
+                for (int[] r : records) {
+                    int row = r[0];
+                    int col = r[1];
+                    for (int i = 0; i < n; ++i) {
+                        matrix[row][i] = 0;
+                    }
+                    for (int i = 0; i < m; ++i) {
+                        matrix[i][col] = 0;
+                    }
+                }
+            }
+        }
+    }
+
+    public void setZeroes73(int[][] matrix) {
+        int m = matrix.length;
+        if (m > 0) {
+            int n = matrix[0].length;
+            if (n > 0) {
+                int row = 0;
+                int col = 0;
+                while (row < m && col < n) {
+                    if (matrix[row][col] == 0) {
+                        break;
+                    }
+                    ++col;
+                    if (col == n) {
+                        col = 0;
+                        ++row;
+                    }
+                }
+                if (row < m && col < n) {
+                    for (int i = row, j = col;;) {
+                        ++j;
+                        if (j == n) {
+                            j = 0;
+                            ++i;
+                        }
+                        if (i < m && j < n) {
+                            if (matrix[i][j] == 0) {
+                                matrix[i][col] = 0;
+                                matrix[row][j] = 0;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                    for (int j = 0; j < n; ++j) {
+                        if (j != col) {
+                            if (matrix[row][j] == 0) {
+                                for (int i = 0; i < m; ++i) {
+                                    matrix[i][j] = 0;
+                                }
+                            }
+                        }
+                    }
+                    for (int i = 0; i < m; ++i) {
+                        if (i != row) {
+                            if (matrix[i][col] == 0) {
+                                for (int j = 0; j < n; ++j) {
+                                    matrix[i][j] = 0;
+                                }
+                            }
+                        }
+                    }
+                    for (int j = 0; j < n; ++j) {
+                        matrix[row][j] = 0;
+                    }
+                    for (int i = 0; i < m; ++i) {
+                        matrix[i][col] = 0;
+                    }
+                }
+            }
+        }
+    }
 }
