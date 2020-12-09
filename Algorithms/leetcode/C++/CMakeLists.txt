@@ -38,3 +38,5 @@ add_executable(copy_list_with_random_pointer copy_list_with_random_pointer.cpp c
 add_test(NAME copy_list_with_random_pointer COMMAND copy_list_with_random_pointer)
 add_executable(text_justification text_justification.cpp check.h)
 add_test(NAME text_justification COMMAND text_justification)
+add_executable(largest_number_test largest_number_test.cpp check.h)
+add_test(NAME largest_number_test COMMAND largest_number_test)
