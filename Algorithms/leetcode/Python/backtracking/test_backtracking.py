@@ -2,14 +2,29 @@ import unittest
 from permutation import *
 import word_search
 from ip_addresses import restore_ip4_addresses
-from partition import palindrome_partition, word_break
+from partition import palindrome_partition, word_break, word_breaking_is_possible
 from sudoku import fill_empty_cells
 
 
 class BacktrackingTester(unittest.TestCase):
     def test_permutation(self):
-        self.assertEqual(len(permute([1, 2, 3, 4])), 24)
         self.assertEqual(len(dedup_permute([1, 1, 2])), 3)
+
+        inputs = [
+            (['1', '2', '3'], 6),
+            (['1', '2', '3', '4'], 24),
+            (['1', '2', '3', '4', '5'], 120),
+            (['1', '2', '3', '4', '5', '6'], 720),
+            (['1', '2', '3', '4', '5', '6', '7'], 5040),
+            (['1', '2', '3', '4', '5', '6', '7', '8'], 40320)
+        ]
+        for pair in inputs:
+            r = permute(pair[0])
+            self.assertEqual(len(r), pair[1])
+            for i in range(1, 1+len(r)):
+                v = ''.join(r[i-1])
+                self.assertEqual(
+                    ''.join(r[i-1]), generate_permutation(len(pair[0]), i))
 
     def test_subsets(self):
         self.assertEqual(len(subsets([1, 2, 3, 3])), 12)
@@ -52,13 +67,29 @@ class BacktrackingTester(unittest.TestCase):
             word_break("catsanddog", word_dict),
             ["cat sand dog", "cats and dog"]
         )
+        self.assertTrue(word_breaking_is_possible("catsanddog", word_dict))
         word_dict = set(["apple", "pen", "applepen", "pine", "pineapple"])
         self.assertEqual(
             word_break("pineapplepenapple", word_dict),
             ["pine apple pen apple", "pine applepen apple", "pineapple pen apple"]
         )
+        self.assertTrue(word_breaking_is_possible(
+            "pineapplepenapple", word_dict))
         word_dict = set(["cats", "dog", "sand", "and", "cat"])
         self.assertEqual(word_break("catsandog", word_dict), [])
+        self.assertFalse(word_breaking_is_possible("catsandog", word_dict))
+
+        word_dict = set(["a", "aa", "aaa", "aaaa", "aaaaa", "aaaaaa",
+                         "aaaaaaa", "aaaaaaaa", "aaaaaaaaa", "aaaaaaaaaa"])
+        input = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        self.assertTrue(word_breaking_is_possible(input, word_dict))
+        input = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab"
+        self.assertFalse(word_breaking_is_possible(input, word_dict))
+
+        word_dict = set(["aa", "aaa", "aaaa", "aaaaa", "aaaaaa",
+                         "aaaaaaa", "aaaaaaaa", "aaaaaaaaa", "aaaaaaaaaa", "ba"])
+        input = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        self.assertFalse(word_breaking_is_possible(input, word_dict))
 
     def test_fill_empty_cells(self):
         board = [

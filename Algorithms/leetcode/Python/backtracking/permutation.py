@@ -33,6 +33,50 @@ def permute(input: List[T]) -> List[List[T]]:
     return retval
 
 
+'''
+The set [1, 2, 3, ..., n] contains a total of n! unique permutations.
+
+By listing and labeling all of the permutations in order, we get the following sequence for n = 3:
+
+"123"
+"132"
+"213"
+"231"
+"312"
+"321"
+Given n and k, return the kth permutation sequence.
+'''
+
+
+def generate_permutation(n: int, k: int) -> str:
+    assert 0 < n
+    if n > 1:
+        cache = [0 for _ in range(n+1)]
+        cache[2] = 1
+        v = 1
+        for i in range(3, n+1):
+            v *= (i-1)
+            cache[i] = v
+        candidates = [_ for _ in range(1, n+1)]
+        buf = []
+        for i in range(n, 1, -1):
+            quotient = k // cache[i]
+            remainder = k % cache[i]
+            if remainder != 0:
+                quotient += 1
+            o = candidates.pop(quotient-1)
+            buf.append(str(o))
+            if remainder != 0:
+                k = remainder
+            else:
+                for o in reversed(candidates):
+                    buf.append(str(o))
+                break
+        return ''.join(buf)
+    else:
+        return "1"
+
+
 def dedup_permute(input: List[T]) -> List[List[T]]:
     def next(
         input: List[T],
