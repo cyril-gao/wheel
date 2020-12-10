@@ -2,7 +2,8 @@ import unittest
 from permutation import *
 import word_search
 from ip_addresses import restore_ip4_addresses
-from partition import palindrome_partition, word_break, word_breaking_is_possible
+from partition import palindrome_partition
+from word_breaking import word_break, word_breaking_is_possible
 from sudoku import fill_empty_cells
 
 
@@ -62,34 +63,45 @@ class BacktrackingTester(unittest.TestCase):
         )
 
     def test_word_break(self):
-        word_dict = set(["cat", "cats", "and", "sand", "dog"])
+        word_set = set(["abcde", "cdef", "fg", "bcde", "a"])
         self.assertEqual(
-            word_break("catsanddog", word_dict),
-            ["cat sand dog", "cats and dog"]
+            set(word_break("abcdefg", word_set)),
+            set(["a bcde fg", "abcde fg"])
         )
-        self.assertTrue(word_breaking_is_possible("catsanddog", word_dict))
-        word_dict = set(["apple", "pen", "applepen", "pine", "pineapple"])
+        word_set = set(["cc", "ac"])
         self.assertEqual(
-            word_break("pineapplepenapple", word_dict),
-            ["pine apple pen apple", "pine applepen apple", "pineapple pen apple"]
+            set(word_break("ccaccc", word_set)),
+            set(["cc ac cc"])
+        )
+        word_set = set(["cat", "cats", "and", "sand", "dog"])
+        self.assertEqual(
+            set(word_break("catsanddog", word_set)),
+            set(["cats and dog", "cat sand dog"])
+        )
+        self.assertTrue(word_breaking_is_possible("catsanddog", word_set))
+        word_set = set(["apple", "pen", "applepen", "pine", "pineapple"])
+        self.assertEqual(
+            set(word_break("pineapplepenapple", word_set)),
+            set(["pineapple pen apple", "pine applepen apple", "pine apple pen apple"])
         )
         self.assertTrue(word_breaking_is_possible(
-            "pineapplepenapple", word_dict))
-        word_dict = set(["cats", "dog", "sand", "and", "cat"])
-        self.assertEqual(word_break("catsandog", word_dict), [])
-        self.assertFalse(word_breaking_is_possible("catsandog", word_dict))
+            "pineapplepenapple", word_set))
+        word_set = set(["cats", "dog", "sand", "and", "cat"])
+        self.assertEqual(word_break("catsandog", word_set), [])
+        self.assertFalse(word_breaking_is_possible("catsandog", word_set))
 
-        word_dict = set(["a", "aa", "aaa", "aaaa", "aaaaa", "aaaaaa",
-                         "aaaaaaa", "aaaaaaaa", "aaaaaaaaa", "aaaaaaaaaa"])
+        word_set = set(["a", "aa", "aaa", "aaaa", "aaaaa", "aaaaaa",
+                        "aaaaaaa", "aaaaaaaa", "aaaaaaaaa", "aaaaaaaaaa"])
         input = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-        self.assertTrue(word_breaking_is_possible(input, word_dict))
+        self.assertTrue(word_breaking_is_possible(input, word_set))
         input = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab"
-        self.assertFalse(word_breaking_is_possible(input, word_dict))
+        self.assertEqual(word_break(input, word_set), [])
+        self.assertFalse(word_breaking_is_possible(input, word_set))
 
-        word_dict = set(["aa", "aaa", "aaaa", "aaaaa", "aaaaaa",
-                         "aaaaaaa", "aaaaaaaa", "aaaaaaaaa", "aaaaaaaaaa", "ba"])
+        word_set = set(["aa", "aaa", "aaaa", "aaaaa", "aaaaaa",
+                        "aaaaaaa", "aaaaaaaa", "aaaaaaaaa", "aaaaaaaaaa", "ba"])
         input = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-        self.assertFalse(word_breaking_is_possible(input, word_dict))
+        self.assertFalse(word_breaking_is_possible(input, word_set))
 
     def test_fill_empty_cells(self):
         board = [
