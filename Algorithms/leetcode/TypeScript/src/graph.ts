@@ -53,43 +53,35 @@ export class VertexStates
     }
 }
 
+export interface AdjacencyFilter {
+    filter(vertex: number, graph: Graph): Array<number>;
+}
+
 export class DfsVisitor
 {
     private tick: number;
-    private inConsumer?: Consumer;
-    private outConsumer?: Consumer;
-    private traversalConsumer?: Consumer;
+    private inConsumer: Consumer;
+    private outConsumer: Consumer;
+    private traversalConsumer: Consumer;
+    private adjacencyFilter: AdjacencyFilter;
 
-    constructor(
-        private readonly graph: Graph,
-        inConsumer?: Consumer,
-        outConsumer?: Consumer,
-        traversalConsumer?: Consumer
-    ) {
+    constructor(private readonly graph: Graph) {
         this.tick = 0;
 
-        //let doNothing: Consumer = (vertex: number, state: VertexState): void => {};
         let doNothing: Consumer = {
             accept: function(vertex: number, state: VertexState) {}
         };
 
-        if (inConsumer) {
-            this.inConsumer = inConsumer;
-        } else {
-            this.inConsumer = doNothing;
-        }
+        let normalAdjacencyFilter: AdjacencyFilter = {
+            filter: function(vertex: number, graph: Graph): Array<number> {
+                return graph.adj(vertex);
+            }
+        };
 
-        if (outConsumer) {
-            this.outConsumer = outConsumer;
-        } else {
-            this.outConsumer = doNothing;
-        }
-
-        if (traversalConsumer) {
-            this.traversalConsumer = traversalConsumer;
-        } else {
-            this.traversalConsumer = doNothing;
-        }
+        this.inConsumer = doNothing;
+        this.outConsumer = doNothing;
+        this.traversalConsumer = doNothing;
+        this.adjacencyFilter = normalAdjacencyFilter;
     }
 
     public setInConsumer(inConsumer: Consumer): void {
@@ -104,12 +96,17 @@ export class DfsVisitor
         this.traversalConsumer = traversalConsumer;
     }
 
+    public setAdjacencyFilter(adjacencyFilter: AdjacencyFilter): void {
+        this.adjacencyFilter = adjacencyFilter;
+    }
+
     private dfs(vertex: number, states: Array<VertexState>): void {
         ++this.tick;
         states[vertex].color = Color.GRAY;
         states[vertex].enter = this.tick;
         this.inConsumer.accept(vertex, states[vertex]);
-        for (let neighbour of this.graph.adj(vertex)) {
+        let neighbours = this.adjacencyFilter.filter(vertex, this.graph);
+        for (let neighbour of neighbours) {
             this.traversalConsumer.accept(neighbour, states[neighbour]);
             if (states[neighbour].color === Color.WHITE) {
                 states[neighbour].parent = vertex;
