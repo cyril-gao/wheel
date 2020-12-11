@@ -1136,4 +1136,71 @@ public class ArrayOperations {
             }
         }
     }
+
+    public int maxProfit(int[] prices) {
+        int retval = 0;
+        int n = prices != null ? prices.length : 0;
+        if (n > 1) {
+            for (int i = 0; i < n - 1;) {
+                int j = i + 1;
+                int d = prices[j] - prices[i];
+                i = j;
+                if (d > 0) {
+                    retval += d;
+                }
+            }
+        }
+        return retval;
+    }
+
+    public int rob(int[] nums) {
+        int retval = 0;
+        int n = nums != null ? nums.length : 0;
+        if (n > 0) {
+            int[] cache = new int[n + 1];
+            cache[n] = 0;
+            cache[n - 1] = nums[n - 1];
+            if (n > 1) {
+                cache[n - 2] = Math.max(nums[n - 2], nums[n - 1]);
+                for (int i = n - 3; i >= 0; --i) {
+                    cache[i] = Math.max(cache[i + 1], Math.max(cache[i + 2], cache[i + 3]) + nums[i]);
+                }
+            }
+            retval = cache[0];
+        }
+        return retval;
+    }
+
+    private int partition(int[] nums, int start, int end) {
+        int ge = end;
+        int v = nums[start];
+        for (int i = end; i > start;) {
+            --i;
+            if (nums[i] >= v) {
+                --ge;
+                swap(nums, ge, i);
+            }
+        }
+        return ge;
+    }
+
+    private int findKthLargest(int[] nums, int begin, int end, int k) {
+        int separator = partition(nums, begin, end);
+        int v = end - separator;
+        if (v == k) {
+            return nums[separator];
+        } else {
+            if (v > k) {
+                return findKthLargest(nums, separator + 1, end, k);
+            } else {
+                return findKthLargest(nums, begin, separator, k - v);
+            }
+        }
+    }
+
+    public int findKthLargest(int[] nums, int k) {
+        int n = nums != null ? nums.length : 0;
+        assert (k <= n);
+        return findKthLargest(nums, 0, n, k);
+    }
 }

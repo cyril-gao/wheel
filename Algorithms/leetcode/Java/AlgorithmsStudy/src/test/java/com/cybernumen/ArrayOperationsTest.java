@@ -296,6 +296,22 @@ public class ArrayOperationsTest {
                 assertEquals(result, ni.expection);
             }
         }
+
+        {
+            int[] nums = { 1, 2, 3, 1 };
+            var result = ao.rob(nums);
+            assertEquals(result, 4);
+        }
+        {
+            int[] nums = { 2, 7, 9, 3, 1 };
+            var result = ao.rob(nums);
+            assertEquals(result, 12);
+        }
+        {
+            int[] nums = { 1, 3, 1 };
+            var result = ao.rob(nums);
+            assertEquals(result, 3);
+        }
     }
 
     private static boolean equals(int[] result, int[] expection) {
@@ -691,6 +707,19 @@ public class ArrayOperationsTest {
                     }
                 }
             }
+        }
+    }
+
+    @Test
+    public void testFindKthLargest() {
+        var ao = new ArrayOperations();
+        int[] template = { 3, 2, 3, 1, 2, 4, 5, 5, 6, 7, 2, 0, 8 };
+        int[] results = { 8, 7, 6, 5, 5, 4, 3, 3, 2, 2, 2, 1, 0 };
+        for (int k = 1, n = template.length; k <= n; ++k) {
+            int[] nums = new int[n];
+            System.arraycopy(template, 0, nums, 0, n);
+            var r = ao.findKthLargest(nums, k);
+            assertEquals(r, results[k - 1]);
         }
     }
 }

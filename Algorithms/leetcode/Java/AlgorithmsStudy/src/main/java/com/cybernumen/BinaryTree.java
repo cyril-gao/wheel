@@ -501,4 +501,41 @@ public class BinaryTree {
         // return numTrees(1, n);
         return numTrees2(n);
     }
+
+    private static List<TreeNode> search(TreeNode root, TreeNode other) {
+        List<TreeNode> retval = new LinkedList<>();
+        if (root != null) {
+            if (root == other) {
+                retval.add(root);
+            } else {
+                List<TreeNode> r = search(root.left, other);
+                if (!r.isEmpty()) {
+                    r.add(0, root);
+                    retval = r;
+                } else {
+                    r = search(root.right, other);
+                    if (!r.isEmpty()) {
+                        r.add(0, root);
+                        retval = r;
+                    }
+                }
+            }
+        }
+        return retval;
+    }
+
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        List<TreeNode> pr = search(root, p);
+        List<TreeNode> qr = search(root, q);
+        TreeNode retval = null;
+        for (int pi = 0, ps = pr.size(), qi = 0, qs = qr.size(); pi < ps && qi < qs; ++pi, ++qi) {
+            TreeNode node = pr.get(pi);
+            if (node == qr.get(qi)) {
+                retval = node;
+            } else {
+                break;
+            }
+        }
+        return retval;
+    }
 }
