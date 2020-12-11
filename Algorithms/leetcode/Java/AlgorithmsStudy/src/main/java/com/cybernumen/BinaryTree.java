@@ -538,4 +538,32 @@ public class BinaryTree {
         }
         return retval;
     }
+
+    public List<Integer> rightSideView(TreeNode root) {
+        List<Integer> retval = new LinkedList<>();
+        if (root != null) {
+            List<TreeNode> current = new LinkedList<>();
+            current.add(root);
+            while (!current.isEmpty()) {
+                TreeNode last = null;
+                List<TreeNode> next = new LinkedList<>();
+                for (TreeNode n : current) {
+                    last = n;
+                    if (n.left != null) {
+                        next.add(n.left);
+                    }
+                    if (n.right != null) {
+                        next.add(n.right);
+                    }
+                }
+                retval.add(last.val);
+                current = next;
+            }
+        }
+        return retval;
+    }
+
+    public int kthSmallest(TreeNode root, int k) {
+        assert (root != null);
+    }
 }

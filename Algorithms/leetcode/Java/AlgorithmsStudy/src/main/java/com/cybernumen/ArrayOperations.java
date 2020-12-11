@@ -1203,4 +1203,29 @@ public class ArrayOperations {
         assert (k <= n);
         return findKthLargest(nums, 0, n, k);
     }
+
+    public int[] productExceptSelf(int[] nums) {
+        assert (nums != null && nums.length > 0);
+        int[] retval = new int[nums.length];
+        if (nums.length > 2) {
+            for (int i = 0; i < nums.length; ++i) {
+                retval[i] = 1;
+            }
+            for (int i = 1; i < nums.length; ++i) {
+                int j = i - 1;
+                retval[i] = retval[j] * nums[j];
+            }
+            int v = nums[nums.length - 1];
+            for (int i = nums.length - 2; i >= 0; --i) {
+                retval[i] *= v;
+                v *= nums[i];
+            }
+        } else {
+            if (nums.length == 2) {
+                retval[0] = nums[1];
+                retval[1] = nums[0];
+            }
+        }
+        return retval;
+    }
 }

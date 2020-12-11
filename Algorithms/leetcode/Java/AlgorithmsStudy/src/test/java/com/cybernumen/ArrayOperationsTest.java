@@ -722,4 +722,59 @@ public class ArrayOperationsTest {
             assertEquals(r, results[k - 1]);
         }
     }
+
+    private int[] productExceptSelf(int[] nums) {
+        int[] retval = new int[nums.length];
+        for (int i = 0; i < nums.length; ++i) {
+            int total = 1;
+            for (int j = 0; j < nums.length; ++j) {
+                if (i != j) {
+                    total *= nums[j];
+                }
+            }
+            retval[i] = total;
+        }
+        return retval;
+    }
+
+    @Test
+    public void testProductExceptSelf() {
+        var ao = new ArrayOperations();
+        {
+            int[] nums = { 11, 3, -4, 2, 8, -9, 7, 4, -3, 5 };
+            var r1 = ao.productExceptSelf(nums);
+            var r2 = productExceptSelf(nums);
+            assertTrue(equals(r1, r2));
+        }
+        {
+            int[] nums = { 11, 3, -4, 2, 8, 0, -9, 7, 4, -3, 5 };
+            var r1 = ao.productExceptSelf(nums);
+            var r2 = productExceptSelf(nums);
+            assertTrue(equals(r1, r2));
+        }
+        {
+            int[] nums = { 3, -3 };
+            var r1 = ao.productExceptSelf(nums);
+            var r2 = productExceptSelf(nums);
+            assertTrue(equals(r1, r2));
+        }
+        {
+            int[] nums = { 4, 0 };
+            var r1 = ao.productExceptSelf(nums);
+            var r2 = productExceptSelf(nums);
+            assertTrue(equals(r1, r2));
+        }
+        {
+            int[] nums = { 0, 0 };
+            var r1 = ao.productExceptSelf(nums);
+            var r2 = productExceptSelf(nums);
+            assertTrue(equals(r1, r2));
+        }
+        {
+            int[] nums = { 3, 0, -2 };
+            var r1 = ao.productExceptSelf(nums);
+            var r2 = productExceptSelf(nums);
+            assertTrue(equals(r1, r2));
+        }
+    }
 }

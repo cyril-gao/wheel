@@ -222,7 +222,7 @@ public class BinaryTreeTest {
     public void testLowestCommonAncestor() {
         BinaryTree bt = new BinaryTree();
         {
-            var n0 = new BinaryTree.TreeNode(10);
+            var n0 = new BinaryTree.TreeNode(0);
             var n1 = new BinaryTree.TreeNode(1);
             var n2 = new BinaryTree.TreeNode(2);
             var n3 = new BinaryTree.TreeNode(3);
@@ -246,6 +246,47 @@ public class BinaryTreeTest {
             assertEquals(bt.lowestCommonAncestor(root, n4, n0), n3);
             assertEquals(bt.lowestCommonAncestor(root, n5, n7), n5);
             assertEquals(bt.lowestCommonAncestor(root, n8, n7), n3);
+        }
+    }
+
+    @Test
+    public void testRightSideView() {
+        BinaryTree bt = new BinaryTree();
+        {
+            var n1 = new BinaryTree.TreeNode(1);
+            var n2 = new BinaryTree.TreeNode(2);
+            var n3 = new BinaryTree.TreeNode(3);
+            var n4 = new BinaryTree.TreeNode(4);
+            var n5 = new BinaryTree.TreeNode(5);
+            var n6 = new BinaryTree.TreeNode(6);
+            var n7 = new BinaryTree.TreeNode(7);
+            var n8 = new BinaryTree.TreeNode(8);
+            var n9 = new BinaryTree.TreeNode(9);
+            var n10 = new BinaryTree.TreeNode(10);
+            var n11 = new BinaryTree.TreeNode(11);
+
+            n1.left = n2;
+            n2.left = n3;
+            n2.right = n4;
+            n3.right = n5;
+            n4.left = n6;
+            n5.left = n7;
+            n5.right = n8;
+            n6.right = n9;
+            n8.right = n10;
+            n10.left = n11;
+
+            var root = n1;
+
+            List<Integer> expectation = new LinkedList<>();
+            expectation.add(1);
+            expectation.add(2);
+            expectation.add(4);
+            expectation.add(6);
+            expectation.add(9);
+            expectation.add(10);
+            expectation.add(11);
+            assertEquals(bt.rightSideView(root), expectation);
         }
     }
 }
