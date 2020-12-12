@@ -15,7 +15,7 @@
     <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/ElementaryGraphAlgorithms">ElementaryGraphAlgorithms</a>: BFS, DFS, Topological sort, Strongly connected components</dd>
     <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/MST">MST</a> (Minimum Spanning Trees):  Kruskal, Prim</dd>
     <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/SingleSourceShortestPaths">SingleSourceShortestPaths</a>: Bellman-Ford, DAG, Dijkstra</dd>
-    <dd>- AllPairsShortestPaths</dd>
+    <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/AllPairsShortestPaths">AllPairsShortestPaths</a></dd>
     <dt>leetcode</dt>
     <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/leetcode/C%2B%2B">C++</a>: use C++ to resolve those problems</dd>
     <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/leetcode/Java/AlgorithmsStudy">Java</a>: use Java to resolve those problems</dd>
