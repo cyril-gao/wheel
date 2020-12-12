@@ -1,10 +1,11 @@
 import numpy as np
 
-extend_shortest_paths(L, M):
+
+def extend_shortest_paths(L, M):
     assert L.ndim == 2 and M.ndim == 2
     n = L.shape[0]
     assert n == L.shape[1]
-    L2 = np.zero(L.shape, L.dtype) # L2 == L'
+    L2 = np.zeros(L.shape, L.dtype)  # L2 == L'
     for i in range(n):
         for j in range(n):
             v = np.Infinity
