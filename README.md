@@ -4,7 +4,7 @@
     <dt><a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/sort">sort</a>: merge sort, heap sort, <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/sort/quick_sort.h">quick sort (10 different versions)</a></dt>
     <dt><a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BinaryTreeTraversal">Binary Tree Traversal</a></dt>
     <dd>- traverse a binary tree: preorder, inorder, postorder, levelorder iteratively or recursively.</dd>
-    <dt><a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BST">Binary Search Tree (BST)</a>
+    <dt><a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BST">Binary Search Tree</a> (BST)
     <dd>- insert new node into or remove a node from a red-black/AVL tree</dd>
     <dd>- document about how to rebalance the irregular red-black/AVL trees:</dd>
     <ol>
