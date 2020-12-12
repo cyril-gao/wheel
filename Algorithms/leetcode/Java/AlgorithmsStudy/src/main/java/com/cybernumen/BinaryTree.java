@@ -565,5 +565,80 @@ public class BinaryTree {
 
     public int kthSmallest(TreeNode root, int k) {
         assert (root != null);
+        int retval = 0;
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode i = root;
+        int j = 0;
+        while (i != null || !stack.isEmpty()) {
+            while (i != null) {
+                stack.push(i);
+                i = i.left;
+            }
+            i = stack.pop();
+            if (++j == k) {
+                retval = i.val;
+                break;
+            }
+            i = i.right;
+        }
+        return retval;
+    }
+
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        List<List<Integer>> retval = new LinkedList<>();
+        if (root != null) {
+            if (root.left == null && root.right == null && root.val == sum) {
+                List<Integer> path = new LinkedList<>();
+                path.add(root.val);
+                retval.add(path);
+            } else {
+                int remains = sum - root.val;
+                List<List<Integer>> r = null;
+                if (root.left != null) {
+                    r = pathSum(root.left, remains);
+                    if (!r.isEmpty()) {
+                        for (List<Integer> p : r) {
+                            p.add(0, root.val);
+                            retval.add(p);
+                        }
+                    }
+                }
+                if (root.right != null) {
+                    r = pathSum(root.right, remains);
+                    if (!r.isEmpty()) {
+                        for (List<Integer> p : r) {
+                            p.add(0, root.val);
+                            retval.add(p);
+                        }
+                    }
+                }
+            }
+        }
+        return retval;
+    }
+
+    private static int _sumNumbers(int v, TreeNode node) {
+        assert (node != null);
+        int tmp = v * 10 + node.val;
+        int retval = 0;
+        if (node.left == null && node.right == null) {
+            retval = tmp;
+        } else {
+            if (node.left != null) {
+                retval += _sumNumbers(tmp, node.left);
+            }
+            if (node.right != null) {
+                retval += _sumNumbers(tmp, node.right);
+            }
+        }
+        return retval;
+    }
+
+    public int sumNumbers(TreeNode root) {
+        int retval = 0;
+        if (root != null) {
+            retval = _sumNumbers(0, root);
+        }
+        return retval;
     }
 }

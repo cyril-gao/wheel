@@ -289,4 +289,111 @@ public class BinaryTreeTest {
             assertEquals(bt.rightSideView(root), expectation);
         }
     }
+
+    @Test
+    public void testPathSum() {
+        BinaryTree bt = new BinaryTree();
+        {
+            var n5_1 = new BinaryTree.TreeNode(5);
+            var n4_1 = new BinaryTree.TreeNode(4);
+            var n8 = new BinaryTree.TreeNode(8);
+            var n11 = new BinaryTree.TreeNode(11);
+            var n6 = new BinaryTree.TreeNode(6);
+            var n9 = new BinaryTree.TreeNode(9);
+            var n4_2 = new BinaryTree.TreeNode(4);
+            var n7_1 = new BinaryTree.TreeNode(7);
+            var n2 = new BinaryTree.TreeNode(2);
+            var n7_2 = new BinaryTree.TreeNode(7);
+            var n5_2 = new BinaryTree.TreeNode(5);
+            var n1 = new BinaryTree.TreeNode(1);
+            var n4_3 = new BinaryTree.TreeNode(4);
+
+            n5_1.left = n4_1;
+            n5_1.right = n8;
+            n4_1.left = n11;
+            n4_1.right = n6;
+            n8.left = n9;
+            n8.right = n4_2;
+            n11.left = n7_1;
+            n11.right = n2;
+            n6.left = n7_2;
+            n4_2.left = n5_2;
+            n4_2.right = n1;
+            n1.right = n4_3;
+
+            var root = n5_1;
+            assertEquals(bt.pathSum(root, 22).size(), 5);
+        }
+        {
+            var n1_1 = new BinaryTree.TreeNode(1);
+            var n_2_1 = new BinaryTree.TreeNode(-2);
+            var n_3 = new BinaryTree.TreeNode(-3);
+            var n1_2 = new BinaryTree.TreeNode(1);
+            var n3 = new BinaryTree.TreeNode(3);
+            var n_2_2 = new BinaryTree.TreeNode(-2);
+            var n_1 = new BinaryTree.TreeNode(-1);
+
+            n1_1.left = n_2_1;
+            n1_1.right = n_3;
+            n_2_1.left = n1_2;
+            n_2_1.right = n3;
+            n_3.left = n_2_2;
+            n1_2.left = n_1;
+            var root = n1_1;
+            assertEquals(bt.pathSum(root, -1).size(), 1);
+        }
+    }
+
+    @Test
+    public void testSumNumbers() {
+        BinaryTree bt = new BinaryTree();
+        {
+            var n1 = new BinaryTree.TreeNode(1);
+            var n2 = new BinaryTree.TreeNode(2);
+            var n3 = new BinaryTree.TreeNode(3);
+            n1.left = n2;
+            n1.right = n3;
+            var root = n1;
+            assertEquals(bt.sumNumbers(root), 25);
+        }
+        {
+            var n0 = new BinaryTree.TreeNode(0);
+            var n1 = new BinaryTree.TreeNode(1);
+            var n4 = new BinaryTree.TreeNode(4);
+            var n5 = new BinaryTree.TreeNode(5);
+            var n9 = new BinaryTree.TreeNode(9);
+            n4.left = n9;
+            n4.right = n0;
+            n9.left = n5;
+            n9.right = n1;
+
+            var root = n4;
+            assertEquals(bt.sumNumbers(root), 1026);
+        }
+        {
+            var n0 = new BinaryTree.TreeNode(0);
+            var n1 = new BinaryTree.TreeNode(1);
+            var n2 = new BinaryTree.TreeNode(2);
+            var n3 = new BinaryTree.TreeNode(3);
+            var n4 = new BinaryTree.TreeNode(4);
+            var n5 = new BinaryTree.TreeNode(5);
+            var n6 = new BinaryTree.TreeNode(6);
+            var n7 = new BinaryTree.TreeNode(7);
+            var n8 = new BinaryTree.TreeNode(8);
+            var n9 = new BinaryTree.TreeNode(9);
+
+            n4.left = n2;
+            n4.right = n7;
+            n2.left = n1;
+            n7.left = n0;
+            n7.right = n5;
+            n1.left = n3;
+            n0.right = n6;
+            n6.left = n9;
+            n6.right = n8;
+
+            var root = n4;
+            assertEquals(bt.sumNumbers(root), 4213 + 47069 + 47068 + 475);
+        }
+    }
 }

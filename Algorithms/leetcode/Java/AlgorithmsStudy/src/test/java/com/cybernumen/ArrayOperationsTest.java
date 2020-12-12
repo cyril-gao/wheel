@@ -18,6 +18,8 @@ class NumberInput {
 }
 
 public class ArrayOperationsTest {
+    Random random = new Random();
+
     private void print(int[] array) {
         // for (int i = 0; i < array.length; ++i) {
         // System.out.print(array[i] + " ");
@@ -775,6 +777,82 @@ public class ArrayOperationsTest {
             var r1 = ao.productExceptSelf(nums);
             var r2 = productExceptSelf(nums);
             assertTrue(equals(r1, r2));
+        }
+    }
+
+    private int randomInc() {
+        int v = -1;
+        while (v <= 0) {
+            v = random.nextInt() % 5;
+        }
+        return v;
+    }
+
+    @Test
+    public void testSearchInOrderedMatrix() {
+        var ao = new ArrayOperations();
+        {
+            int[] nums = { 1, 4, 7, 200, 296, 314, 1000, 2, 80, 100, 400, 500, 600, 1100, 90, 100, 110, 1410, 1510,
+                    1610, 11200, 11300, 11400, 11500, 11600, 11700, 11800, 20000 };
+            int m = 4, n = 7;
+            assert (m * n == nums.length);
+            Set<Integer> numSet = new HashSet<>();
+            for (var v : nums) {
+                numSet.add(v);
+            }
+            int[][] matrix = new int[m][n];
+            for (int i = 0, k = 0; i < m; ++i) {
+                for (int j = 0; j < n; ++j) {
+                    matrix[i][j] = nums[k++];
+                }
+            }
+            for (int target = nums[0] - 1000; target < nums[nums.length - 1] + 1000; ++target) {
+                var r = ao.searchInOrderedMatrix(matrix, target);
+                if (numSet.contains(Integer.valueOf(target))) {
+                    assertTrue(r);
+                } else {
+                    assertFalse(r);
+                }
+            }
+        }
+        {
+            int m = 407, n = 2197;
+            try {
+                Set<Integer> numSet = new HashSet<>();
+                int[][] matrix = new int[m][n];
+                int v = Integer.MIN_VALUE + 100;
+                for (int j = 0; j < n; ++j) {
+                    numSet.add(v);
+                    matrix[0][j] = v;
+                    v += randomInc();
+                    if (v <= matrix[0][j]) {
+                        System.out.printf("v: %d, previous: %d%n", v, matrix[0][j]);
+                        assert (false);
+                    }
+                }
+                for (int i = 1; i < m; ++i) {
+                    for (int j = 0; j < n; ++j) {
+                        int v1 = matrix[i - 1][j];
+                        int v2 = Integer.MIN_VALUE;
+                        if (j > 0) {
+                            v2 = matrix[i][j - 1];
+                        }
+                        v = Math.max(v1, v2) + randomInc();
+                        matrix[i][j] = v;
+                        numSet.add(v);
+                    }
+                }
+                for (int target = Integer.MIN_VALUE; target < v + 200; ++target) {
+                    var r = ao.searchInOrderedMatrix(matrix, target);
+                    if (numSet.contains(Integer.valueOf(target))) {
+                        assertTrue(r);
+                    } else {
+                        assertFalse(r);
+                    }
+                }
+            } catch (OutOfMemoryError oom) {
+                // ignore
+            }
         }
     }
 }

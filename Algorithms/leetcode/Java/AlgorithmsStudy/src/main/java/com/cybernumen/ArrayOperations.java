@@ -1228,4 +1228,109 @@ public class ArrayOperations {
         }
         return retval;
     }
+
+    private static boolean searchInOrderedMatrix(int[][] matrix, int rowBegin, int rowEnd, int colBegin, int colEnd,
+            int target) {
+        boolean retval = false;
+        int rowMid = rowEnd, colMid = colEnd;
+        if (rowBegin < rowEnd && colBegin < colEnd) {
+            rowMid = (rowBegin + rowEnd) / 2;
+            colMid = (colBegin + colEnd) / 2;
+            if (rowMid > rowBegin && colMid > colBegin) {
+                int rowMid_1 = rowMid - 1;
+                int colMid_1 = colMid - 1;
+                int v = matrix[rowMid_1][colMid_1];
+                if (v != target) {
+                    List<int[]> rectangles = new ArrayList<>();
+                    rectangles.add(new int[] { rowBegin, rowMid, colMid, colEnd });
+                    rectangles.add(new int[] { rowMid, rowEnd, colBegin, colMid });
+                    if (v < target) {
+                        rectangles.add(new int[] { rowMid, rowEnd, colMid, colEnd });
+                    } else {
+                        rectangles.add(new int[] { rowBegin, rowMid, colBegin, colMid });
+                    }
+                    for (int[] r : rectangles) {
+                        if (searchInOrderedMatrix(matrix, r[0], r[1], r[2], r[3], target)) {
+                            retval = true;
+                            break;
+                        }
+                    }
+                } else {
+                    retval = true;
+                }
+            } else {
+                if (rowMid > rowBegin || colMid > colBegin) {
+                    if (rowMid > rowBegin) {
+                        assert ((colEnd - colBegin) == 1);
+                        int diff = colEnd - colBegin;
+                        if (diff <= 8) {
+                            for (int i = rowBegin; i < rowEnd; ++i) {
+                                if (matrix[i][colBegin] == target) {
+                                    retval = true;
+                                    break;
+                                }
+                            }
+                        } else {
+                            while (rowBegin < rowEnd) {
+                                rowMid = (rowBegin + rowEnd) / 2;
+                                int v = matrix[rowMid][colBegin];
+                                if (v > target) {
+                                    rowEnd = rowMid;
+                                    rowMid = rowBegin;
+                                } else if (v < target) {
+                                    rowBegin = rowMid + 1;
+                                    rowMid = rowEnd;
+                                } else {
+                                    retval = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (colMid > colBegin) {
+                        assert ((rowEnd - rowBegin) == 1);
+                        int diff = colEnd - colBegin;
+                        if (diff <= 128) {
+                            for (int j = colBegin; j != colEnd; ++j) {
+                                if (matrix[rowBegin][j] == target) {
+                                    retval = true;
+                                    break;
+                                }
+                            }
+                        } else {
+                            while (colBegin < colEnd) {
+                                colMid = (colBegin + colEnd) / 2;
+                                int v = matrix[rowBegin][colMid];
+                                if (v > target) {
+                                    colEnd = colMid;
+                                    colMid = colBegin;
+                                } else if (v < target) {
+                                    colBegin = colMid + 1;
+                                    colMid = colEnd;
+                                } else {
+                                    retval = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    retval = (matrix[rowBegin][colBegin] == target);
+                }
+
+            }
+        }
+        return retval;
+    }
+
+    // 240. Search a 2D Matrix II
+    public boolean searchInOrderedMatrix(int[][] matrix, int target) {
+        boolean retval = false;
+        int m = matrix != null ? matrix.length : 0;
+        if (m > 0) {
+            int n = matrix[0].length;
+            retval = searchInOrderedMatrix(matrix, 0, m, 0, n, target);
+        }
+        return retval;
+    }
 }
