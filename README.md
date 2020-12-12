@@ -12,10 +12,10 @@
         <li><a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/BST/The%20rebalancing%20process%20of%20AVL%20trees.pdf">AVL trees</a></li>
     </ol>
     <dt>graph</dt>
-    <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/ElementaryGraphAlgorithms">ElementaryGraphAlgorithms</a>: BFS, DFS, Topological sort, Strongly connected components</dd>
-    <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/MST">MST</a> (Minimum Spanning Trees):  Kruskal, Prim</dd>
-    <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/SingleSourceShortestPaths">SingleSourceShortestPaths</a>: Bellman-Ford, DAG, Dijkstra</dd>
-    <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/AllPairsShortestPaths">AllPairsShortestPaths</a></dd>
+    <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/ElementaryGraphAlgorithms">Elementary Graph Algorithms</a>: BFS, DFS, Topological sort, Strongly connected components</dd>
+    <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/MST">Minimum Spanning Trees</a> (MST):  Kruskal, Prim</dd>
+    <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/SingleSourceShortestPaths">Single Source Shortest Paths</a>: Bellman-Ford, DAG, Dijkstra</dd>
+    <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/AllPairsShortestPaths">All Pairs Shortest Paths</a></dd>
     <dt>leetcode</dt>
     <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/leetcode/C%2B%2B">C++</a>: use C++ to resolve those problems</dd>
     <dd>- <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/leetcode/Java/AlgorithmsStudy">Java</a>: use Java to resolve those problems</dd>
