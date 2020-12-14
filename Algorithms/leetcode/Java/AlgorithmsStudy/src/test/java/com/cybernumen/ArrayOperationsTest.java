@@ -670,19 +670,19 @@ public class ArrayOperationsTest {
         {
             int[][] matrix2 = new int[1][1];
             matrix2[0][0] = 1;
-            ao.setZeroes73(matrix2);
+            ao.setZeroes(matrix2);
             matrix2[0][0] = 0;
-            ao.setZeroes73(matrix2);
+            ao.setZeroes(matrix2);
             matrix2 = new int[2][1];
             fillMatrix(matrix2, 2, 1, 1);
-            ao.setZeroes73(matrix2);
+            ao.setZeroes(matrix2);
             matrix2[0][0] = 0;
-            ao.setZeroes73(matrix2);
+            ao.setZeroes(matrix2);
             matrix2 = new int[2][2];
             fillMatrix(matrix2, 2, 2, 1);
-            ao.setZeroes73(matrix2);
+            ao.setZeroes(matrix2);
             matrix2[0][1] = 0;
-            ao.setZeroes73(matrix2);
+            ao.setZeroes(matrix2);
         }
         {
             int m = 41, n = 91;
@@ -699,7 +699,7 @@ public class ArrayOperationsTest {
                             matrix2[c.row][c.col] = 0;
                         }
                         ao.setZeroesByBruteForce(matrix1);
-                        ao.setZeroes73(matrix2);
+                        ao.setZeroes(matrix2);
                         if (!equals(matrix1, matrix2)) {
                             System.out.printf("len: %d%n%s%n", len, sc.toString());
                             print(matrix1, System.out);

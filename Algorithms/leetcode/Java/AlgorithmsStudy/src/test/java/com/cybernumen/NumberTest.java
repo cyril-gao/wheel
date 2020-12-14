@@ -40,4 +40,25 @@ public class NumberTest {
             }
         }
     }
+
+    @Test
+    public void testFindNthDigit() {
+        Number n = new Number();
+        {
+            var r = n.findNthDigit(1000000000);
+            assertEquals(r, 1);
+        }
+        StringBuffer sb = new StringBuffer();
+        for (int i = 1; i < 100000; ++i) {
+            sb.append(Integer.valueOf(i).toString());
+        }
+        String s = sb.toString();
+        for (int i = 0; i < 100000;) {
+            int j = i + 1;
+            var r = n.findNthDigit(j);
+            // System.out.println(j);
+            assertEquals(s.charAt(i), (char) (r + '0'));
+            i = j;
+        }
+    }
 }

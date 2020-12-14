@@ -205,11 +205,6 @@ public class ArrayOperations {
         return retval;
     }
 
-    // https://leetcode.com/problems/set-matrix-zeroes/
-    public void setZeroes(int[][] matrix) {
-
-    }
-
     // https://leetcode.com/problems/trapping-rain-water/
     public int trap(int[] height) {
         int retval = 0;
@@ -1075,7 +1070,8 @@ public class ArrayOperations {
         }
     }
 
-    public void setZeroes73(int[][] matrix) {
+    // https://leetcode.com/problems/set-matrix-zeroes/
+    public void setZeroes(int[][] matrix) {
         int m = matrix.length;
         if (m > 0) {
             int n = matrix[0].length;

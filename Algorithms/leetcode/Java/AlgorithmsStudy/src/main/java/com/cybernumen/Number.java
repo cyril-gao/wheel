@@ -76,4 +76,49 @@ public class Number {
         }
         return retval;
     }
+
+    private int pow10(int d) {
+        int retval = 1;
+        for (int i = 0; i < d; ++i) {
+            retval *= 10;
+        }
+        return retval;
+    }
+
+    // https://leetcode.com/problems/nth-digit/
+    public int findNthDigit(int n) {
+        assert (n > 0);
+        final int limit = 12;
+        long[][] ranges = new long[limit][2];
+        {
+            long begin = 0, end = 9;
+            long v = 9, d = 1;
+            for (int i = 0; i < limit; ++i) {
+                ranges[i][0] = begin;
+                ranges[i][1] = end;
+                v *= 10;
+                ++d;
+                long len = v * d;
+                begin = end;
+                end += len;
+            }
+        }
+        {
+            --n; // start from 0
+            int i = 0;
+            while (i < limit) {
+                if (n < ranges[i][1]) {
+                    break;
+                }
+                ++i;
+            }
+            int d = i + 1;
+            n -= ranges[i][0];
+            int j = n / d;
+            int k = n % d;
+            j += pow10(i);
+            String s = Integer.valueOf(j).toString();
+            return s.charAt(k) - '0';
+        }
+    }
 }
