@@ -18,6 +18,12 @@
         <li><a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/BST/The%20rebalancing%20process%20of%20AVL%20trees.pdf">AVL trees</a></li>
     </ul>
 
+#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/heap">heap</a>
+
+*   binary heap
+*   k-ary heap
+*   fibonacci heap
+
 ### graph
 
 ##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/ElementaryGraphAlgorithms">Elementary Graph Algorithms</a>:
