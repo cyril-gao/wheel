@@ -2,7 +2,9 @@
 
 #### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/sort">sort:</a>
 
-*   merge sort, heap sort, <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/sort/quick_sort.h">quick sort (10 different versions)</a>
+*   merge sort
+*   heap sort
+*   <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/sort/quick_sort.h">quick sort (10 different versions)</a>
 
 #### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BinaryTreeTraversal">Binary Tree Traversal:</a>
 
@@ -28,15 +30,21 @@
 
 ##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/ElementaryGraphAlgorithms">Elementary Graph Algorithms</a>:
 
-*   BFS, DFS, Topological sort, Strongly connected components
+*   BFS
+*   DFS
+*   Topological sort
+*   Strongly connected components
 
 ##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/MST">Minimum Spanning Trees</a> (MST):
 
-*   Kruskal, Prim
+*   Kruskal
+*   Prim
 
 ##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/SingleSourceShortestPaths">Single Source Shortest Paths</a>:
 
-*   Bellman-Ford, DAG, Dijkstra
+*   Bellman-Ford
+*   DAG
+*   Dijkstra
 
 ##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/AllPairsShortestPaths">All Pairs Shortest Paths</a>
 
