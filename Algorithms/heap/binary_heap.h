@@ -63,6 +63,8 @@ namespace heap
         template <
             typename I,
             typename C,
+            template <typename>
+            class KeyTrait,
             template <typename, typename, template <typename> class>
             class Indexer
         >
@@ -99,6 +101,8 @@ namespace heap
         template <
             typename I,
             typename C,
+            template <typename>
+            class KeyTrait,
             template <typename, typename, template <typename> class>
             class Indexer
         >
@@ -124,6 +128,8 @@ namespace heap
         template <
             typename I,
             typename C,
+            template <typename>
+            class KeyTrait,
             template <typename, typename, template <typename> class>
             class Indexer
         >
@@ -136,7 +142,7 @@ namespace heap
             int64_t len = static_cast<int64_t>(end - begin);
             if (len > 1) {
                 for (auto i = len >> 1; i >= 0; --i) {
-                    sink<I, C, Indexer>(begin, end, begin + i, comp, indexer);
+                    sink<I, C, KeyTrait, Indexer>(begin, end, begin + i, comp, indexer);
                 }
             }
             return len;
@@ -157,6 +163,7 @@ namespace heap
         template <typename I>
         BinaryHeap(I begin, I end)/* : m_heap(begin, end)*/
         {
+            m_heap.reserve(end-begin);
         #if 0
             size_t i = 0;
             for (auto j = begin; j != end; ++j) {
@@ -220,7 +227,7 @@ namespace heap
                 if (n != 0) {
                     std::iter_swap(begin, end);
                     m_indexer.set(*begin, 0);
-                    details::sink<typename std::vector<T>::iterator, C, details::Indexer>(
+                    details::sink<typename std::vector<T>::iterator, C, KeyTrait, details::Indexer>(
                         begin, end, begin, C(), m_indexer
                     );
                 }
@@ -252,20 +259,19 @@ namespace heap
 
         void replace(const T& _old, const T& _new) // throw(std::out_of_range)
         {
-            if (_old != _new) {
-                size_t index = m_indexer.get(_old);
-                m_heap[index] = _new;
-                m_indexer.erase(_old);
-                m_indexer.set(_new, index);
-                if (C()(_old, _new)) {
-                    details::rise<typename std::vector<T>::iterator, C, details::Indexer>(
-                        m_heap.begin(), m_heap.end(), m_heap.begin() + index, C(), m_indexer
-                    );
-                } else {
-                    details::sink<typename std::vector<T>::iterator, C, details::Indexer>(
-                        m_heap.begin(), m_heap.end(), m_heap.begin() + index, C(), m_indexer
-                    );
-                }
+            bool should_rise = C()(_old, _new);
+            size_t index = m_indexer.get(_old);
+            m_heap[index] = _new;
+            m_indexer.erase(_old);
+            m_indexer.set(_new, index);
+            if (should_rise) {
+                details::rise<typename std::vector<T>::iterator, C, KeyTrait, details::Indexer>(
+                    m_heap.begin(), m_heap.end(), m_heap.begin() + index, C(), m_indexer
+                );
+            } else {
+                details::sink<typename std::vector<T>::iterator, C, KeyTrait, details::Indexer>(
+                    m_heap.begin(), m_heap.end(), m_heap.begin() + index, C(), m_indexer
+                );
             }
         }
 
@@ -280,11 +286,17 @@ namespace heap
                 auto end = begin + n;
                 m_heap[index] = *end;
                 m_indexer.set(m_heap[index], index);
-                details::sink<typename std::vector<T>::iterator, C, details::Indexer>(
+                details::sink<typename std::vector<T>::iterator, C, KeyTrait, details::Indexer>(
                     begin, end, begin + index, C(), m_indexer
                 );
             }
             m_heap.pop_back();
+        }
+
+        const T& operator[](const T& t) const
+        {
+            size_t index = m_indexer.get(t);
+            return m_heap[index];
         }
 
         bool contains(const T& t) const { return m_indexer.contains(t); }

@@ -12,6 +12,8 @@ namespace heap
         template <
             typename I,
             typename C,
+            template <typename>
+            class KeyTrait,
             template <typename, typename, template <typename> class>
             class Indexer,
             size_t K
@@ -49,6 +51,8 @@ namespace heap
         template <
             typename I,
             typename C,
+            template <typename>
+            class KeyTrait,
             template <typename, typename, template <typename> class>
             class Indexer,
             size_t K
@@ -75,6 +79,8 @@ namespace heap
         template <
             typename I,
             typename C,
+            template <typename>
+            class KeyTrait,
             template <typename, typename, template <typename> class>
             class Indexer,
             size_t K
@@ -88,7 +94,7 @@ namespace heap
             int64_t len = static_cast<int64_t>(end - begin);
             if (len > 1) {
                 for (auto i = (len + K - 1) / K; i >= 0; --i) {
-                    kary_sink<I, C, Indexer, K>(begin, end, begin + i, comp, indexer);
+                    kary_sink<I, C, KeyTrait, Indexer, K>(begin, end, begin + i, comp, indexer);
                 }
             }
             return len;
@@ -110,6 +116,7 @@ namespace heap
         template <typename I>
         KaryHeap(I begin, I end)
         {
+            m_heap.reserve(end-begin);
             for (auto i = begin; i != end; ++i) {
                 insert(*i);
             }
@@ -138,7 +145,7 @@ namespace heap
                 size_t n = m_heap.size();
                 m_heap.push_back(t);
                 m_indexer.set(t, n);
-                details::kary_rise<typename std::vector<T>::iterator, C, details::Indexer, K>(
+                details::kary_rise<typename std::vector<T>::iterator, C, KeyTrait, details::Indexer, K>(
                     m_heap.begin(), m_heap.end(), m_heap.begin() + n, C(), m_indexer
                 );
             } else {
@@ -160,7 +167,7 @@ namespace heap
                 if (n != 0) {
                     std::iter_swap(begin, end);
                     m_indexer.set(*begin, 0);
-                    details::kary_sink<typename std::vector<T>::iterator, C, details::Indexer, K>(
+                    details::kary_sink<typename std::vector<T>::iterator, C, KeyTrait, details::Indexer, K>(
                         begin, end, begin, C(), m_indexer
                     );
                 }
@@ -178,20 +185,19 @@ namespace heap
 
         void replace(const T& _old, const T& _new) // throw(std::out_of_range)
         {
-            if (_old != _new) {
-                size_t index = m_indexer.get(_old);
-                m_heap[index] = _new;
-                m_indexer.erase(_old);
-                m_indexer.set(_new, index);
-                if (C()(_old, _new)) {
-                    details::kary_rise<typename std::vector<T>::iterator, C, details::Indexer, K>(
-                        m_heap.begin(), m_heap.end(), m_heap.begin() + index, C(), m_indexer
-                    );
-                } else {
-                    details::kary_sink<typename std::vector<T>::iterator, C, details::Indexer, K>(
-                        m_heap.begin(), m_heap.end(), m_heap.begin() + index, C(), m_indexer
-                    );
-                }
+            bool should_rise = C()(_old, _new);
+            size_t index = m_indexer.get(_old);
+            m_heap[index] = _new;
+            m_indexer.erase(_old);
+            m_indexer.set(_new, index);
+            if (should_rise) {
+                details::kary_rise<typename std::vector<T>::iterator, C, KeyTrait, details::Indexer, K>(
+                    m_heap.begin(), m_heap.end(), m_heap.begin() + index, C(), m_indexer
+                );
+            } else {
+                details::kary_sink<typename std::vector<T>::iterator, C, KeyTrait, details::Indexer, K>(
+                    m_heap.begin(), m_heap.end(), m_heap.begin() + index, C(), m_indexer
+                );
             }
         }
 
@@ -206,11 +212,17 @@ namespace heap
                 auto end = begin + n;
                 m_heap[index] = *end;
                 m_indexer.set(m_heap[index], index);
-                details::kary_sink<typename std::vector<T>::iterator, C, details::Indexer, K>(
+                details::kary_sink<typename std::vector<T>::iterator, C, KeyTrait, details::Indexer, K>(
                     begin, end, begin + index, C(), m_indexer
                 );
             }
             m_heap.pop_back();
+        }
+
+        const T& operator[](const T& t) const
+        {
+            size_t index = m_indexer.get(t);
+            return m_heap[index];
         }
 
         bool contains(const T& t) const { return m_indexer.contains(t); }

@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <assert.h>
 
+#include <utility>
+#include <memory>
 #include <algorithm>
 #include <functional>
 #include <iterator>
@@ -28,6 +30,17 @@ namespace heap
             Node<T, C> * child;
             Node<T, C> * left;
             Node<T, C> * right;
+
+            Node(const T& t) :
+                data(t),
+                degree(0),
+                mark(false),
+                parent(nullptr),
+                child(nullptr),
+                left(nullptr),
+                right(nullptr)
+            {
+            }
         };
     }
 
@@ -39,6 +52,29 @@ namespace heap
     >
     class FibonacciHeap
     {
+        details::Node * m_min;
+        size_t m_size;
+
+        void fib_heap_link(Node* y, Node* x)
+        {
+
+        }
+
+        void consolidate()
+        {
+            if (m_size > 1) {
+                std::vector<Node*> A(m_size + 1, nullptr);
+                for (Node* first = m_min, * x = first;;) {
+                    size_t d = x->degree;
+                    while (A[d] != nullptr) {
+                        Node* y = A[d];
+                        if (C()(x->data, y->data)) {
+                            std::swap(x, y);
+                        };
+                    }
+                }
+            }
+        }
     public:
         FibonacciHeap(size_t n=0);
         FibonacciHeap(FibonacciHeap<T, C, KeyTrait> const&) = default;
@@ -49,9 +85,31 @@ namespace heap
         template <typename I>
         static FibonacciHeap<T, C, KeyTrait> make_heap(I begin, I end);
 
-        void insert(const T& t);
+        void insert(const T& t)
+        {
+            auto node = new details::Node(t);
+            if (m_min != nullptr) {
+                details::Node * previous = m_min.left;
+                previous->right = node;
+                node->left = previous;
+                node->right = m_min;
+                m_min->left = node;
+                if (C()(m_min->data, t)) {
+                    m_min = node;
+                }
+            } else {
+                node->left = node;
+                node->right = node;
+                m_min = node;
+            }
+            ++m_size;
+        }
 
-        const T& minimum() const;
+        const T& minimum() const
+        {
+            assert(m_min != nullptr);
+            return m_min->data;
+        }
         void pop_min();
 
         FibonacciHeap<T, C, KeyTrait> & operator+=(FibonacciHeap<T, C, KeyTrait> const& other);
@@ -60,8 +118,14 @@ namespace heap
 
         void erase(const T& t);
 
-        size_t size() const;
-        bool empty() const;
+        size_t size() const
+        {
+            return m_min != nullptr ? m_min->degree : 0;
+        }
+        bool empty() const
+        {
+            return m_min == nullptr || m_min->degree == 0;
+        }
         void swap(FibonacciHeap<T, C, KeyTrait>& other);
     };
 }

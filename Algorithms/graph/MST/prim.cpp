@@ -3,7 +3,13 @@
 #include <vector>
 #include <unordered_map>
 #include "mst.h"
+#if 0
+#include "merge.h"
+#else
+#include <kary_heap.h>
+#endif
 
+#if 0
 namespace
 {
     class Indexer
@@ -102,3 +108,63 @@ mst::MST mst::prim(const Graph& graph)
     retval.edges.emplace_back(*begin);
     return retval;
 }
+
+#else
+
+namespace
+{
+    template <typename T>
+    struct KeyTrait;
+
+    template <>
+    struct KeyTrait<mst::Edge>
+    {
+        using key_type = int;
+        key_type key(const mst::Edge& t) const { return t.vertex; }
+        void swap(KeyTrait<mst::Edge>&) {}
+    };
+}
+
+mst::MST mst::prim(const Graph& graph)
+{
+    auto V = graph.size();
+    mst::MST retval(V);
+
+    auto comparator = [](const mst::Edge& l, const mst::Edge& r) {
+        return l.weight > r.weight;
+    };
+
+    heap::KaryHeap<16, mst::Edge, decltype(comparator), KeyTrait> kary_heap;
+    kary_heap.insert(mst::Edge{ 0, 0 });
+    for (int i = 1, e = static_cast<int>(V); i < e; ++i) {
+        kary_heap.insert(mst::Edge{ i });
+    }
+    std::vector<bool> visited(V, false);
+    while (!kary_heap.empty()) {
+        auto u = kary_heap.minimum();
+        kary_heap.pop_min();
+        visited[u.vertex] = true;
+        retval.weight += u.weight;
+        u.path_weight = retval.weight;
+        retval.edges[u.vertex] = u;
+
+        std::for_each(
+            graph.adj(u.vertex).begin(),
+            graph.adj(u.vertex).end(),
+            [uv = u.vertex, &visited, &kary_heap](auto v) {
+                if (!visited[v.vertex]) {
+                    mst::Edge ve{ v.vertex };
+                    decltype(auto) old = kary_heap[ve];
+                    if (old.weight > v.weight) {
+                        ve.parent = uv;
+                        ve.weight = v.weight;
+                        kary_heap.replace(old, ve);
+                    }
+                }
+            }
+        );
+    }
+    return retval;
+}
+
+#endif

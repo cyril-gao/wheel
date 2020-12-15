@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sstream>
 #include <filesystem>
+#include <chrono>
 #include "mst.h"
 #include "check.h"
 
@@ -34,7 +35,7 @@ namespace
 
     bool equals(float f1, float f2)
     {
-        if (abs(f1 - f2) < 0.000001) {
+        if (abs((f1 - f2) / f1) < 0.00005) {
             return true;
         }
         return false;
@@ -56,8 +57,11 @@ int main(int argc, char * argv[])
             std::filesystem::path file(argv[i]);
             if (std::filesystem::is_regular_file(file)) {
                 auto graph = mst::create_edge_weighted_graph(argv[i]);
+                auto begin = std::chrono::system_clock::now();
                 auto r1 = mst::prim(graph);
-                printf("minimum total weight: %f\n", r1.weight);
+                auto end = std::chrono::system_clock::now();
+                double prim_duration = std::chrono::duration<double>(end - begin).count();
+                printf("prim: %f in %f seconds\n", r1.weight, prim_duration);
                 auto printer = [](auto const& edges, bool showing_path_weight = true) {
                     for (const auto& e : edges) {
                         int u = e.parent, v = e.vertex;
@@ -71,11 +75,16 @@ int main(int argc, char * argv[])
                         printf("\n");
                     }
                 };
+
+                begin = std::chrono::system_clock::now();
                 auto r2 = mst::kruskal(graph);
+                end = std::chrono::system_clock::now();
+                double kruskal_duration = std::chrono::duration<double>(end - begin).count();
+                printf("kruskal: %f in %f seconds\n", r2.weight, kruskal_duration);
                 if (!equals(r1.weight, r2.weight)) {
                     printer(r2.edges, false);
                 }
-                examine(equals(r1.weight, r2.weight), "the return value %f of kruskal is different from that of prim\n", r2.weight);
+                examine(equals(r1.weight, r2.weight), "the return value %f of kruskal is different from that of prim (%f)\n", r2.weight, r1.weight);
             }
         }
     }

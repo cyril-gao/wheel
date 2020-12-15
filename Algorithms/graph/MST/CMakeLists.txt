@@ -30,5 +30,7 @@ endif()
 
 enable_testing()
 
-add_executable(mst_test mst_test.cpp mst.cpp prim.cpp kruskal.cpp uf.cpp uf.h mst.h graph_factory.h graph.h merge.h check.h)
+include_directories("../../heap")
+
+add_executable(mst_test mst_test.cpp mst.cpp prim.cpp kruskal.cpp uf.cpp uf.h mst.h graph_factory.h graph.h check.h)
 add_test(NAME mst_test COMMAND mst_test)
