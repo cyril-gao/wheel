@@ -30,5 +30,7 @@ endif()
 
 enable_testing()
 
+include_directories("../../heap")
+
 add_executable(sssp_test sssp_test.cpp sssp.cpp graph_factory.h sssp.h)
 add_test(NAME sssp_test COMMAND sssp_test)

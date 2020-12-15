@@ -11,28 +11,24 @@ namespace sssp
 {
     class Graph
     {
-        struct Edge
-        {
-            int to{ -1 };
-            float weight{ 1.0 };
-        };
-        mutable std::vector<std::unordered_map<int, Edge>> m_adjacency_list;
+        mutable std::vector<std::unordered_map<int, double>> m_adjacency_list;
+
     public:
         explicit Graph(size_t V) : m_adjacency_list(V)
         {
         }
-        void add_adge(int from, int to, float weight = 1.0)
+        void add_adge(int from, int to, double weight = 1.0)
         {
             assert(from >= 0 && to >= 0);
             assert(static_cast<size_t>(from) < m_adjacency_list.size());
             assert(static_cast<size_t>(to) < m_adjacency_list.size());
-            m_adjacency_list[from][to] = Edge{ to, weight };
+            m_adjacency_list[from][to] = weight;
         }
-        const std::unordered_map<int, Edge>& adj(size_t i) const
+        const std::unordered_map<int, double>& adj(size_t i) const
         {
             return m_adjacency_list[i];
         }
-        const std::unordered_map<int, Edge>& operator[](size_t i) const
+        const std::unordered_map<int, double>& operator[](size_t i) const
         {
             return m_adjacency_list[i];
         }
@@ -41,15 +37,27 @@ namespace sssp
 
     struct Edge
     {
-        int parent{ -1 };
-        int vertex{ -1 };
-        float weight{ FLT_MAX };
-        float distance{ FLT_MAX };
+        int parent;
+        int vertex;
+        float weight;
+        float distance;
+
+        Edge(int p, int v, float w, float d) :
+            parent(p), vertex(v), weight(w), distance(d)
+        {
+        }
+        Edge(int vertex = -1, float weight = FLT_MAX) :
+            Edge(-1, vertex, weight, FLT_MAX)
+        {
+        }
     };
 
     struct ShortestPaths
     {
         std::vector<Edge> edges;
+
+        ShortestPaths() = default;
+        ShortestPaths(std::vector<Edge>&& es) : edges(std::move(es)) {}
 
         Edge& operator[](size_t vertex) { return edges[vertex]; }
         const Edge& operator[](size_t vertex) const { return edges[vertex]; }
@@ -62,9 +70,9 @@ namespace sssp
         float get_distance(int vertex) const;
     };
 
-    bool bellman_ford(Graph const& graph, int source, ShortestPaths & output);
+    bool bellman_ford(Graph const& graph, int source, ShortestPaths& output);
     ShortestPaths dag(Graph const& graph, int source);
     ShortestPaths dijkstra(Graph const& graph, int source);
-}
+} // namespace sssp
 
 #endif
