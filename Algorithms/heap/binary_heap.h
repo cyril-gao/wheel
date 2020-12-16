@@ -205,7 +205,7 @@ namespace heap
                 size_t n = m_heap.size();
                 m_heap.push_back(t);
                 m_indexer.set(t, n);
-                details::rise<typename std::vector<T>::iterator, C, details::Indexer>(
+                details::rise<typename std::vector<T>::iterator, C, KeyTrait, details::Indexer>(
                     m_heap.begin(), m_heap.end(), m_heap.begin() + n, C(), m_indexer
                 );
             } else {
@@ -243,7 +243,7 @@ namespace heap
             for (auto i = other.m_heap.begin(), ie = other.m_heap.end(); i != ie; ++i) {
                 m_indexer.set(*i, n++);
             }
-            details::make_heap<typename std::vector<T>::iterator, C, details::Indexer>(
+            details::make_heap<typename std::vector<T>::iterator, C, KeyTrait, details::Indexer>(
                 m_heap.begin(), m_heap.end(), C(), m_indexer
             );
             if (m_indexer.size() != n) {

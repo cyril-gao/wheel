@@ -30,5 +30,5 @@ endif()
 
 enable_testing()
 
-add_executable(heap_test heap_test.cpp mergeable_heap.h binary_heap.h kary_heap.h fibonacci_heap.h check.h)
+add_executable(heap_test heap_test.cpp binary_heap.h kary_heap.h fibonacci_heap.h check.h)
 add_test(NAME heap_test COMMAND heap_test)
