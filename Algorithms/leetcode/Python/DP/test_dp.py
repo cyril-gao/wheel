@@ -4,6 +4,8 @@ from minimum_path_sum import minimum_path_sum
 from climbing_stairs import climbing_stairs
 from decode_ways import number_of_decodings
 from edit_distance import minimum_distance, minimum_distance_2
+from triangle import minimum_path_in_triangle
+from subsequence import lis
 
 
 class DPTester(unittest.TestCase):
@@ -86,3 +88,14 @@ class DPTester(unittest.TestCase):
         self.assertEqual(minimum_distance_2("12456", "123456"), 1)
         self.assertEqual(minimum_distance_2("horse", "ros"), 3)
         self.assertEqual(minimum_distance_2("intention", "execution"), 5)
+
+    def test_minimum_path_in_triangle(self):
+        triangle = [[2], [3, 4],[6, 5, 7], [4, 1, 8, 3], [20, 30, 40, 4, 10]]
+        self.assertEqual(minimum_path_in_triangle(triangle), 20)
+        self.assertEqual(minimum_path_in_triangle(triangle[0:4]), 11)
+        self.assertEqual(minimum_path_in_triangle(triangle[0:3]), 10)
+        self.assertEqual(minimum_path_in_triangle(triangle[0:2]), 5)
+
+    def test_lis(self):
+        input = [7, 1, 2, 10, 9, 8, 6, 4, 7, 3, 5, 2, 4, 7]
+        self.assertEqual(len(lis(input)), 5)
