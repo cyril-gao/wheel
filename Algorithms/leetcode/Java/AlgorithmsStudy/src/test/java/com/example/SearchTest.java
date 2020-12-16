@@ -239,4 +239,39 @@ public class SearchTest {
             assertEquals(r, results[k - 1]);
         }
     }
+
+    @Test
+    public void testHIndex() {
+        var ao = new ArraySearch();
+        {
+            int[] citations = { 3, 0, 6, 1, 5 };
+            var r = ao.hIndex(citations);
+            assertEquals(r, 3);
+        }
+        {
+            int[] citations = { 0, 0, 0, 0, 0, 0 };
+            var r = ao.hIndex(citations);
+            assertEquals(r, 0);
+        }
+        {
+            int[] citations = { 0, 1, 0, 0, 2, 0 };
+            var r = ao.hIndex(citations);
+            assertEquals(r, 1);
+        }
+        {
+            int[] citations = { 30, 20, 10, 4 };
+            var r = ao.hIndex(citations);
+            assertEquals(r, 4);
+        }
+        {
+            int[] citations = { 4, 0, 6, 1, 5, 7 };
+            var r = ao.hIndex(citations);
+            assertEquals(r, 4);
+        }
+        {
+            int[] citations = { 4, 4, 0, 0 };
+            var r = ao.hIndex(citations);
+            assertEquals(r, 2);
+        }
+    }
 }

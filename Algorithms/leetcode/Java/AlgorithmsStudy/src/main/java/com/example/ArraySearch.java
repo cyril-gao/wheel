@@ -1,5 +1,7 @@
 package com.example;
 
+import java.util.Arrays;
+
 public class ArraySearch {
     /**
      * Suppose an array sorted in ascending order is rotated at some pivot unknown
@@ -338,5 +340,25 @@ public class ArraySearch {
         int n = nums != null ? nums.length : 0;
         assert (k <= n);
         return findKthLargest(nums, 0, n, k);
+    }
+
+    // https://leetcode.com/problems/h-index/
+    public int hIndex(int[] citations) {
+        int retval = 0;
+        int n = citations != null ? citations.length : 0;
+        if (n > 0) {
+            Arrays.sort(citations);
+            if (citations[0] < n) {
+                for (int i = 0, j = n; i < n; ++i, --j) {
+                    if (j <= citations[i]) {
+                        retval = j;
+                        break;
+                    }
+                }
+            } else {
+                retval = n;
+            }
+        }
+        return retval;
     }
 }

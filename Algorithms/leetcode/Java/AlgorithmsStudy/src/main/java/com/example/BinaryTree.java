@@ -641,4 +641,36 @@ public class BinaryTree {
         }
         return retval;
     }
+
+    static class Visitor
+    {
+        TreeNode previous;
+        Visitor() { previous = null; }
+        void visit(TreeNode node)  {
+            if (previous != null) {
+                previous.right = node;
+            }
+            previous = node;
+            previous.left = null;
+        }
+    }
+
+    private void flatten(TreeNode root, Visitor visitor) {
+        if (root != null) {
+            TreeNode left = root.left;
+            TreeNode right = root.right;
+            visitor.visit(root);
+            flatten(left, visitor);
+            flatten(right, visitor);
+        }
+    }
+
+    // https://leetcode.com/problems/flatten-binary-tree-to-linked-list/
+    public void flatten(TreeNode root) {
+        if (root != null) {
+            Visitor visitor = new Visitor();
+            flatten(root, visitor);
+            visitor.previous.right = null;
+        }
+    }
 }
