@@ -642,11 +642,14 @@ public class BinaryTree {
         return retval;
     }
 
-    static class Visitor
-    {
+    static class Visitor {
         TreeNode previous;
-        Visitor() { previous = null; }
-        void visit(TreeNode node)  {
+
+        Visitor() {
+            previous = null;
+        }
+
+        void visit(TreeNode node) {
             if (previous != null) {
                 previous.right = node;
             }
@@ -673,4 +676,33 @@ public class BinaryTree {
             visitor.previous.right = null;
         }
     }
+
+    // https://leetcode.com/problems/binary-search-tree-iterator/
+    static public class BSTIterator {
+        private Stack<TreeNode> stack;
+        TreeNode pointer;
+
+        public BSTIterator(TreeNode root) {
+            stack = new Stack<TreeNode>();
+            pointer = root;
+        }
+
+        /** @return the next smallest number */
+        public int next() {
+            while (pointer != null) {
+                stack.push(pointer);
+                pointer = pointer.left;
+            }
+            pointer = stack.pop();
+            int retval = pointer.val;
+            pointer = pointer.right;
+            return retval;
+        }
+
+        /** @return whether we have a next smallest number */
+        public boolean hasNext() {
+            return (pointer != null || !stack.isEmpty());
+        }
+    }
+
 }

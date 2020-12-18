@@ -2,8 +2,12 @@ package com.example;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
 
 import org.testng.annotations.*;
+
+import java.util.*;
 
 public class NumberTest {
     @Test
@@ -50,16 +54,42 @@ public class NumberTest {
             assertEquals(r, 1);
         }
         StringBuffer sb = new StringBuffer();
-        for (int i = 1; i < 100000; ++i) {
+        for (int i = 1; i < 1000; ++i) {
             sb.append(Integer.valueOf(i).toString());
         }
         String s = sb.toString();
-        for (int i = 0; i < 100000;) {
+        for (int i = 0; i < 1000;) {
             int j = i + 1;
             var r = n.findNthDigit(j);
             // System.out.println(j);
             assertEquals(s.charAt(i), (char) (r + '0'));
             i = j;
         }
+    }
+
+    @Test
+    public void testIsPerfectSquare() {
+        Number n = new Number();
+        Set<Integer> nums = new HashSet<>();
+        nums.add(0);
+        nums.add(1);
+        nums.add(4);
+        nums.add(9);
+        nums.add(16);
+        nums.add(25);
+        nums.add(36);
+        nums.add(49);
+        nums.add(64);
+        nums.add(81);
+        nums.add(100);
+        for (int i = 0; i < 110; ++i) {
+            if (nums.contains(i)) {
+                assertTrue(n.isPerfectSquare(i));
+            } else {
+                assertFalse(n.isPerfectSquare(i));
+            }
+        }
+        assertFalse(n.isPerfectSquare(Integer.MAX_VALUE));
+        assertTrue(n.isPerfectSquare(2147395600));
     }
 }

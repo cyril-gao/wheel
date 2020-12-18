@@ -121,4 +121,29 @@ public class Number {
             return s.charAt(k) - '0';
         }
     }
+
+    public boolean isPerfectSquare(int num) {
+        boolean retval = false;
+        if (num >= 2) {
+            int bits = (getBits(num) + 1) / 2;
+            long begin = 1 << (bits - 1);
+            long end = 1 << bits;
+            long target = num;
+            while (begin < end) {
+                long mid = (begin + end) / 2;
+                long v = mid * mid;
+                if (v > target) {
+                    end = mid;
+                } else if (v < target) {
+                    begin = mid + 1;
+                } else {
+                    retval = true;
+                    break;
+                }
+            }
+        } else {
+            retval = (num == 0 || num == 1);
+        }
+        return retval;
+    }
 }

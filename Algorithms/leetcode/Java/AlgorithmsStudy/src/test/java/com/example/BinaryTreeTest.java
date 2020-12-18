@@ -394,4 +394,56 @@ public class BinaryTreeTest {
             assertEquals(bt.sumNumbers(root), 4213 + 47069 + 47068 + 475);
         }
     }
+
+    @Test
+    public void testBSTIterator() {
+        BinaryTree bt = new BinaryTree();
+        {
+            var n1 = new BinaryTree.TreeNode(1);
+            var n2 = new BinaryTree.TreeNode(2);
+            var n3 = new BinaryTree.TreeNode(3);
+            var n4 = new BinaryTree.TreeNode(4);
+            var n5 = new BinaryTree.TreeNode(5);
+            var n6 = new BinaryTree.TreeNode(6);
+            var n7 = new BinaryTree.TreeNode(7);
+            var n8 = new BinaryTree.TreeNode(8);
+            var n9 = new BinaryTree.TreeNode(9);
+            var n10 = new BinaryTree.TreeNode(10);
+            n6.left = n4;
+            n6.right = n10;
+            n4.left = n1;
+            n4.right = n5;
+            n10.left = n9;
+            n1.right = n2;
+            n9.left = n8;
+            n2.right = n3;
+            n8.left = n7;
+
+            var root = n6;
+            assertTrue(bt.isValidBST(root));
+
+            var i = new BinaryTree.BSTIterator(root);
+            assertTrue(i.hasNext());
+            assertEquals(i.next(), 1);
+            assertTrue(i.hasNext());
+            assertEquals(i.next(), 2);
+            assertTrue(i.hasNext());
+            assertEquals(i.next(), 3);
+            assertTrue(i.hasNext());
+            assertEquals(i.next(), 4);
+            assertTrue(i.hasNext());
+            assertEquals(i.next(), 5);
+            assertTrue(i.hasNext());
+            assertEquals(i.next(), 6);
+            assertTrue(i.hasNext());
+            assertEquals(i.next(), 7);
+            assertTrue(i.hasNext());
+            assertEquals(i.next(), 8);
+            assertTrue(i.hasNext());
+            assertEquals(i.next(), 9);
+            assertTrue(i.hasNext());
+            assertEquals(i.next(), 10);
+            assertFalse(i.hasNext());
+        }
+    }
 }
