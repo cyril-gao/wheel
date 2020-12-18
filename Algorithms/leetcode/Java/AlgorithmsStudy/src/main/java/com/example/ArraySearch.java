@@ -342,22 +342,57 @@ public class ArraySearch {
         return findKthLargest(nums, 0, n, k);
     }
 
+    private int hIndexInSortedArray(int[] citations, int n) {
+        int retval = 0;
+        if (n > 0) {
+            if (citations[0] < n) {
+                int begin = 0, end = n;
+                int mid = n;
+                while (begin < end) {
+                    mid = (begin + end) / 2;
+                    int v = (n - mid);
+                    if (v > citations[mid]) {
+                        begin = mid + 1;
+                        mid = end;
+                    } else if (v < citations[mid]) {
+                        end = mid;
+                        mid = begin;
+                    } else {
+                        break;
+                    }
+                }
+                if (mid != n) {
+                    retval = n - mid;
+                }
+            } else {
+                retval = n;
+            }
+        }
+        return retval;
+    }
+
+    private int hIndexNormal(int[] citations, int n) {
+        int retval = 0;
+        if (citations[0] < n) {
+            for (int i = 0, j = n; i < n; ++i, --j) {
+                if (j <= citations[i]) {
+                    retval = j;
+                    break;
+                }
+            }
+        } else {
+            retval = n;
+        }
+        return retval;
+    }
+
     // https://leetcode.com/problems/h-index/
     public int hIndex(int[] citations) {
         int retval = 0;
         int n = citations != null ? citations.length : 0;
         if (n > 0) {
             Arrays.sort(citations);
-            if (citations[0] < n) {
-                for (int i = 0, j = n; i < n; ++i, --j) {
-                    if (j <= citations[i]) {
-                        retval = j;
-                        break;
-                    }
-                }
-            } else {
-                retval = n;
-            }
+            retval = hIndexInSortedArray(citations, n);
         }
         return retval;
     }
