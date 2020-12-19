@@ -123,50 +123,6 @@ public class AppTest {
     }
 
     @Test
-    public void testThreeSum() {
-        ThreeSum ts = new ThreeSum();
-        {
-            int[] nums = { -1, 0, 1, 2, -1, -4 };
-            var result = ts.threeSum(nums);
-            assertEquals(result.size(), 2);
-            // result.forEach(item -> System.out.println(item));
-        }
-        {
-            int[] nums = { -1, 0, 1, -10, 8, 4, -11, 6, 9, -21, -8, 8, 2, -1, -4 };
-            var result = ts.threeSum(nums);
-            // result.forEach(item -> System.out.println(item));
-            assertEquals(result.size(), 10);
-        }
-    }
-
-    @Test
-    public void testThreeSumClosest() {
-        var tsc = new ThreeSumClosest();
-        {
-            int[] nums = { -1, 2, 1, -4 };
-            assertEquals(tsc.threeSumClosest(nums, 1), 2);
-        }
-        {
-            int[] nums = { 0, 0, 0 };
-            assertEquals(tsc.threeSumClosest(nums, 1), 0);
-        }
-        {
-            int[] nums = { 0, 2, 1, -3 };
-            assertEquals(tsc.threeSumClosest(nums, 1), 0);
-        }
-        {
-            int[] nums = { 1, 2, 4, 8, 16, 32, 64, 128 };
-            assertEquals(tsc.threeSumClosest(nums, 82), 82);
-        }
-        {
-            int[] nums = { -1, 2, 1, -4, -11, -3, 8, -6, 7, 9, -28, 17, 48, 23, 3, 5, -9, 27 };
-            var result = tsc.threeSumClosest(nums, 21);
-            // System.out.println(result);
-            assertEquals(result, 21);
-        }
-    }
-
-    @Test
     public void testLetterCombinations() {
         var lc = new LetterCombinations();
         {
@@ -182,26 +138,6 @@ public class AppTest {
             var result = lc.letterCombinations("2379");
             var uniqueResult = new HashSet<String>(result);
             assertEquals(uniqueResult.size(), 9 * 16);
-        }
-    }
-
-    @Test
-    public void testFourSum() {
-        var fs = new FourSum();
-        {
-            int[] input = { 1, 0, -1, 0, -2, 2 };
-            var result = fs.fourSum(input, 0);
-            assertEquals(result.size(), 3);
-        }
-        {
-            int[] input = { -3, -2, -1, 0, 0, 1, 2, 3 };
-            var result = fs.fourSum(input, 0);
-            assertEquals(result.size(), 8);
-        }
-        {
-            int[] input = { -1, 0, -5, -2, -2, -4, 0, 1, -2 };
-            var result = fs.fourSum(input, -9);
-            assertEquals(result.size(), 4);
         }
     }
 

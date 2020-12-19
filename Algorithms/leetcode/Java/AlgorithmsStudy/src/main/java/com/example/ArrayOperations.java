@@ -574,4 +574,65 @@ public class ArrayOperations {
         }
         return retval;
     }
+
+    // https://leetcode.com/problems/missing-number/
+    public int missingNumber(int[] nums) {
+        int n = nums.length;
+        assert (n > 0);
+        boolean nExists = false;
+        for (int i = 0; i < n; ++i) {
+            int v = nums[i];
+            if (v != i) {
+                if (v != n) {
+                    while (true) {
+                        int j = nums[v];
+                        nums[v] = v;
+                        if (j == v) {
+                            break;
+                        }
+                        if (j == n) {
+                            nExists = true;
+                            break;
+                        }
+                        v = j;
+                    }
+                } else {
+                    nExists = true;
+                }
+            }
+        }
+        int retval = n;
+        if (nExists) {
+            for (int i = 0; i < n; ++i) {
+                if (nums[i] != i) {
+                    retval = i;
+                    break;
+                }
+            }
+        }
+        return retval;
+    }
+
+    // https://leetcode.com/problems/move-zeroes/
+    public void moveZeroes(int[] nums) {
+        int n = nums != null ? nums.length : 0;
+        if (n > 1) {
+            int next = 0;
+            for (int i = 0; i < n;) {
+                int j = i;
+                while (j < n && nums[j] != 0) {
+                    nums[next++] = nums[j++];
+                }
+                i = j; // point to 0 or the end
+                int k = j;
+                while (k < n && nums[k] == 0) {
+                    ++k;
+                }
+                i = k;
+            }
+            while (next < n) {
+                nums[next++] = 0;
+            }
+        }
+    }
 }

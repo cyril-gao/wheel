@@ -360,4 +360,60 @@ public class ArrayOperationsTest {
             assertTrue(equals(r1, r2));
         }
     }
+
+    @Test
+    public void testMissingNumber() {
+        var ao = new ArrayOperations();
+        {
+            int[] nums = { 0, 1 };
+            assertEquals(ao.missingNumber(nums), 2);
+        }
+        {
+            int[] nums = { 9, 6, 4, 2, 3, 5, 7, 0, 1 };
+            assertEquals(ao.missingNumber(nums), 8);
+        }
+        {
+            int[] nums = { 0 };
+            assertEquals(ao.missingNumber(nums), 1);
+        }
+        {
+            int[] nums = { 8, 6, 4, 2, 3, 5, 7, 0, 1 };
+            assertEquals(ao.missingNumber(nums), 9);
+        }
+    }
+
+    @Test
+    public void testMoveZeroes() {
+        var ao = new ArrayOperations();
+        {
+            int[] data = { 0, 0, 1, 0, 3, 12 };
+            int[] result = { 1, 3, 12, 0, 0, 0 };
+            ao.moveZeroes(data);
+            assertTrue(equals(data, result));
+        }
+        {
+            int[] data = { 1, 2, 0, 3, 4, 0, 5, 0, 0, 6, 0, 8, 12 };
+            int[] result = { 1, 2, 3, 4, 5, 6, 8, 12, 0, 0, 0, 0, 0 };
+            ao.moveZeroes(data);
+            assertTrue(equals(data, result));
+        }
+        {
+            int[] data = { 1, 2, 3, 4, 5, 6, 8, 12 };
+            int[] result = { 1, 2, 3, 4, 5, 6, 8, 12 };
+            ao.moveZeroes(data);
+            assertTrue(equals(data, result));
+        }
+        {
+            int[] data = { 0 };
+            int[] result = { 0 };
+            ao.moveZeroes(data);
+            assertTrue(equals(data, result));
+        }
+        {
+            int[] data = { 1 };
+            int[] result = { 1 };
+            ao.moveZeroes(data);
+            assertTrue(equals(data, result));
+        }
+    }
 }
