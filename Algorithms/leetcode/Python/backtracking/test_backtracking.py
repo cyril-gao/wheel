@@ -5,6 +5,7 @@ from ip_addresses import restore_ip4_addresses
 from partition import palindrome_partition
 from word_breaking import word_break, word_breaking_is_possible
 from sudoku import fill_empty_cells
+from combination import k_combination
 
 
 class BacktrackingTester(unittest.TestCase):
@@ -128,3 +129,18 @@ class BacktrackingTester(unittest.TestCase):
         ]
         fill_empty_cells(board)
         self.assertEqual(board, result)
+
+    def test_k_combination(self):
+        result = k_combination(3, 7)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0], [1, 2, 4])
+
+        expectation = [[1, 2, 6], [1, 3, 5], [2, 3, 4]]
+        result = k_combination(3, 9)
+        self.assertEqual(result, expectation)
+
+        result = k_combination(4, 1)
+        self.assertFalse(result)
+
+        result = k_combination(4, 9)
+        self.assertFalse(result)
