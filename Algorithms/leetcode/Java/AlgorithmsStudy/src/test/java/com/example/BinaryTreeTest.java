@@ -446,4 +446,38 @@ public class BinaryTreeTest {
             assertFalse(i.hasNext());
         }
     }
+
+    @Test
+    public void testBinaryTreePaths() {
+        BinaryTree bt = new BinaryTree();
+        {
+            var n1 = new BinaryTree.TreeNode(1);
+            var n2 = new BinaryTree.TreeNode(2);
+            var n3 = new BinaryTree.TreeNode(3);
+            var n4 = new BinaryTree.TreeNode(4);
+            var n5 = new BinaryTree.TreeNode(5);
+            var n6 = new BinaryTree.TreeNode(6);
+            var n7 = new BinaryTree.TreeNode(7);
+            var n8 = new BinaryTree.TreeNode(8);
+            var n9 = new BinaryTree.TreeNode(9);
+            var n10 = new BinaryTree.TreeNode(10);
+            var n11 = new BinaryTree.TreeNode(11);
+
+            n1.left = n2;
+            n1.right = n3;
+            n2.left = n4;
+            n2.right = n5;
+            n3.right = n6;
+            n5.left = n7;
+            n6.right = n8;
+            n7.right = n9;
+            n8.left = n10;
+            n8.right = n11;
+
+            var root = n1;
+            var paths = bt.binaryTreePaths(root);
+            // System.out.println(paths);
+            assertEquals(paths.size(), 4);
+        }
+    }
 }

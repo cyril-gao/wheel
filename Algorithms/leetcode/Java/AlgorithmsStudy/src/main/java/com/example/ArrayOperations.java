@@ -635,4 +635,24 @@ public class ArrayOperations {
             }
         }
     }
+
+    // https://leetcode.com/problems/excel-sheet-column-title/
+    public String convertToTitle(int n) {
+        char[] cache = { ' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+                'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+        final int base = 26;
+        assert (n > 0);
+        StringBuffer sb = new StringBuffer();
+        while (n != 0) {
+            int quotient = n / base;
+            int remainder = n % base;
+            if (remainder == 0) {
+                remainder = base;
+                --quotient;
+            }
+            sb.append(cache[remainder]);
+            n = quotient;
+        }
+        return sb.reverse().toString();
+    }
 }

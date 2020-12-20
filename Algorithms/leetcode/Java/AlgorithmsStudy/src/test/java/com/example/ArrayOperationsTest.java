@@ -416,4 +416,13 @@ public class ArrayOperationsTest {
             assertTrue(equals(data, result));
         }
     }
+
+    @Test
+    public void testConvertToTitle() {
+        var ao = new ArrayOperations();
+        assertEquals(ao.convertToTitle(26), "Z");
+        assertEquals(ao.convertToTitle(52), "AZ");
+        assertEquals(ao.convertToTitle(53), "BA");
+        assertEquals(ao.convertToTitle(702), "ZZ");
+    }
 }

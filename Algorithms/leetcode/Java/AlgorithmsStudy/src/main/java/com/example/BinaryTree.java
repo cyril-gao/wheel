@@ -705,4 +705,22 @@ public class BinaryTree {
         }
     }
 
+    // https://leetcode.com/problems/binary-tree-paths/
+    public List<String> binaryTreePaths(TreeNode root) {
+        List<String> retval = new LinkedList<>();
+        if (root != null) {
+            TreeNode[] children = { root.left, root.right };
+            for (TreeNode child : children) {
+                if (child != null) {
+                    for (String s : binaryTreePaths(child)) {
+                        retval.add(String.format("%d->%s", root.val, s));
+                    }
+                }
+            }
+            if (root.left == null && root.right == null) {
+                retval.add(Integer.valueOf(root.val).toString());
+            }
+        }
+        return retval;
+    }
 }
