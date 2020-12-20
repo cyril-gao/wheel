@@ -92,4 +92,29 @@ public class NumberTest {
         assertFalse(n.isPerfectSquare(Integer.MAX_VALUE));
         assertTrue(n.isPerfectSquare(2147395600));
     }
+
+    @Test
+    public void testValidUtf8() {
+        Number n = new Number();
+        {
+            int[] data = { 197, 130, 1 };
+            assertTrue(n.validUtf8(data));
+        }
+        {
+            int[] data = { 235, 140, 4 };
+            assertFalse(n.validUtf8(data));
+        }
+        {
+            int[] data = { 0xec, 0xb3, 0x9c, 197, 130, 1, 235, 140, 4 };
+            assertFalse(n.validUtf8(data));
+        }
+        {
+            int[] data = { 0xec, 0xb3, 0x9c, 197, 130, 1 };
+            assertTrue(n.validUtf8(data));
+        }
+        {
+            int[] data = { 0xf7, 0xb3, 0x9c, 0x82, 197, 130, 1 };
+            assertTrue(n.validUtf8(data));
+        }
+    }
 }

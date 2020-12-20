@@ -146,4 +146,62 @@ public class Number {
         }
         return retval;
     }
+
+    // https://leetcode.com/problems/utf-8-validation/
+    public boolean validUtf8(int[] data) {
+        int n = data != null ? data.length : 0;
+        boolean retval = true;
+        for (int i = 0; i < n;) {
+            int v = (data[i] & 0xf8);
+            if (v <= 0x78) {
+                ++i;
+            } else if (0xc0 <= v && v <= 0xd8) {
+                ++i;
+                if (i < n) {
+                    v = data[i] & 0xc0;
+                    if (v != 0x80) {
+                        retval = false;
+                        break;
+                    }
+                    ++i;
+                } else {
+                    retval = false;
+                    break;
+                }
+            } else if (0xe0 <= v && v <= 0xe8) {
+                i += 2;
+                if (i < n) {
+                    v = data[i] & 0xc0;
+                    int v2 = data[i - 1] & 0xc0;
+                    if (v != 0x80 || v2 != 0x80) {
+                        retval = false;
+                        break;
+                    }
+                    ++i;
+                } else {
+                    retval = false;
+                    break;
+                }
+            } else if (v == 0xf0) {
+                i += 3;
+                if (i < n) {
+                    v = data[i] & 0xc0;
+                    int v2 = data[i - 1] & 0xc0;
+                    int v3 = data[i - 2] & 0xc0;
+                    if (v != 0x80 || v2 != 0x80 || v3 != 0x80) {
+                        retval = false;
+                        break;
+                    }
+                    ++i;
+                } else {
+                    retval = false;
+                    break;
+                }
+            } else {
+                retval = false;
+                break;
+            }
+        }
+        return retval;
+    }
 }
