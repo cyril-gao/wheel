@@ -40,14 +40,11 @@ Output: "abccdcdcdxyz"
 
 namespace
 {
-    std::string repeat(const char * input, size_t begin, size_t end, size_t times)
+    void append_duplication_to(const char * input, size_t begin, size_t end, size_t times, std::string & output)
     {
-        std::string retval;
-        retval.reserve((end - begin) * times);
         for (size_t i = 0; i < times; ++i) {
-            retval.insert(retval.end(), input + begin, input + end);
+            output.insert(output.end(), input + begin, input + end);
         }
-        return retval;
     }
 
     std::string decode_string(const char * input, size_t begin, size_t end)
@@ -87,12 +84,10 @@ namespace
                     if (count == 0) {
                         auto times = strtoul(input + i, nullptr, 10);
                         if (!recursive) {
-                            auto r = repeat(input, j + 1, k, times);
-                            retval.insert(retval.end(), r.begin(), r.end());
+                            append_duplication_to(input, j + 1, k, times, retval);
                         } else {
                             auto r1 = decode_string(input, j + 1, k);
-                            auto r2 = repeat(r1.c_str(), 0, r1.size(), times);
-                            retval.insert(retval.end(), r2.begin(), r2.end());
+                            append_duplication_to(r1.c_str(), 0, r1.size(), times, retval);
                         }
                         j = k + 1;
                     } else {

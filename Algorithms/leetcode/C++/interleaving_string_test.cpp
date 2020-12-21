@@ -294,7 +294,7 @@ namespace v3
                             word, index_in_word,
                             another, next_index_in_another_word
                         )
-                        ) {
+                    ) {
                         return true;
                     }
                 }
@@ -331,6 +331,7 @@ namespace v3
             return false;
         }
     }
+
     bool is_interleaving(std::string const& s1, std::string const& s2, std::string const& s3)
     {
         size_t ns1 = s1.length();
@@ -339,7 +340,7 @@ namespace v3
         bool retval = false;
         if ((ns1 + ns2) == ns3) {
             if (ns1 != 0 && ns2 != 0) {
-                return details::interleaving_check(s1, s2, s3, ns3);
+                retval = details::interleaving_check(s1, s2, s3, ns3);
             }
             else {
                 if (ns1 == 0) {
