@@ -32,6 +32,15 @@ export interface Consumer {
     accept(vertex: number, state: VertexState): void;
 }
 
+export interface AdjacencyFilter {
+    filter(vertex: number, graph: Graph): Array<number>;
+}
+
+export interface DfsRecorder {
+    begin(vertex: number): void;
+    end(): void;
+}
+
 export class VertexStates
 {
     constructor(private readonly states: Array<VertexState>) {}
@@ -53,10 +62,6 @@ export class VertexStates
     }
 }
 
-export interface AdjacencyFilter {
-    filter(vertex: number, graph: Graph): Array<number>;
-}
-
 export class DfsVisitor
 {
     private tick: number;
@@ -64,11 +69,12 @@ export class DfsVisitor
     private outConsumer: Consumer;
     private traversalConsumer: Consumer;
     private adjacencyFilter: AdjacencyFilter;
+    private dfsRecorder: DfsRecorder;
 
     constructor(private readonly graph: Graph) {
         this.tick = 0;
 
-        let doNothing: Consumer = {
+        let doNothingConsumer: Consumer = {
             accept: function(vertex: number, state: VertexState) {}
         };
 
@@ -78,10 +84,16 @@ export class DfsVisitor
             }
         };
 
-        this.inConsumer = doNothing;
-        this.outConsumer = doNothing;
-        this.traversalConsumer = doNothing;
+        let doNothingRecorder: DfsRecorder = {
+            begin(vertex: number): void {},
+            end(): void {}
+        }
+
+        this.inConsumer = doNothingConsumer;
+        this.outConsumer = doNothingConsumer;
+        this.traversalConsumer = doNothingConsumer;
         this.adjacencyFilter = normalAdjacencyFilter;
+        this.dfsRecorder = doNothingRecorder;
     }
 
     public setInConsumer(inConsumer: Consumer): void {
@@ -98,6 +110,10 @@ export class DfsVisitor
 
     public setAdjacencyFilter(adjacencyFilter: AdjacencyFilter): void {
         this.adjacencyFilter = adjacencyFilter;
+    }
+
+    public setDfsRecorder(dfsRecorder: DfsRecorder): void {
+        this.dfsRecorder = dfsRecorder;
     }
 
     private dfs(vertex: number, states: Array<VertexState>): void {
@@ -128,7 +144,9 @@ export class DfsVisitor
         for (let v of vertices) {
             if (v >= 0 && v < this.graph.V) {
                 if (states[v].color === Color.WHITE) {
+                    this.dfsRecorder.begin(v);
                     this.dfs(v, states);
+                    this.dfsRecorder.end();
                 }
             }
         }

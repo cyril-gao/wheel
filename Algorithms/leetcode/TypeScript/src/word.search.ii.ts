@@ -15,7 +15,7 @@ Output: []
 */
 
 export function findWords(board: string[][], words: string[]): string[] {
-    function getId(n: number, i: number, j: number): number {
+    function getVertex(n: number, i: number, j: number): number {
         return i * n + j;
     }
     function getCoordinate(n: number, index: number): number[] {
@@ -33,7 +33,7 @@ export function findWords(board: string[][], words: string[]): string[] {
             let V = m * n;
             let graph = new Graph(V);
             for (let i = 0, j = 0; i < m && j < n;) {
-                let v = getId(n, i, j);
+                let v = getVertex(n, i, j);
                 if ((j-1) >= 0) {
                     graph.addEdge(v, v-1);
                 }
@@ -67,11 +67,11 @@ export function findWords(board: string[][], words: string[]): string[] {
                     }
                     if (i < m) {
                         let map = new Map<number, number>();
-                        let startVertex = getId(n, i, j);
+                        let startVertex = getVertex(n, i, j);
                         map.set(startVertex, 0);
                         let adjacencyFilter = {
                             filter: function(vertex: number, graph: Graph): Array<number> {
-                                let filterRetval = []
+                                let filterRetval = [];
                                 let indexInWord = map.get(vertex);
                                 let nextIndexInWord = indexInWord + 1;
                                 if (nextIndexInWord < word.length) {
