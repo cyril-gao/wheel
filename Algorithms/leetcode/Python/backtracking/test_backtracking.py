@@ -6,6 +6,7 @@ from partition import palindrome_partition
 from word_breaking import word_break, word_breaking_is_possible
 from sudoku import fill_empty_cells
 from combination import k_combination
+from additive_number import is_additive_number
 
 
 class BacktrackingTester(unittest.TestCase):
@@ -144,3 +145,14 @@ class BacktrackingTester(unittest.TestCase):
 
         result = k_combination(4, 9)
         self.assertFalse(result)
+
+    def test_is_additive_number(self):
+        self.assertTrue(is_additive_number("123"))
+        self.assertTrue(is_additive_number("112358"))
+        self.assertTrue(is_additive_number("199100199"))
+        self.assertTrue(is_additive_number("199101991"))
+        self.assertFalse(is_additive_number("1991019910"))
+        self.assertTrue(is_additive_number("000"))
+        self.assertTrue(is_additive_number("0000"))
+        self.assertTrue(is_additive_number("0111111222"))
+        self.assertFalse(is_additive_number("01111112220"))
