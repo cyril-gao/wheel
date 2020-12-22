@@ -25,6 +25,10 @@ class AllPairsShortestPathsTester(unittest.TestCase):
         L = slow_all_pairs_shortest_paths(np.array(self.W))
         self.assertTrue(np.array_equal(L, self.expectation))
 
+    def test_faster_all_pairs_shortest_paths_recursively(self):
+        L = faster_all_pairs_shortest_paths_recursively(np.array(self.W))
+        self.assertTrue(np.array_equal(L, self.expectation))
+
     def test_faster_all_pairs_shortest_paths(self):
         L = faster_all_pairs_shortest_paths(np.array(self.W))
         self.assertTrue(np.array_equal(L, self.expectation))
