@@ -23,3 +23,18 @@ def slow_all_pairs_shortest_paths(W):
     for _ in range(2, n):
         L = extend_shortest_paths(L, W)
     return L
+
+def faster_all_pairs_shortest_paths(W):
+    def faster_all_pairs_shortest_paths_recursively(L, n):
+        if n > 1:
+            L2 = faster_all_pairs_shortest_paths_recursively(L, n//2)
+            L3 = extend_shortest_paths(L2, L2)
+            if (n&2) == 1:
+                L3 = extend_shortest_paths(L3, L)
+            return L3
+        else:
+            return L
+    assert W.ndim == 2
+    n = W.shape[0]
+    assert n == W.shape[1]
+    return faster_all_pairs_shortest_paths_recursively(W, n-1)
