@@ -117,4 +117,22 @@ public class NumberTest {
             assertTrue(n.validUtf8(data));
         }
     }
+
+    @Test
+    public void testCountNumbersWithUniqueDigits() {
+        Number n = new Number();
+        assertEquals(n.countNumbersWithUniqueDigits(0), 1);
+        assertEquals(n.countNumbersWithUniqueDigits(1), 10);
+        assertEquals(n.countNumbersWithUniqueDigits(2), 91);
+        assertEquals(n.countNumbersWithUniqueDigits(3), 739);
+        assertEquals(n.countNumbersWithUniqueDigits(4), 5275);
+        assertEquals(n.countNumbersWithUniqueDigits(5), 32491);
+        assertEquals(n.countNumbersWithUniqueDigits(6), 168571);
+        assertEquals(n.countNumbersWithUniqueDigits(7), 712891);
+        assertEquals(n.countNumbersWithUniqueDigits(8), 2345851);
+        assertEquals(n.countNumbersWithUniqueDigits(9), 5611771);
+        assertEquals(n.countNumbersWithUniqueDigits(10), 8877691);
+        assertEquals(n.countNumbersWithUniqueDigits(11), 8877691);
+        assertEquals(n.countNumbersWithUniqueDigits(12), 8877691);
+    }
 }

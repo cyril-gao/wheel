@@ -204,4 +204,29 @@ public class Number {
         }
         return retval;
     }
+
+    // https://leetcode.com/problems/count-numbers-with-unique-digits/
+    public int countNumbersWithUniqueDigits(int n) {
+        assert (n >= 0);
+        int[] cache = new int[11];
+        cache[1] = 10;
+        int v = 9 * 9;
+        cache[2] = v;
+        for (int i = 3, j = 8; i <= 10; ++i, --j) {
+            v *= j;
+            cache[i] = v;
+        }
+        int retval = 0;
+        if (n > 0) {
+            if (n > 10) {
+                n = 10;
+            }
+            for (int i = 1; i <= n; ++i) {
+                retval += cache[i];
+            }
+        } else if (n == 0) {
+            retval = 1;
+        }
+        return retval;
+    }
 }
