@@ -207,7 +207,6 @@ public class Number {
 
     // https://leetcode.com/problems/count-numbers-with-unique-digits/
     public int countNumbersWithUniqueDigits(int n) {
-        assert (n >= 0);
         int[] cache = new int[11];
         cache[1] = 10;
         int v = 9 * 9;
