@@ -30,18 +30,5 @@ endif()
 
 enable_testing()
 
-if (NOT WIN32)
-	set(PTHREAD pthread)
-endif ()
-
-if (WIN32)
-    set(LD_SUFFIX .dll)
-else()
-    set(LD_SUFFIX .so)
-endif()
-
-add_executable(sort_test sort_test.cpp insertion_sort.h merge_sort.h heap_sort.h quick_sort.h)
+add_executable(sort_test sort_test.cpp insertion_sort.h merge_sort.h heap_sort.h quick_sort.h counting_sort.h)
 add_test(NAME sort_test COMMAND sort_test "test")
-if (NOT WIN32)
-    target_link_libraries(sort_test pthread)
-endif ()

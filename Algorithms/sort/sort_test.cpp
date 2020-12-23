@@ -11,6 +11,8 @@
 #include "merge_sort.h"
 #include "heap_sort.h"
 #include "quick_sort.h"
+#include "counting_sort.h"
+
 
 #define EXECUTE(data, function, showing_duration)                             \
     do                                                                        \
@@ -168,8 +170,62 @@ void performance_test(const size_t buf_size, const double factor)
     EXECUTE(data, std::sort, true);
 }
 
+template <typename T>
+void counting_sort_test_cast_for_bytes(size_t buf_size)
+{
+    std::random_device rd;
+    std::uniform_int_distribution<int16_t> dist(
+        std::numeric_limits<int16_t>::min(),
+        std::numeric_limits<int16_t>::max()
+    );
+    std::vector<T> data(buf_size);
+    for (auto& v : data) {
+        v = static_cast<T>(dist(rd));
+    }
+    print_separator();
+    printf("%zu %s:\n", buf_size, typeid(T).name());
+    EXECUTE(data, std::sort, true);
+    EXECUTE(data, integer_sort, true);
+}
+
+template <typename T>
+void counting_sort_test_cast(size_t buf_size)
+{
+    std::random_device rd;
+    std::uniform_int_distribution<T> dist(
+        std::numeric_limits<T>::min(),
+        std::numeric_limits<T>::max()
+    );
+    std::vector<T> data(buf_size);
+    for (auto& v : data) {
+        v = dist(rd);
+    }
+    print_separator();
+    printf("%zu %s:\n", buf_size, typeid(T).name());
+    EXECUTE(data, std::sort, true);
+    EXECUTE(data, integer_sort, true);
+}
+
+void counting_sort_test(size_t buf_size)
+{
+    counting_sort_test_cast_for_bytes<char>(buf_size);
+    counting_sort_test_cast_for_bytes<uint8_t>(buf_size);
+    counting_sort_test_cast_for_bytes<int8_t>(buf_size);
+    counting_sort_test_cast<int16_t>(buf_size);
+    counting_sort_test_cast<uint16_t>(buf_size);
+    counting_sort_test_cast<int32_t>(buf_size);
+    counting_sort_test_cast<uint32_t>(buf_size);
+    counting_sort_test_cast<int64_t>(buf_size);
+    counting_sort_test_cast<uint64_t>(buf_size);
+}
+
 int main()
 {
+#if ( defined( _DEBUG ) || defined( DEBUG ) || defined( DBG ) )
+    const size_t BUF_SIZE = 107;
+#else
+    const size_t BUF_SIZE = 1023437;
+#endif
     try
     {
         verification_test<int16_t>();
@@ -182,10 +238,13 @@ int main()
         heap_sort_vs_merge_sort<int64_t>();
         printf("\n");
 
+        counting_sort_test(BUF_SIZE);
+        printf("\n");
+
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_real_distribution<> dis(0.0, 1.0);
-        const size_t BUF_SIZE = 1023437;
+        
         for (double i = 0; i <= 16; i += 1.0)
         {
             performance_test<int64_t>(BUF_SIZE, i + dis(gen));
