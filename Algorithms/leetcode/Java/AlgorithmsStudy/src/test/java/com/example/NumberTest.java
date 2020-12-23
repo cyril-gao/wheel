@@ -135,4 +135,37 @@ public class NumberTest {
         assertEquals(n.countNumbersWithUniqueDigits(11), 8877691);
         assertEquals(n.countNumbersWithUniqueDigits(12), 8877691);
     }
+
+    @Test
+    public void testSuperPow() {
+        Number n = new Number();
+        {
+            int[] b = { 3 };
+            assertEquals(n.superPow(2, b), 8);
+        }
+        {
+            int[] b = { 0 };
+            assertEquals(n.superPow(2, b), 1);
+        }
+        {
+            int[] b = { 1, 0 };
+            assertEquals(n.superPow(2, b), 1024);
+        }
+        {
+            int[] b = { 4, 3, 3, 8, 5, 2 };
+            assertEquals(n.superPow(1, b), 1);
+        }
+        {
+            int[] b = { 2, 0, 0 };
+            assertEquals(n.superPow(2147483647, b), 1198);
+        }
+        {
+            int[] b = { 3, 4, 5, 7, 4, 3, 5 };
+            assertEquals(n.superPow(390457, b), 802);
+        }
+        {
+            int[] b = { 3, 4, 5, 7, 4, 3, 5 };
+            assertEquals(n.superPow(2147483647, b), 1121);
+        }
+    }
 }

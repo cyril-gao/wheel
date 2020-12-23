@@ -228,4 +228,42 @@ public class Number {
         }
         return retval;
     }
+
+    private int div2(int[] b, int length) {
+        int n = 0, next = 0;
+        for (int i = 0; i < length; ++i) {
+            int dividend = (n * 10 + b[i]);
+            int quotient = dividend / 2;
+            n = dividend % 2;
+            if (quotient != 0 || next != 0) {
+                b[next++] = quotient;
+            }
+        }
+        return next;
+    }
+
+    // https://leetcode.com/problems/super-pow/
+    public int superPow(int a, int[] b) {
+        int retval = 1;
+        int nb = b != null ? b.length : 0;
+        if (nb > 1 || (nb == 1 && b[0] > 0)) {
+            final int divisor = 1337;
+            long dividend = a;
+            long remainder = dividend % divisor;
+            long result = 1;
+            if ((b[nb - 1] & 1) == 1) {
+                result = remainder;
+            }
+            nb = div2(b, nb);
+            while (nb > 1 || (nb == 1 && b[0] != 0)) {
+                remainder = (remainder * remainder) % divisor;
+                if ((b[nb - 1] & 1) == 1) {
+                    result = (result * remainder) % divisor;
+                }
+                nb = div2(b, nb);
+            }
+            retval = (int) result;
+        }
+        return retval;
+    }
 }
