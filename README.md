@@ -5,6 +5,7 @@
 *   merge sort
 *   heap sort
 *   <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/sort/quick_sort.h">quick sort (10 different versions)</a>
+*   counting sort
 
 #### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BinaryTreeTraversal">Binary Tree Traversal:</a>
 
