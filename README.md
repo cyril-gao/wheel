@@ -1,4 +1,4 @@
-## Implement many different algorithms for study
+## Re-implement many different algorithms
 
 #### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/sort">sort:</a>
 
