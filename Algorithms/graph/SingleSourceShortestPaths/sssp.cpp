@@ -175,10 +175,10 @@ sssp::ShortestPaths sssp::dijkstra(sssp::Graph const& graph, int source)
             [&ue, &visited, &kary_heap](auto vw) {
                 auto [v, w] = vw;
                 if (!visited[v]) {
-                    auto old_ve = kary_heap[sssp::Edge{v}];
+                    decltype(auto) old_ve = kary_heap[sssp::Edge{v}];
                     auto ve(old_ve);
                     if (relax(w, ue, ve)) {
-                        kary_heap.replace(old_ve, ve);
+                        kary_heap.decrease(old_ve, ve);
                     }
                 }
             }

@@ -4,7 +4,26 @@
 
 #include "binary_heap.h"
 #include "kary_heap.h"
+#include "fibonacci_heap.h"
 #include "check.h"
+
+void fibonacci_heap_test()
+{
+    heap::FibonacciHeap<int> fh;
+    fh.insert(1);
+    fh.insert(2);
+    fh.insert(3);
+    auto m = fh.minimum();
+    examine(m == 1, "FibonacciHeap is failed at the line: %d\n", __LINE__);
+    fh.pop_min();
+    m = fh.minimum();
+    examine(m == 2, "FibonacciHeap is failed at the line: %d\n", __LINE__);
+    fh.pop_min();
+    m = fh.minimum();
+    examine(m == 3, "FibonacciHeap is failed at the line: %d\n", __LINE__);
+    fh.pop_min();
+    examine(fh.empty(), "FibonacciHeap is failed at the line: %d\n", __LINE__);
+}
 
 template <typename H>
 void heap_test_case1(H& h)
@@ -75,6 +94,9 @@ void heap_test_case3()
 
 int main()
 {
+    {
+        fibonacci_heap_test();
+    }
     {
         heap::BinaryHeap<int> bh;
         heap_test_case1(bh);

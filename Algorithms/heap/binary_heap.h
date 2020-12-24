@@ -107,18 +107,18 @@ namespace heap
             class Indexer
         >
         void rise(
-            I begin, I /*end*/, I outer,
+            I begin, size_t d,
             C comp,
             Indexer<typename std::iterator_traits<I>::value_type, C, KeyTrait> & indexer
         ) {
-            while (true) {
-                auto d = outer - begin;
-                I parent;
+            for (I parent = begin, outer = begin;;) {
+                outer = begin + d;
                 if (d > 0 && comp(*(parent = begin + ((d - 1) >> 1)), *outer)) {
-                    indexer.set(*parent, outer - begin);
-                    indexer.set(*outer, parent - begin);
+                    size_t newd = parent - begin;
+                    indexer.set(*parent, d);
+                    indexer.set(*outer, newd);
                     std::iter_swap(outer, parent);
-                    outer = parent;
+                    d = newd;
                 } else {
                     break;
                 }
@@ -206,7 +206,7 @@ namespace heap
                 m_heap.push_back(t);
                 m_indexer.set(t, n);
                 details::rise<typename std::vector<T>::iterator, C, KeyTrait, details::Indexer>(
-                    m_heap.begin(), m_heap.end(), m_heap.begin() + n, C(), m_indexer
+                    m_heap.begin(), n, C(), m_indexer
                 );
             } else {
                 size_t i = m_indexer.get(t);
@@ -266,13 +266,19 @@ namespace heap
             m_indexer.set(_new, index);
             if (should_rise) {
                 details::rise<typename std::vector<T>::iterator, C, KeyTrait, details::Indexer>(
-                    m_heap.begin(), m_heap.end(), m_heap.begin() + index, C(), m_indexer
+                    m_heap.begin(), index, C(), m_indexer
                 );
             } else {
                 details::sink<typename std::vector<T>::iterator, C, KeyTrait, details::Indexer>(
                     m_heap.begin(), m_heap.end(), m_heap.begin() + index, C(), m_indexer
                 );
             }
+        }
+
+        void decrease(const T& _old, const T& _new)
+        {
+            assert(C()(_old, _new));
+            replace(_old, _new);
         }
 
         void erase(const T& t) // throw(std::out_of_range)

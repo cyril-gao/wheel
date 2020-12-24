@@ -158,7 +158,7 @@ mst::MST mst::prim(const Graph& graph)
                     if (old.weight > v.weight) {
                         ve.parent = uv;
                         ve.weight = v.weight;
-                        kary_heap.replace(old, ve);
+                        kary_heap.decrease(old, ve);
                     }
                 }
             }
