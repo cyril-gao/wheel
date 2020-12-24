@@ -12,6 +12,7 @@
 #include <type_traits>
 #include <vector>
 #include <unordered_map>
+#include <stdexcept>
 
 #include "binary_heap.h"
 
@@ -19,10 +20,7 @@ namespace heap
 {
     namespace details
     {
-        template <
-            typename T,
-            typename C = std::greater_equal<T>
-        >
+        template <typename T, typename C>
         struct Node
         {
             T data;
@@ -57,10 +55,7 @@ namespace heap
             }
         };
 
-        template <
-            typename T,
-            typename C = std::greater_equal<T>
-        >
+        template <typename T, typename C>
         void free(Node<T, C>* node)
         {
             if (node != nullptr) {
@@ -81,13 +76,17 @@ namespace heap
 
     template <
         typename T,
-        typename C = std::greater_equal<T>,
+        typename C = std::greater<T>,
         template <typename>
         class KeyTrait = details::KeyTrait
     >
     class FibonacciHeap
     {
+        using key_type = typename KeyTrait<T>::key_type;
         using Node = details::Node<T, C>;
+
+        KeyTrait<T> m_key_trait;
+        std::unordered_map<key_type, Node*> m_map;
         Node * m_min;
         size_t m_size;
 
@@ -99,6 +98,7 @@ namespace heap
             auto right = node->right;
             left->right = right;
             right->left = left;
+            node->parent = nullptr;
         }
 
         static void fib_heap_link(Node* y, Node* x)
@@ -113,6 +113,51 @@ namespace heap
             }
             ++x->degree;
             y->mark = false;
+        }
+
+        void insert(Node* node)
+        {
+            assert(node != nullptr);
+            if (m_min != nullptr) {
+                m_min->add_sibling(node);
+                if (C()(m_min->data, node->data)) {
+                    m_min = node;
+                }
+            } else {
+                node->left = node;
+                node->right = node;
+                m_min = node;
+            }
+        }
+
+        void cut(Node* x, Node* y)
+        {
+            assert(x != nullptr && y != nullptr);
+            auto child = y->child;
+            if (child->left != child) {
+                detach(x);
+            } else {
+                assert(child == x);
+                y->child = nullptr;
+            }
+            --y->degree;
+            insert(x);
+            x->parent = nullptr;
+            x->mark = false;
+        }
+
+        void cascading_cut(Node* y)
+        {
+            assert(y != nullptr);
+            auto z = y->parent;
+            if (z != nullptr) {
+                if (y->mark == false) {
+                    y->mark = true;
+                } else {
+                    cut(y, z);
+                    cascading_cut(z);
+                }
+            }
         }
 
         void consolidate()
@@ -131,7 +176,11 @@ namespace heap
                     while (A[d] != nullptr) {
                         auto* y = A[d];
                         if (C()(x->data, y->data)) {
+                            m_map.erase(m_key_trait.key(x->data));
+                            m_map.erase(m_key_trait.key(y->data));
                             std::swap(x, y);
+                            m_map[m_key_trait.key(x->data)] = x;
+                            m_map[m_key_trait.key(y->data)] = y;
                         };
                         fib_heap_link(y, x);
                         A[d] = nullptr;
@@ -143,39 +192,108 @@ namespace heap
 
                 for (auto x : A) {
                     if (x != nullptr) {
-                        if (m_min != nullptr) {
-                            m_min->add_sibling(x);
-                            if (C()(m_min->data, x->data)) {
-                                m_min = x;
-                            }
-                        } else {
-                            m_min = x;
-                            assert(m_min->left == m_min && m_min->right == m_min);
-                        }
+                        insert(x);
                     }
                 }
             }
         }
 
+        void erase(Node* to_be_deleted)
+        {
+            // to_be_deleted must be in the root list
+            auto child = to_be_deleted->child;
+            if (child != nullptr) {
+                for (auto i = child;;) {
+                    i->parent = nullptr;
+                    i = i->right;
+                    if (i == child) {
+                        break;
+                    }
+                }
+            }
+            if (m_min == to_be_deleted) {
+                m_min = to_be_deleted->right;
+            }
+            if (m_min != to_be_deleted) {
+                detach(to_be_deleted);
+                if (child != nullptr) {
+                    auto last1 = m_min->left;
+                    auto last2 = child->left;
+                    last1->right = child;
+                    child->left = last1;
+                    last2->right = m_min;
+                    m_min->left = last2;
+                }
+            }
+            else {
+                m_min = child;
+            }
+            --m_size;
+            consolidate();
+            m_map.erase(m_key_trait.key(to_be_deleted->data));
+            delete to_be_deleted;
+        }
+
+        void append(FibonacciHeap<T, C, KeyTrait> const& other)
+        {
+            for (auto i = other.m_map.begin(), ie = other.m_map.end(); i != ie; ++i) {
+                insert(i->second->data);
+            }
+        }
     public:
         FibonacciHeap(size_t=0) : m_min(nullptr), m_size(0) {}
-        ~FibonacciHeap()
+
+        void clear()
         {
+            m_map.clear();
             if (m_min != nullptr) {
                 auto last = m_min->left;
                 last->right = nullptr;
                 for (auto i = m_min; i != nullptr;) {
                     auto next = i->right;
-                    details::free(i);
+                    details::free<T, C>(i);
                     i = next;
                 }
+                m_min = nullptr;
             }
         }
+        ~FibonacciHeap()
+        {
+            clear();
+        }
 
-        FibonacciHeap(FibonacciHeap<T, C, KeyTrait> const&);
-        FibonacciHeap(FibonacciHeap<T, C, KeyTrait>&&);
-        FibonacciHeap<T, C, KeyTrait>& operator=(FibonacciHeap<T, C, KeyTrait> const&);
-        FibonacciHeap<T, C, KeyTrait>& operator=(FibonacciHeap<T, C, KeyTrait>&&);
+        FibonacciHeap(FibonacciHeap<T, C, KeyTrait> const& other) : FibonacciHeap()
+        {
+            append(other);
+        }
+        FibonacciHeap(FibonacciHeap<T, C, KeyTrait>&& other) :
+            m_key_trait(std::move(other.m_key_trait)),
+            m_map(std::move(other.m_map)),
+            m_min(other.m_min),
+            m_size(other.m_size)
+        {
+            other.m_min = nullptr;
+            other.m_size = 0;
+        }
+        FibonacciHeap<T, C, KeyTrait>& operator=(FibonacciHeap<T, C, KeyTrait> const& other)
+        {
+            if (this != &other) {
+                clear();
+                append(other);
+            }
+        }
+        FibonacciHeap<T, C, KeyTrait>& operator=(FibonacciHeap<T, C, KeyTrait>&& other)
+        {
+            {
+                m_key_trait = std::move(other.m_key_trait);
+                m_map = std::move(other.m_map);
+                m_min = other.m_min;
+                m_size = other.m_size;
+                other.m_min = nullptr;
+                other.m_size = 0;
+            }
+            return *this;
+        }
 
         template <typename I>
         static FibonacciHeap<T, C, KeyTrait> make_heap(I begin, I end)
@@ -187,18 +305,18 @@ namespace heap
 
         void insert(const T& t)
         {
-            auto node = new details::Node(t);
-            if (m_min != nullptr) {
-                m_min->add_sibling(node);
-                if (C()(m_min->data, t)) {
-                    m_min = node;
-                }
-            } else {
-                node->left = node;
-                node->right = node;
-                m_min = node;
+            auto i = m_map.find(m_key_trait.key(t));
+            if (i == m_map.end()) {
+                auto node = new Node(t);
+                m_map[m_key_trait.key(t)] = node;
+                insert(node);
+                ++m_size;
             }
-            ++m_size;
+            /* ignore
+            else {
+                throw std::invalid_argument("It has been inserted into the object.");
+            }
+            */
         }
 
         const T& minimum() const
@@ -206,48 +324,64 @@ namespace heap
             assert(m_min != nullptr);
             return m_min->data;
         }
+
         void pop_min()
         {
             if (m_min != nullptr) {
-                auto to_be_deleted = m_min;
-                auto child = to_be_deleted->child;
-                if (child != nullptr) {
-                    for (auto i = child;;) {
-                        i->parent = nullptr;
-                        i = i->right;
-                        if (i == child) {
-                            break;
-                        }
-                    }
-                }
-                m_min = to_be_deleted->right;
-                if (m_min != to_be_deleted) {
-                    detach(to_be_deleted);
-                    if (child != nullptr) {
-                        auto last1 = m_min->left;
-                        auto last2 = child->left;
-                        last1->right = child;
-                        child->left = last1;
-                        last2->right = m_min;
-                        m_min->left = last2;
-                    }
-                }
-                else {
-                    m_min = child;
-                }
-                --m_size;
-                consolidate();
-                delete to_be_deleted;
+                erase(m_min);
             }
         }
 
-        FibonacciHeap<T, C, KeyTrait> & operator+=(FibonacciHeap<T, C, KeyTrait> const& other);
+        FibonacciHeap<T, C, KeyTrait>& operator+=(FibonacciHeap<T, C, KeyTrait> const& other)
+        {
+            append(other);
+            return *this;
+        }
 
-        void replace(const T& _old, const T& _new);
+        void decrease(const T& _old, const T& _new)
+        {
+            if (C()(_old, _new)) {
+                auto x = m_map.at(m_key_trait.key(_old));
+                m_map.erase(m_key_trait.key(_old));
+                x->data = _new;
+                m_map[m_key_trait.key(_new)] = x;
+                auto y = x->parent;
+                if (y != nullptr && C()(y->data, x->data)) {
+                    cut(x, y);
+                    cascading_cut(y);
+                }
+                if (C()(m_min->data, x->data)) {
+                    m_min = x;
+                }
+            } else {
+                throw std::invalid_argument("new value must be less than the original one");
+            }
+        }
 
-        void erase(const T& t);
+        void erase(const T& t)
+        {
+            auto i = m_map.find(m_key_trait.key(t));
+            if (i != m_map.end()) {
+                auto node = i->second;
+                if (node != m_min) {
+                    auto parent = node->parent;
+                    if (parent != nullptr) {
+                        cut(node, parent);
+                    }
+                    // now the node must be in the root list
+                    erase(node);
+                }
+                else {
+                    pop_min();
+                }
+            }
+        }
 
-        const T& operator[](const T& t) const;
+        const T& operator[](const T& t) const
+        {
+            auto x = m_map.at(m_key_trait.key(t));
+            return x->data;
+        }
 
         size_t size() const
         {
@@ -257,7 +391,14 @@ namespace heap
         {
             return m_size == 0;
         }
-        void swap(FibonacciHeap<T, C, KeyTrait>& other);
+        void swap(FibonacciHeap<T, C, KeyTrait>& other)
+        {
+            using std::swap;
+            m_key_trait.swap(other.m_key_trait);
+            m_map.swap(other.m_map);
+            swap(m_min, other.m_min);
+            swap(m_size, other.m_size);
+        }
     };
 }
 

@@ -9,20 +9,42 @@
 
 void fibonacci_heap_test()
 {
-    heap::FibonacciHeap<int> fh;
-    fh.insert(1);
-    fh.insert(2);
-    fh.insert(3);
-    auto m = fh.minimum();
-    examine(m == 1, "FibonacciHeap is failed at the line: %d\n", __LINE__);
-    fh.pop_min();
-    m = fh.minimum();
-    examine(m == 2, "FibonacciHeap is failed at the line: %d\n", __LINE__);
-    fh.pop_min();
-    m = fh.minimum();
-    examine(m == 3, "FibonacciHeap is failed at the line: %d\n", __LINE__);
-    fh.pop_min();
-    examine(fh.empty(), "FibonacciHeap is failed at the line: %d\n", __LINE__);
+    heap::FibonacciHeap<int> h;
+    h.insert(0);
+    h.insert(4);
+    h.insert(-1);
+    h.insert(-2);
+    h.insert(-10);
+    h.pop_min();
+    h.pop_min();
+    examine(h.minimum() == -1, "failed at the line: %d\n", __LINE__);
+    h.pop_min();
+    h.decrease(4, -20);
+    h.insert(-11);
+    h.insert(-100);
+    h.insert(-101);
+    h.insert(-102);
+    h.insert(-103);
+    h.insert(-104);
+    h.decrease(-104, -120);
+    examine(h.minimum() == -120, "failed at the line: %d\n", __LINE__);
+    h.pop_min();
+    examine(h.minimum() == -103, "failed at the line: %d\n", __LINE__);
+    h.pop_min();
+    h.decrease(-102, -108);
+    examine(h.minimum() == -108, "failed at the line: %d\n", __LINE__);
+    h.pop_min();
+    examine(h.minimum() == -101, "failed at the line: %d\n", __LINE__);
+    h.pop_min();
+    examine(h.minimum() == -100, "failed at the line: %d\n", __LINE__);
+    h.pop_min();
+    examine(h.minimum() == -20, "failed at the line: %d\n", __LINE__);
+    h.pop_min();
+    examine(h.minimum() == -11, "failed at the line: %d\n", __LINE__);
+    h.pop_min();
+    examine(h.minimum() == 0, "failed at the line: %d\n", __LINE__);
+    h.pop_min();
+    examine(h.empty(), "failed at the line: %d\n", __LINE__);
 }
 
 template <typename H>
@@ -37,29 +59,29 @@ void heap_test_case1(H& h)
     h.erase(-10);
     examine(h.minimum() == -1, "failed at the line: %d\n", __LINE__);
     h.pop_min();
-    h.replace(4, -20);
+    h.decrease(4, -20);
     h.insert(-11);
     h.insert(-100);
     h.insert(-101);
     h.insert(-102);
     h.insert(-103);
     h.insert(-104);
-    h.replace(-104, -12);
+    h.decrease(-104, -120);
+    examine(h.minimum() == -120, "failed at the line: %d\n", __LINE__);
+    h.pop_min();
     examine(h.minimum() == -103, "failed at the line: %d\n", __LINE__);
     h.pop_min();
-    examine(h.minimum() == -102, "failed at the line: %d\n", __LINE__);
+    h.decrease(-102, -108);
+    h.erase(-108);
+    examine(h.minimum() == -101, "failed at the line: %d\n", __LINE__);
     h.pop_min();
-    h.replace(-101, 100);
-    h.erase(-100);
+    examine(h.minimum() == -100, "failed at the line: %d\n", __LINE__);
+    h.pop_min();
     examine(h.minimum() == -20, "failed at the line: %d\n", __LINE__);
-    h.pop_min();
-    examine(h.minimum() == -12, "failed at the line: %d\n", __LINE__);
     h.pop_min();
     examine(h.minimum() == -11, "failed at the line: %d\n", __LINE__);
     h.pop_min();
     examine(h.minimum() == 0, "failed at the line: %d\n", __LINE__);
-    h.pop_min();
-    examine(h.minimum() == 100, "failed at the line: %d\n", __LINE__);
     h.pop_min();
     examine(h.empty(), "failed at the line: %d\n", __LINE__);
 }
@@ -96,6 +118,12 @@ int main()
 {
     {
         fibonacci_heap_test();
+    }
+    {
+        heap::FibonacciHeap<int> fh;
+        heap_test_case1(fh);
+        heap_test_case2<heap::FibonacciHeap<int>>();
+        heap_test_case3<heap::FibonacciHeap<int>>();
     }
     {
         heap::BinaryHeap<int> bh;
