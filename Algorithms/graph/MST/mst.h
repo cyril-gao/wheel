@@ -6,6 +6,13 @@
 #include <iosfwd>
 #include "graph.h"
 
+#if ( defined( _DEBUG ) || defined( DEBUG ) || defined( DBG ) )
+#define MST_MAX_WEIGHT 100000.0
+#else
+#define MST_MAX_WEIGHT FLT_MAX
+#endif
+
+
 namespace mst
 {
     struct Edge
@@ -19,8 +26,8 @@ namespace mst
             parent(p), vertex(v), weight(w), path_weight(pw)
         {
         }
-        Edge(int vertex = -1, float weight = FLT_MAX) :
-            Edge(-1, vertex, weight, FLT_MAX)
+        Edge(int vertex = -1, float weight = MST_MAX_WEIGHT) :
+            Edge(-1, vertex, weight, MST_MAX_WEIGHT)
         {
         }
     };
