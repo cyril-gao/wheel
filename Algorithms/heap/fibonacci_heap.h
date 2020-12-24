@@ -20,6 +20,24 @@ namespace heap
 {
     namespace details
     {
+        // bidirectional cyclic list
+        template <typename BCL>
+        size_t length(BCL node)
+        {
+            size_t l = 0;
+            if (node != nullptr) {
+                for (BCL i = node;;) {
+                    ++l;
+                    assert(l < INT_MAX);
+                    i = i->right;
+                    if (i == node) {
+                        break;
+                    }
+                }
+            }
+            return l;
+        }
+
         template <typename T, typename C>
         struct Node
         {
@@ -52,6 +70,61 @@ namespace heap
                 other->right = this;
                 left = other;
                 other->parent = parent;
+            }
+
+            bool is_valid() const
+            {
+                bool retval = (degree == length(child) && length(left) > 0);
+                if (retval) {
+                    if (child != nullptr) {
+                        for (auto i = child;;) {
+                            if (!i->is_valid() || i->parent != this) {
+                                retval = false;
+                                break;
+                            }
+                            i = i->right;
+                            if (i == child) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                return retval;
+            }
+
+            size_t count() const
+            {
+                size_t retval = 1;
+                if (child != nullptr) {
+                    for (auto i = child;;) {
+                        auto r = i->count();
+                        retval += r;
+                        i = i->right;
+                        if (i == child) {
+                            break;
+                        }
+                    }
+                }
+                return retval;
+            }
+
+            bool is_child_of(Node<T, C> const* other)
+            {
+                if (other != nullptr) {
+                    auto child = other->child;
+                    if (child != nullptr) {
+                        for (auto i = child;;) {
+                            if (i == this && parent == other) {
+                                return true;
+                            }
+                            i = i->right;
+                            if (i == child) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                return false;
             }
         };
 
@@ -90,6 +163,35 @@ namespace heap
         Node * m_min;
         size_t m_size;
 
+        bool is_valid() const
+        {
+            if (m_min != nullptr) {
+                if (
+                    m_size == m_map.size() &&
+                    m_size > 0
+                ) {
+                    size_t sum = 0;
+                    for (auto i = m_min;;) {
+                        if (!i->is_valid() || i->parent != nullptr) {
+                            return false;
+                        }
+                        sum += i->count();
+                        i = i->right;
+                        if (i == m_min) {
+                            break;
+                        }
+                    }
+                    return (sum == m_size);
+                }
+            }
+            else {
+                if (m_size == 0 && m_map.empty()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         static void detach(Node* node)
         {
             assert(node != nullptr);
@@ -99,6 +201,11 @@ namespace heap
             left->right = right;
             right->left = left;
             node->parent = nullptr;
+        #if ( defined( _DEBUG ) || defined( DEBUG ) || defined( DBG ) )
+            {
+                node->left = node->right = nullptr;
+            }
+        #endif
         }
 
         static void fib_heap_link(Node* y, Node* x)
@@ -133,8 +240,11 @@ namespace heap
         void cut(Node* x, Node* y)
         {
             assert(x != nullptr && y != nullptr);
+            assert(is_valid());
+            assert(x->is_child_of(y));
             auto child = y->child;
             if (child->left != child) {
+                y->child = x->right;
                 detach(x);
             } else {
                 assert(child == x);
@@ -144,6 +254,7 @@ namespace heap
             insert(x);
             x->parent = nullptr;
             x->mark = false;
+            assert(is_valid());
         }
 
         void cascading_cut(Node* y)
@@ -195,6 +306,7 @@ namespace heap
                         insert(x);
                     }
                 }
+                assert(is_valid());
             }
         }
 
@@ -228,10 +340,11 @@ namespace heap
             else {
                 m_min = child;
             }
+            m_map.erase(m_key_trait.key(to_be_deleted->data));
             --m_size;
             consolidate();
-            m_map.erase(m_key_trait.key(to_be_deleted->data));
             delete to_be_deleted;
+            assert(is_valid());
         }
 
         void append(FibonacciHeap<T, C, KeyTrait> const& other)
@@ -309,14 +422,15 @@ namespace heap
             if (i == m_map.end()) {
                 auto node = new Node(t);
                 m_map[m_key_trait.key(t)] = node;
-                insert(node);
                 ++m_size;
+                insert(node);
             }
             /* ignore
             else {
                 throw std::invalid_argument("It has been inserted into the object.");
             }
             */
+            assert(is_valid());
         }
 
         const T& minimum() const
@@ -353,6 +467,7 @@ namespace heap
                 if (C()(m_min->data, x->data)) {
                     m_min = x;
                 }
+                assert(is_valid());
             } else {
                 throw std::invalid_argument("new value must be less than the original one");
             }
@@ -374,6 +489,7 @@ namespace heap
                 else {
                     pop_min();
                 }
+                assert(is_valid());
             }
         }
 
