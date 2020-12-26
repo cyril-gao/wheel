@@ -655,4 +655,68 @@ public class ArrayOperations {
         }
         return sb.reverse().toString();
     }
+
+    // https://leetcode.com/problems/candy/
+    public int candy(int[] ratings) {
+        int n = ratings != null ? ratings.length : 0;
+        int retval = 0;
+        if (n > 0) {
+            for (int i = 0; i < n;) {
+                int j = i + 1;
+                if (j < n) {
+                    int k = j + 1;
+                    if (ratings[i] > ratings[j]) {
+                        while (k < n && ratings[k - 1] > ratings[k]) {
+                            ++k;
+                        }
+                        j = (k - i);
+                        j = (j * (j + 1)) / 2 - 1;
+                        retval += j;
+                        j = k - 1;
+                    } else if (ratings[i] == ratings[j]) {
+                        while (k < n && ratings[k - 1] == ratings[k]) {
+                            ++k;
+                        }
+                        retval += (k - j);
+                        j = k - 1;
+                    } else {
+                        while (k < n && ratings[k - 1] < ratings[k]) {
+                            ++k;
+                        }
+                        if (k < n && ratings[k - 1] > ratings[k]) {
+                            int top = k - 1;
+                            int first = (k - i);
+                            ++k;
+                            while (k < n && ratings[k - 1] > ratings[k]) {
+                                ++k;
+                            }
+                            int second = k - top;
+                            if (first < second) {
+                                int v1 = (first - 1) * first / 2;
+                                int v2 = (second * (second + 1)) / 2;
+                                retval += (v1 + v2);
+                            } else {
+                                int v1 = (first * (first + 1)) / 2;
+                                int v2 = (second - 1) * second / 2;
+                                retval += (v1 + v2);
+                            }
+                            j = k;
+                            if (k < n && ratings[k - 1] < ratings[k]) {
+                                --retval;
+                                --j;
+                            }
+                        } else {
+                            j = (k - i);
+                            retval += (j * (j + 1)) / 2;
+                            j = k;
+                        }
+                    }
+                } else {
+                    ++retval;
+                }
+                i = j;
+            }
+        }
+        return retval;
+    }
 }

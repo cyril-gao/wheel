@@ -425,4 +425,41 @@ public class ArrayOperationsTest {
         assertEquals(ao.convertToTitle(53), "BA");
         assertEquals(ao.convertToTitle(702), "ZZ");
     }
+
+    @Test
+    public void testCandy() {
+        var ao = new ArrayOperations();
+        {
+            int[] ratings = { 1, 0, 2 };
+            assertEquals(ao.candy(ratings), 5);
+        }
+        {
+            int[] ratings = { 1, 2, 2 };
+            assertEquals(ao.candy(ratings), 4);
+        }
+        {
+            int[] ratings = { 6, 5, 4, 4, 4, 3, 2, 1 };
+            assertEquals(ao.candy(ratings), 17);
+        }
+        {
+            int[] ratings = { 6, 5, 4, 4, 5, 6 };
+            assertEquals(ao.candy(ratings), 12);
+        }
+        {
+            int[] ratings = { 1, 2, 3, 3, 4, 5, 6 };
+            assertEquals(ao.candy(ratings), 16);
+        }
+        {
+            int[] ratings = { 11, 12, 13, 8, 7, 6, 5, 7, 8, 8, 2, 4, 2, 1 };
+            assertEquals(ao.candy(ratings), 32);
+        }
+        {
+            int[] ratings = { 1, 4, 15, 10, 8, 7, 4, 3, 3, 7, 9, 1, 3, 2, 2, 6, 1, 2, 7, 1, 0, 4, 2, 9, 8 };
+            assertEquals(ao.candy(ratings), 52);
+        }
+        {
+            int[] ratings = { 10,4,11,1,0,15,12,14,13,8,12,11,9,14,10,11,3,11,8,2,7,15,4,1,2,11,1,9,14,0,6,9,1,2,7,5,14,13,1,10,8,4,12,13,13,6,14,4,6,9,4,1,7,7,14,10,10,9,13,5,8,13,10,0,6,2,7,12,1,14,1,15,0,15,15,8,0,7,12,7,1,11,2,4,5,12,5,6,7,0,3,9,5,11,1,5,5,6,11,15,14,1,13,10,11,15,10 };
+            assertEquals(ao.candy(ratings), 202);
+        }
+    }
 }
