@@ -516,16 +516,89 @@ public class ArrayOperations {
         }
     }
 
-    public int maxProfit(int[] prices) {
+    private int maxProfitAtMostOneTransaction(int[] differences, int begin, int end) {
+        int retval = 0, sum = 0;
+        for (int i = begin; i < end; ++i) {
+            sum += differences[i];
+            if (sum > retval) {
+                retval = sum;
+            }
+            if (sum < 0) {
+                sum = 0;
+            }
+        }
+        return retval;
+    }
+
+    private int[] getDifferences(int[] prices, int n) {
+        assert (n > 1);
+        int[] differences = new int[n - 1];
+        for (int i = 0; i < differences.length;) {
+            int j = i + 1;
+            differences[i] = prices[j] - prices[i];
+            i = j;
+        }
+        return differences;
+    }
+
+    // https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
+    public int maxProfitAtMostOneTransaction(int[] prices) {
         int retval = 0;
         int n = prices != null ? prices.length : 0;
         if (n > 1) {
-            for (int i = 0; i < n - 1;) {
+            int[] differences = getDifferences(prices, n);
+            retval = maxProfitAtMostOneTransaction(differences, 0, differences.length);
+        }
+        return retval;
+    }
+
+    private int maxProfitAtMostOneTransactionFromHead(int[] differences, int[] cache) {
+        int retval = 0, sum = 0;
+        for (int i = 0; i < differences.length; ++i) {
+            sum += differences[i];
+            if (sum > retval) {
+                retval = sum;
+            }
+            if (sum < 0) {
+                sum = 0;
+            }
+            cache[i] = retval;
+        }
+        return retval;
+    }
+
+    private int maxProfitAtMostOneTransactionFromTail(int[] differences, int[] cache) {
+        int retval = 0, sum = 0;
+        for (int i = differences.length - 1; i >= 0; --i) {
+            sum += differences[i];
+            if (sum > retval) {
+                retval = sum;
+            }
+            if (sum < 0) {
+                sum = 0;
+            }
+            cache[i] = retval;
+        }
+        return retval;
+    }
+
+    // https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/
+    public int maxProfitAtMostTwoTransactions(int[] prices) {
+        int retval = 0;
+        int n = prices != null ? prices.length : 0;
+        if (n > 1) {
+            int[] differences = getDifferences(prices, n);
+            int[] cache1 = new int[differences.length];
+            int[] cache2 = new int[differences.length];
+            retval = maxProfitAtMostOneTransactionFromHead(differences, cache1);
+            n = maxProfitAtMostOneTransactionFromTail(differences, cache2);
+            assert (retval == n);
+            for (int i = 0, last = differences.length - 1; i < last;) {
                 int j = i + 1;
-                int d = prices[j] - prices[i];
+                n = cache1[i] + cache2[j];
                 i = j;
-                if (d > 0) {
-                    retval += d;
+                if (n > retval) {
+                    retval = n;
                 }
             }
         }

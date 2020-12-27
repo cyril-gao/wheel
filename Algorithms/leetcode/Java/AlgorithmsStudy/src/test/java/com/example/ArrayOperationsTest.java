@@ -458,8 +458,40 @@ public class ArrayOperationsTest {
             assertEquals(ao.candy(ratings), 52);
         }
         {
-            int[] ratings = { 10,4,11,1,0,15,12,14,13,8,12,11,9,14,10,11,3,11,8,2,7,15,4,1,2,11,1,9,14,0,6,9,1,2,7,5,14,13,1,10,8,4,12,13,13,6,14,4,6,9,4,1,7,7,14,10,10,9,13,5,8,13,10,0,6,2,7,12,1,14,1,15,0,15,15,8,0,7,12,7,1,11,2,4,5,12,5,6,7,0,3,9,5,11,1,5,5,6,11,15,14,1,13,10,11,15,10 };
+            int[] ratings = { 10, 4, 11, 1, 0, 15, 12, 14, 13, 8, 12, 11, 9, 14, 10, 11, 3, 11, 8, 2, 7, 15, 4, 1, 2,
+                    11, 1, 9, 14, 0, 6, 9, 1, 2, 7, 5, 14, 13, 1, 10, 8, 4, 12, 13, 13, 6, 14, 4, 6, 9, 4, 1, 7, 7, 14,
+                    10, 10, 9, 13, 5, 8, 13, 10, 0, 6, 2, 7, 12, 1, 14, 1, 15, 0, 15, 15, 8, 0, 7, 12, 7, 1, 11, 2, 4,
+                    5, 12, 5, 6, 7, 0, 3, 9, 5, 11, 1, 5, 5, 6, 11, 15, 14, 1, 13, 10, 11, 15, 10 };
             assertEquals(ao.candy(ratings), 202);
+        }
+    }
+
+    @Test
+    public void testMaxProfit() {
+        var ao = new ArrayOperations();
+        {
+            int[] prices = { 7, 1, 5, 3, 6, 4 };
+            assertEquals(ao.maxProfitAtMostOneTransaction(prices), 5);
+            assertEquals(ao.maxProfitAtMostTwoTransactions(prices), 7);
+        }
+        {
+            int[] prices = { 7, 6, 4, 3, 1 };
+            assertEquals(ao.maxProfitAtMostOneTransaction(prices), 0);
+            assertEquals(ao.maxProfitAtMostTwoTransactions(prices), 0);
+        }
+        {
+            int[] prices = { 3, 3, 5, 0, 0, 3, 1, 4 };
+            assertEquals(ao.maxProfitAtMostOneTransaction(prices), 4);
+            assertEquals(ao.maxProfitAtMostTwoTransactions(prices), 6);
+        }
+        {
+            int[] prices = { 175, 145, 101, 110, 180, 135, 15, 184, 133, 119, 88, 114, 199, 177, 31, 48, 0, 79, 166, 66,
+                    29, 45, 133, 71, 186, 198, 5, 83, 150, 184, 183, 79, 57, 139, 185, 134, 196, 118, 146, 136, 84, 78,
+                    86, 195, 67, 109, 122, 108, 6, 166, 128, 87, 160, 8, 104, 189, 24, 60, 69, 198, 14, 64, 3, 194, 79,
+                    109, 67, 166, 184, 76, 33, 99, 133, 59, 171, 181, 44, 172, 87, 125, 94, 3, 43, 103, 71, 118, 75, 72,
+                    22, 165, 37, 169, 45, 138, 78, 142, 128, 193, 125, 168, 39, 150, 51, 135, 73, 155, 191 };
+            assertEquals(ao.maxProfitAtMostOneTransaction(prices), 198);
+            assertEquals(ao.maxProfitAtMostTwoTransactions(prices), 391);
         }
     }
 }
