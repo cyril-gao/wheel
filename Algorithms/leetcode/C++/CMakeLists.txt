@@ -28,6 +28,8 @@ else()
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -Wall -Wextra")
 endif()
 
+include_directories("../../sort")
+
 enable_testing()
 
 add_executable(intervals_test intervals_test.cpp check.h)
@@ -54,3 +56,5 @@ add_executable(distinct_subsequences_test distinct_subsequences_test.cpp check.h
 add_test(NAME distinct_subsequences_test COMMAND distinct_subsequences_test)
 add_executable(scramble_string_test scramble_string_test.cpp check.h)
 add_test(NAME scramble_string_test COMMAND scramble_string_test)
+add_executable(longest_consecutive_sequence longest_consecutive_sequence.cpp check.h)
+add_test(NAME longest_consecutive_sequence COMMAND longest_consecutive_sequence)
