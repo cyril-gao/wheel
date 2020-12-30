@@ -1,5 +1,6 @@
 import unittest
 from max_points_on_a_line import max_points
+from gray_code import gray_code, is_gray_code
 
 
 class LeetcodeTester(unittest.TestCase):
@@ -30,3 +31,13 @@ class LeetcodeTester(unittest.TestCase):
             [19, -9], [9, -17]
         ]
         self.assertEqual(max_points(input), 6)
+
+    def test_gray_code(self):
+        nums = [0, 1, 3, 2]
+        self.assertTrue(is_gray_code(nums))
+        nums = [0, 2, 3, 1]
+        self.assertTrue(is_gray_code(nums))
+        for n in range(16):
+            nums = gray_code(n)
+            self.assertEqual(len(nums), 2 ** n)
+            self.assertTrue(is_gray_code(nums))
