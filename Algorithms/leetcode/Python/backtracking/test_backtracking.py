@@ -7,6 +7,7 @@ from word_breaking import word_break, word_breaking_is_possible
 from sudoku import fill_empty_cells
 from combination import k_combination
 from additive_number import is_additive_number
+from binary_watch import read_binary_watch
 
 
 class BacktrackingTester(unittest.TestCase):
@@ -156,3 +157,14 @@ class BacktrackingTester(unittest.TestCase):
         self.assertTrue(is_additive_number("0000"))
         self.assertTrue(is_additive_number("0111111222"))
         self.assertFalse(is_additive_number("01111112220"))
+
+    def test_read_binary_watch(self):
+        r = read_binary_watch(8)
+        self.assertEqual(
+            r,
+            ['7:31', '7:47', '7:55', '7:59', '11:31', '11:47', '11:55', '11:59']
+        )
+        r = read_binary_watch(7)
+        self.assertEqual(len(r), 48)
+        r = read_binary_watch(2)
+        self.assertEqual(len(r), 44)
