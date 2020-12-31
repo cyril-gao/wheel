@@ -168,3 +168,5 @@ class BacktrackingTester(unittest.TestCase):
         self.assertEqual(len(r), 48)
         r = read_binary_watch(2)
         self.assertEqual(len(r), 44)
+        r = read_binary_watch(9)
+        self.assertEqual(r, [])

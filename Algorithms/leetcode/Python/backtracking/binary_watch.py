@@ -47,11 +47,9 @@ def read_binary_watch(num: int) -> List[str]:
             r = build_time_string(buf)
             if r[0]:
                 result.append(r[1])
-        
+
+    retval = []
     if num < 10:
-        retval = []
         buf = [False for _ in range(10)]
         next(num, 0, buf, retval)
-        return retval
-    else:
-        return ["11:59"]
+    return retval
