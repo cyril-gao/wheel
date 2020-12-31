@@ -478,6 +478,48 @@ public class BinaryTreeTest {
             var paths = bt.binaryTreePaths(root);
             // System.out.println(paths);
             assertEquals(paths.size(), 4);
+
+            assertEquals(bt.sumOfLeftLeaves(root), 14);
+        }
+    }
+
+    @Test
+    public void testSumOfLeftLeaves() {
+        BinaryTree bt = new BinaryTree();
+        {
+            var n1 = new BinaryTree.TreeNode(1);
+            var n2 = new BinaryTree.TreeNode(2);
+            var n3 = new BinaryTree.TreeNode(3);
+            var n4 = new BinaryTree.TreeNode(4);
+            var n5 = new BinaryTree.TreeNode(5);
+            var n6 = new BinaryTree.TreeNode(6);
+            var n7 = new BinaryTree.TreeNode(7);
+            var n8 = new BinaryTree.TreeNode(8);
+            var n9 = new BinaryTree.TreeNode(9);
+            var n10 = new BinaryTree.TreeNode(10);
+            var n11 = new BinaryTree.TreeNode(11);
+            var n12 = new BinaryTree.TreeNode(12);
+            var n13 = new BinaryTree.TreeNode(13);
+            var n14 = new BinaryTree.TreeNode(14);
+            var n15 = new BinaryTree.TreeNode(15);
+
+            n1.left = n2;
+            n1.right = n3;
+            n2.left = n4;
+            n2.right = n5;
+            n3.left = n6;
+            n3.right = n7;
+            n5.left = n8;
+            n7.left = n9;
+            n8.left = n10;
+            n8.right = n11;
+            n9.left = n12;
+            n9.right = n13;
+            n11.right = n14;
+            n13.left = n15;
+
+            var root = n1;
+            assertEquals(bt.sumOfLeftLeaves(root), 47);
         }
     }
 }

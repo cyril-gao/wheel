@@ -1,6 +1,6 @@
 package com.example;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class ArraySearch {
     /**
@@ -395,5 +395,48 @@ public class ArraySearch {
             retval = hIndexInSortedArray(citations, n);
         }
         return retval;
+    }
+
+    static int binarySearchInRepetitiveElements(int[] nums, int begin, int end, int target) {
+        int originalBegin = begin;
+        int m = end;
+        while (begin < end) {
+            m = (begin + end) / 2;
+            if (nums[m] < target) {
+                begin = m + 1;
+                m = end;
+            } else if (nums[m] > target) {
+                end = m;
+                m = begin;
+            } else {
+                if (m > originalBegin && nums[m - 1] == target) {
+                    end = m;
+                    continue;
+                }
+                break;
+            }
+        }
+        return m;
+    }
+
+    // https://leetcode.com/problems/intersection-of-two-arrays-ii/
+    public int[] intersect(int[] nums1, int[] nums2) {
+        Arrays.sort(nums1);
+        Arrays.sort(nums2);
+        List<Integer> result = new ArrayList<>(nums2.length);
+        int begin = 0;
+        for (int v : nums2) {
+            int i = binarySearchInRepetitiveElements(nums1, begin, nums1.length, v);
+            if (i != nums1.length) {
+                if (nums1[i] == v) {
+                    result.add(v);
+                    ++i;
+                }
+                begin = i;
+            } else {
+                break;
+            }
+        }
+        return result.stream().mapToInt(Integer::intValue).toArray();
     }
 }

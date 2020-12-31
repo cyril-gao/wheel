@@ -188,7 +188,7 @@ public class ArrayOperationsTest {
         }
     }
 
-    private static boolean equals(int[] result, int[] expection) {
+    static boolean equals(int[] result, int[] expection) {
         boolean retval = result.length == expection.length;
         if (retval) {
             for (int i = 0; i < result.length; ++i) {

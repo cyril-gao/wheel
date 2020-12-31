@@ -274,4 +274,63 @@ public class SearchTest {
             assertEquals(r, 2);
         }
     }
+
+    @Test
+    public void testBinarySearchInRepetitiveElements() {
+        int[] nums = { 1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6 };
+        int r = ArraySearch.binarySearchInRepetitiveElements(nums, 0, nums.length, 0);
+        assertEquals(r, 0);
+        r = ArraySearch.binarySearchInRepetitiveElements(nums, 0, nums.length, 1);
+        assertEquals(r, 0);
+        r = ArraySearch.binarySearchInRepetitiveElements(nums, 0, nums.length, 2);
+        assertEquals(r, 1);
+        r = ArraySearch.binarySearchInRepetitiveElements(nums, 2, nums.length, 2);
+        assertEquals(r, 2);
+        r = ArraySearch.binarySearchInRepetitiveElements(nums, 0, nums.length, 3);
+        assertEquals(r, 3);
+        r = ArraySearch.binarySearchInRepetitiveElements(nums, 4, nums.length, 3);
+        assertEquals(r, 4);
+        r = ArraySearch.binarySearchInRepetitiveElements(nums, 5, nums.length, 3);
+        assertEquals(r, 5);
+        r = ArraySearch.binarySearchInRepetitiveElements(nums, 0, nums.length, 4);
+        assertEquals(r, 6);
+        r = ArraySearch.binarySearchInRepetitiveElements(nums, 7, nums.length, 4);
+        assertEquals(r, 7);
+        r = ArraySearch.binarySearchInRepetitiveElements(nums, 8, nums.length, 4);
+        assertEquals(r, 8);
+        r = ArraySearch.binarySearchInRepetitiveElements(nums, 9, nums.length, 4);
+        assertEquals(r, 9);
+        r = ArraySearch.binarySearchInRepetitiveElements(nums, 0, nums.length, 5);
+        assertEquals(r, 10);
+        r = ArraySearch.binarySearchInRepetitiveElements(nums, 0, nums.length, 6);
+        assertEquals(r, 15);
+        r = ArraySearch.binarySearchInRepetitiveElements(nums, 0, nums.length, 7);
+        assertEquals(r, nums.length);
+    }
+
+    @Test
+    public void testIntersect() {
+        var ao = new ArraySearch();
+        {
+            int[] nums1 = { 1, 2, 2, 1 };
+            int[] nums2 = { 2, 2 };
+            var r = ao.intersect(nums1, nums2);
+            int[] expectation = { 2, 2 };
+            assertTrue(ArrayOperationsTest.equals(r, expectation));
+        }
+        {
+            int[] nums1 = { 4, 9, 5 };
+            int[] nums2 = { 9, 4, 9, 8, 4 };
+            var r = ao.intersect(nums1, nums2);
+            int[] expectation = { 4, 9 };
+            assertTrue(ArrayOperationsTest.equals(r, expectation));
+        }
+        {
+            int[] nums1 = { 4, 9, 5, 9, 2, 10, 4, 0, 2, 7 };
+            int[] nums2 = { 9, 4, 9, 8, -1, 4, 0, 16, 27, 32 };
+            var r = ao.intersect(nums1, nums2);
+            int[] expectation = { 0, 4, 4, 9, 9 };
+            assertTrue(ArrayOperationsTest.equals(r, expectation));
+        }
+    }
 }

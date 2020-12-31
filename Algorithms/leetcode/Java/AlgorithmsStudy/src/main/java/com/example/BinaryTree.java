@@ -723,4 +723,21 @@ public class BinaryTree {
         }
         return retval;
     }
+
+    // https://leetcode.com/problems/sum-of-left-leaves/
+    public int sumOfLeftLeaves(TreeNode root) {
+        int retval = 0;
+        if (root != null) {
+            if (root.left != null && root.left.left == null && root.left.right == null) {
+                retval += root.left.val;
+                retval += sumOfLeftLeaves(root.right);
+            } else {
+                int r = sumOfLeftLeaves(root.left);
+                retval += r;
+                r = sumOfLeftLeaves(root.right);
+                retval += r;
+            }
+        }
+        return retval;
+    }
 }
