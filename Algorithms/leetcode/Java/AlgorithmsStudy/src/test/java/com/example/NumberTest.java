@@ -168,4 +168,45 @@ public class NumberTest {
             assertEquals(n.superPow(2147483647, b), 1121);
         }
     }
+
+    @Test
+    public void testFractionToDecimal() {
+        Number n = new Number();
+        {
+            var result = n.fractionToDecimal(11, 2);
+            assertEquals(result, "5.5");
+
+            result = n.fractionToDecimal(92, 46);
+            assertEquals(result, "2");
+
+            result = n.fractionToDecimal(5, 3);
+            assertEquals(result, "1.(6)");
+
+            result = n.fractionToDecimal(1, 1048576);
+            assertEquals(result, "0.00000095367431640625");
+
+            result = n.fractionToDecimal(670, 333);
+            assertEquals(result, "2.(012)");
+
+            result = n.fractionToDecimal(37037, 300000);
+            assertEquals(result, "0.12345(6)");
+
+            result = n.fractionToDecimal(-50, 8);
+            assertEquals(result, "-6.25");
+
+            result = n.fractionToDecimal(0, -8);
+            assertEquals(result, "0");
+
+            {
+                String expectation = "-0.0000000004656612873077392578125";
+                result = n.fractionToDecimal(1, Integer.MIN_VALUE);
+                assertEquals(result, expectation);
+            }
+            {
+                result = n.fractionToDecimal(210756734, 112700000);
+                String expectation = "1.87006(862466725820763087843833185448092280390417036379769299023957409050576752440106477373558118899733806566104702750665483584738243123336291038154392191659272404614019520851818988464951197870452528837622005323868677905944986690328305235137533274179236912156166814551907719609582963620230700976042590949423247559893522626441881100266193433895297249334516415261756876663708961845607808340727595385980479148181011535048802129547471162377994676131322094055013309671694764)";
+                assertEquals(result, expectation);
+            }
+        }
+    }
 }

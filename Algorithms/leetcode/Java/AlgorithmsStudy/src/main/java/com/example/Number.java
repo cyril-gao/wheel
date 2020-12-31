@@ -1,5 +1,7 @@
 package com.example;
 
+import java.util.*;
+
 public class Number {
     public int divide(int dividend, int divisor) {
         assert (divisor != 0);
@@ -265,5 +267,76 @@ public class Number {
             retval = (int) result;
         }
         return retval;
+    }
+
+    private String fractionToDecimalImpl(long numerator, long denominator) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("0.");
+        if (numerator >= denominator) {
+            long q = numerator / denominator;
+            long r = numerator % denominator;
+            if (r == 0) {
+                return Long.valueOf(q).toString();
+            }
+            sb.delete(0, sb.length());
+            sb.append(q);
+            sb.append('.');
+            numerator = r;
+        }
+        List<Integer> list = new ArrayList<Integer>();
+        int head = -1;
+        int next = 0;
+        Map<Long, Integer> map = new HashMap<>();
+        while (numerator != 0) {
+            long numerator10 = numerator * 10;
+            long q = numerator10 / denominator;
+            long r = numerator10 % denominator;
+            list.add((int) q);
+            map.put(numerator, next);
+            ++next;
+            if (map.containsKey(r)) {
+                head = map.get(r);
+                break;
+            } else {
+                numerator = r;
+            }
+        }
+        if (head < 0) {
+            head = next;
+        }
+
+        for (int i = 0; i < head; ++i) {
+            sb.append(list.get(i));
+        }
+        if (head < next) {
+            sb.append('(');
+            for (int i = head; i < next; ++i) {
+                sb.append(list.get(i));
+            }
+            sb.append(')');
+        }
+        return sb.toString();
+    }
+
+    // https://leetcode.com/problems/fraction-to-recurring-decimal
+    public String fractionToDecimal(int numerator, int denominator) {
+        if (denominator != 0) {
+            if (numerator != 0) {
+                if (numerator > 0 && denominator > 0) {
+                    return fractionToDecimalImpl(numerator, denominator);
+                } else if (numerator < 0 && denominator < 0) {
+                    long n = numerator;
+                    long d = denominator;
+                    return fractionToDecimalImpl(-n, -d);
+                } else {
+                    long n = numerator;
+                    long d = denominator;
+                    return "-" + fractionToDecimalImpl(Math.abs(n), Math.abs(d));
+                }
+            } else {
+                return "0";
+            }
+        }
+        return "NaN";
     }
 }
