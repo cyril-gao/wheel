@@ -164,21 +164,12 @@ struct V2_2Partitioner
 template <template <typename> class Partitioner, typename RandomIt>
 void two_way_quick_sort(RandomIt begin, RandomIt end)
 {
-    enum
-    {
-        THRESHOLD = 512 / sizeof(typename std::iterator_traits<RandomIt>::value_type)
-    };
-    auto diff = std::distance(begin, end);
-    if (diff > THRESHOLD)
-    {
+    auto sorting = [](RandomIt begin, RandomIt end) {
         auto m = Partitioner<RandomIt>()(begin, end);
         two_way_quick_sort<Partitioner, RandomIt>(begin, m);
         two_way_quick_sort<Partitioner, RandomIt>(m + 1, end);
-    }
-    else
-    {
-        insertion_sort(begin, end);
-    }
+    };
+    insertion_sort<decltype(sorting), RandomIt>(sorting, begin, end);
 }
 
 template <typename RandomIt>
@@ -344,28 +335,20 @@ struct V3_4Partitioner
         }
         return std::make_pair(
             equal,
-            bigger != (begin + distance) ? bigger : end);
+            bigger != (begin + distance) ? bigger : end
+        );
     }
 };
 
 template <template <typename> class Partitioner, typename RandomIt>
 void three_way_quick_sort(RandomIt begin, RandomIt end)
 {
-    enum
-    {
-        THRESHOLD = 512 / sizeof(typename std::iterator_traits<RandomIt>::value_type)
-    };
-    auto diff = std::distance(begin, end);
-    if (diff > THRESHOLD)
-    {
+    auto sorting = [](RandomIt begin, RandomIt end) {
         auto m = Partitioner<RandomIt>()(begin, end);
         three_way_quick_sort<Partitioner, RandomIt>(begin, m.first);
         three_way_quick_sort<Partitioner, RandomIt>(m.second, end);
-    }
-    else
-    {
-        insertion_sort(begin, end);
-    }
+    };
+    insertion_sort<decltype(sorting), RandomIt>(sorting, begin, end);
 }
 
 namespace v2
@@ -421,43 +404,25 @@ namespace v2
         template <typename RandomIt>
         void two_way_quick_sort(RandomIt begin, RandomIt end)
         {
-            enum
-            {
-                THRESHOLD = 512 / sizeof(typename std::iterator_traits<RandomIt>::value_type)
-            };
-            auto diff = std::distance(begin, end);
-            if (diff > THRESHOLD)
-            {
+            auto sorting = [](RandomIt begin, RandomIt end) {
                 auto m = partition<RandomIt>(begin, end);
                 two_way_quick_sort<RandomIt>(begin, m);
                 two_way_quick_sort<RandomIt>(m + 1, end);
-            }
-            else
-            {
-                insertion_sort(begin, end);
-            }
+            };
+            insertion_sort<decltype(sorting), RandomIt>(sorting, begin, end);
         }
     } // namespace details
 
     template <typename RandomIt>
     void two_way_quick_sort(RandomIt begin, RandomIt end)
     {
-        enum
-        {
-            THRESHOLD = 512 / sizeof(typename std::iterator_traits<RandomIt>::value_type)
-        };
-        auto diff = std::distance(begin, end);
-        if (diff > THRESHOLD)
-        {
-            RandomIt last = begin + diff - 1;
+        auto sorting = [](RandomIt begin, RandomIt end) {
+            RandomIt last = begin + (std::distance(begin, end) - 1);
             RandomIt imax = details::max(begin, end);
             std::iter_swap(imax, last);
             details::two_way_quick_sort<RandomIt>(begin, last);
-        }
-        else
-        {
-            insertion_sort(begin, end);
-        }
+        };
+        insertion_sort<decltype(sorting), RandomIt>(sorting, begin, end);
     }
 } // namespace v2
 

@@ -16,24 +16,25 @@ namespace
         DecoratedInputIterator db, DecoratedInputIterator de,
         typename std::iterator_traits<DecoratedInputIterator>::value_type const biggest_item,
         OriginalInputIterator ob, OriginalInputIterator oe,
-        OutputIterator output
+        OutputIterator output,
+        std::vector<uint32_t> & counting_buffer
     ) {
+        assert(counting_buffer.size() >= (static_cast<size_t>(biggest_item) + 1));
         assert(static_cast<size_t>(biggest_item) < SIZE_MAX && (de - db == oe - ob));
         if (de > db) {
-            std::vector<unsigned int> count(static_cast<size_t>(biggest_item) + 1, 0);
             for (DecoratedInputIterator i = db; i != de; ++i) {
-                ++count[*i];
+                ++counting_buffer[*i];
             }
             for (size_t i = 1, last = static_cast<size_t>(biggest_item); i <= last; ++i) {
-                count[i] += count[i - 1];
+                counting_buffer[i] += counting_buffer[i - 1];
             }
 
-            for (long i = static_cast<long>(de - db - 1); i != 0; --i) {
+            for (auto i = de - db; i != 0;) {
+                --i;
                 size_t v = *(db + i);
-                *(output + count[v] - 1) = *(ob + i);
-                --count[v];
+                *(output + counting_buffer[v] - 1) = *(ob + i);
+                --counting_buffer[v];
             }
-            *(output + count[*db] - 1) = *ob;
         }
     }
 
@@ -51,12 +52,14 @@ namespace
 
         explicit OffsetIterator(RandomIt i, size_t offset) : m_i(i), m_offset(offset)
         {
+        #if 0
             assert(offset < sizeof(typename std::iterator_traits<RandomIt>::value_type));
             unsigned int s = 0x01000000;
             unsigned char* pb = reinterpret_cast<unsigned char*>(&s);
             if (pb[0] == 0x01) {
                 m_offset = sizeof(typename std::iterator_traits<RandomIt>::value_type) - offset - 1;
             }
+        #endif
         }
 
         reference operator*() const
@@ -155,18 +158,47 @@ namespace
             if (end > begin) {
                 std::vector<typename std::iterator_traits<RandomIt>::value_type> temporary_array(end - begin);
                 typename std::vector<typename std::iterator_traits<RandomIt>::value_type>::iterator oi = temporary_array.begin(), oe = temporary_array.end();
-                size_t bytes = sizeof(typename std::iterator_traits<RandomIt>::value_type);
+                constexpr size_t bytes = sizeof(typename std::iterator_traits<RandomIt>::value_type);
                 assert(bytes % 2 == 0);
+                std::vector<uint32_t> counting_buffer(static_cast<size_t>(UCHAR_MAX) + 1, 0);
+            #if defined(LITTLE_ENDIAN_MACHINE)
                 for (size_t i = 0; i < bytes; i += 2) {
-                    counting_sort(OffsetIterator<RandomIt>(begin, i), OffsetIterator<RandomIt>(end, i), UCHAR_MAX, begin, end, oi);
+                    counting_sort(OffsetIterator<RandomIt>(begin, i), OffsetIterator<RandomIt>(end, i), UCHAR_MAX, begin, end, oi, counting_buffer);
+                    std::fill(std::begin(counting_buffer), std::end(counting_buffer), 0);
                     counting_sort(
                         OffsetIterator<typename std::vector<typename std::iterator_traits<RandomIt>::value_type>::iterator>(oi, i + 1),
                         OffsetIterator<typename std::vector<typename std::iterator_traits<RandomIt>::value_type>::iterator>(oe, i + 1),
                         UCHAR_MAX,
                         oi, oe,
-                        begin
+                        begin,
+                        counting_buffer
                     );
+                    std::fill(std::begin(counting_buffer), std::end(counting_buffer), 0);
                 }
+            #else
+                for (size_t i = bytes; i != 0;) {
+                    --i;
+                    counting_sort(
+                        OffsetIterator<typename std::vector<typename std::iterator_traits<RandomIt>::value_type>::iterator>(oi, i),
+                        OffsetIterator<typename std::vector<typename std::iterator_traits<RandomIt>::value_type>::iterator>(oe, i),
+                        UCHAR_MAX,
+                        oi, oe,
+                        begin,
+                        counting_buffer
+                    );
+                    std::fill(std::begin(counting_buffer), std::end(counting_buffer), 0);
+                    --i;
+                    counting_sort(
+                        OffsetIterator<typename std::vector<typename std::iterator_traits<RandomIt>::value_type>::iterator>(oi, i),
+                        OffsetIterator<typename std::vector<typename std::iterator_traits<RandomIt>::value_type>::iterator>(oe, i),
+                        UCHAR_MAX,
+                        oi, oe,
+                        begin,
+                        counting_buffer
+                    );
+                    std::fill(std::begin(counting_buffer), std::end(counting_buffer), 0);
+                }
+            #endif
             }
         }
 
@@ -210,6 +242,24 @@ namespace
 
         template <>
         struct integer<unsigned int>
+        {
+            typedef unsigned_int_type value_type;
+        };
+
+        template <>
+        struct integer<char16_t>
+        {
+            typedef unsigned_int_type value_type;
+        };
+
+        template <>
+        struct integer<char32_t>
+        {
+            typedef unsigned_int_type value_type;
+        };
+
+        template <>
+        struct integer<wchar_t>
         {
             typedef unsigned_int_type value_type;
         };
@@ -260,9 +310,10 @@ namespace
                 "must be an one-byte positive integer"
             );
             std::vector<typename std::iterator_traits<RandomIt>::value_type> temporary_array(end - begin);
-            typename std::vector<typename std::iterator_traits<RandomIt>::value_type>::iterator oi = temporary_array.begin(), oe = temporary_array.end();
-            counting_sort(begin, end, UCHAR_MAX, begin, end, oi);
-            std::copy(temporary_array.begin(), temporary_array.begin() + (end - begin), begin);
+            typename std::vector<typename std::iterator_traits<RandomIt>::value_type>::iterator oi = temporary_array.begin();
+            std::vector<uint32_t> counting_buffer(static_cast<size_t>(UCHAR_MAX) + 1, 0);
+            counting_sort(begin, end, UCHAR_MAX, begin, end, oi, counting_buffer);
+            std::copy(temporary_array.begin(), temporary_array.end(), begin);
         }
 
         template <typename RandomIt>
@@ -278,14 +329,16 @@ namespace
             );
             std::vector<typename std::iterator_traits<RandomIt>::value_type> temporary_array(end - begin);
             auto separator = partition(begin, end);
+            std::vector<uint32_t> counting_buffer(static_cast<size_t>(UCHAR_MAX) + 1, 0);
             counting_sort(
                 OffsetIterator<RandomIt>(begin, 0), OffsetIterator<RandomIt>(separator, 0),
                 UCHAR_MAX,
                 begin, separator,
-                temporary_array.begin()
+                temporary_array.begin(),
+                counting_buffer
             );
             std::copy(temporary_array.begin(), temporary_array.begin() + (separator - begin), begin);
-            counting_sort(separator, end, CHAR_MAX, separator, end, temporary_array.begin());
+            counting_sort(separator, end, CHAR_MAX, separator, end, temporary_array.begin(), counting_buffer);
             std::copy(temporary_array.begin(), temporary_array.begin() + (end - separator), separator);
         }
 
@@ -312,15 +365,6 @@ namespace
             positive_integer_sort(separator, end);
             positive_integer_sort(begin, separator);
         }
-    }
-
-    template <typename RandomIt>
-    void positive_integer_sort(RandomIt begin, RandomIt end)
-    {
-    #if ( defined( _DEBUG ) || defined( DEBUG ) || defined( DBG ) )
-        std::for_each(begin, end, [](auto v) { assert(v >= 0); });
-    #endif
-        details::positive_integer_sort(begin, end);
     }
 }
 

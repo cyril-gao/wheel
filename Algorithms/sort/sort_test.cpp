@@ -12,6 +12,7 @@
 #include "heap_sort.h"
 #include "quick_sort.h"
 #include "counting_sort.h"
+#include "str_sort.h"
 
 
 #define EXECUTE(data, function, showing_duration)                             \
@@ -84,6 +85,49 @@ void cache_test()
         EXECUTE(data, std::sort, true);
         printf("\n");
     }
+}
+
+std::vector<std::string> create_string_buffer(
+    const size_t buf_size,
+    std::uniform_int_distribution<int16_t>& value_dist,
+    std::uniform_int_distribution<size_t>& length_dist
+) {
+    std::random_device rd;
+    std::vector<std::string> retval;
+    retval.reserve(buf_size);
+    for (size_t i = 0; i < buf_size; ++i) {
+        size_t len = length_dist(rd);
+        std::string tmp;
+        tmp.reserve(len + 1);
+        for (size_t j = 0; j < len; ++j) {
+            tmp.push_back(static_cast<char>(value_dist(rd)));
+        }
+        retval.emplace_back(std::move(tmp));
+    }
+    return retval;
+}
+
+void str_sort_test(const size_t buf_size)
+{
+//#if ( defined( _DEBUG ) || defined( DEBUG ) || defined( DBG ) )
+    std::uniform_int_distribution<int16_t> value_dist(' ', '~');
+//#else
+//    std::uniform_int_distribution<int16_t> value_dist(1, UCHAR_MAX);
+//#endif
+    std::uniform_int_distribution<size_t> length_dist(4, 128);
+    //EXECUTE(data, msd_sort, true);
+    using details::V4_1Partitioner;
+    using details::V4_2Partitioner;
+    for (int i = 0; i < 3; ++i) {
+        size_t size = buf_size * (i + 1);
+        print_separator();
+        printf("%zu strings:\n", size);
+        auto data = create_string_buffer(size, value_dist, length_dist);
+        EXECUTE(data, str_sort<V4_1Partitioner>, true);
+        EXECUTE(data, str_sort<V4_2Partitioner>, true);
+        EXECUTE(data, std::sort, true);
+    }
+    printf("\n");
 }
 
 template <typename T>
@@ -228,6 +272,20 @@ int main()
 #endif
     try
     {
+        {
+            std::vector<std::string> data = {
+                "98764", "3745672", "1236347", "3", "38374356", "9476453", "39072534", "7456623",
+                "34866352", "5678452", "38456342", "5623434", "50798567", "263454", "8456456",
+                "846353246", "347541", "45678456", "496754", "678905678", "845652", "37452",
+                "6532645", "384563", "2634234", "657454", "5474567", "4557568", "2323348",
+                "1233545", "426346", "345634", "456345", "23423", "435234", "564745",
+                "2", "9", "8", "7", "6", "5", "4", "1"
+            };
+            using details::V4_1Partitioner;
+            using details::V4_2Partitioner;
+            EXECUTE(data, str_sort<V4_1Partitioner>, false);
+            EXECUTE(data, str_sort<V4_2Partitioner>, false);
+        }
         verification_test<int16_t>();
         verification_test<int64_t>();
 
@@ -239,6 +297,9 @@ int main()
         printf("\n");
 
         counting_sort_test(BUF_SIZE);
+        printf("\n");
+
+        str_sort_test(BUF_SIZE);
         printf("\n");
 
         std::random_device rd;
