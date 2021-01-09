@@ -14,24 +14,24 @@ namespace
     template <typename DecoratedInputIterator, typename OriginalInputIterator, typename OutputIterator>
     void counting_sort(
         DecoratedInputIterator db, DecoratedInputIterator de,
-        typename std::iterator_traits<DecoratedInputIterator>::value_type const biggest_item,
+        size_t biggest_item,
         OriginalInputIterator ob, OriginalInputIterator oe,
         OutputIterator output,
         std::vector<uint32_t> & counting_buffer
     ) {
-        assert(counting_buffer.size() >= (static_cast<size_t>(biggest_item) + 1));
-        assert(static_cast<size_t>(biggest_item) < SIZE_MAX && (de - db == oe - ob));
+        assert(biggest_item < SIZE_MAX && (de - db == oe - ob));
+        assert(counting_buffer.size() >= (biggest_item + 1));
         if (de > db) {
             for (DecoratedInputIterator i = db; i != de; ++i) {
-                ++counting_buffer[*i];
+                ++counting_buffer[static_cast<size_t>(*i)];
             }
-            for (size_t i = 1, last = static_cast<size_t>(biggest_item); i <= last; ++i) {
+            for (size_t i = 1, last = biggest_item; i <= last; ++i) {
                 counting_buffer[i] += counting_buffer[i - 1];
             }
 
             for (auto i = de - db; i != 0;) {
                 --i;
-                size_t v = *(db + i);
+                size_t v = static_cast<size_t>(*(db + i));
                 *(output + counting_buffer[v] - 1) = *(ob + i);
                 --counting_buffer[v];
             }
@@ -156,7 +156,7 @@ namespace
         inline void positive_integer_sort(RandomIt begin, RandomIt end)
         {
             if (end > begin) {
-                std::vector<typename std::iterator_traits<RandomIt>::value_type> temporary_array(end - begin);
+                std::vector<typename std::iterator_traits<RandomIt>::value_type> temporary_array(static_cast<size_t>(end - begin));
                 typename std::vector<typename std::iterator_traits<RandomIt>::value_type>::iterator oi = temporary_array.begin(), oe = temporary_array.end();
                 constexpr size_t bytes = sizeof(typename std::iterator_traits<RandomIt>::value_type);
                 assert(bytes % 2 == 0);
@@ -285,6 +285,7 @@ namespace
         template <typename RandomIt>
         inline RandomIt partition(RandomIt begin, RandomIt end)
         {
+            using std::iter_swap;
             RandomIt separator = end;
             if (end > begin) {
                 auto distance = end - begin;
@@ -292,7 +293,7 @@ namespace
                 for (auto i = ge; i != begin;) {
                     auto j = i - 1;
                     if (*j >= 0) {
-                        std::iter_swap(--ge, j);
+                        iter_swap(--ge, j);
                     }
                     i = j;
                 }
@@ -309,7 +310,7 @@ namespace
                 sizeof(typename std::iterator_traits<RandomIt>::value_type) == 1,
                 "must be an one-byte positive integer"
             );
-            std::vector<typename std::iterator_traits<RandomIt>::value_type> temporary_array(end - begin);
+            std::vector<typename std::iterator_traits<RandomIt>::value_type> temporary_array(static_cast<size_t>(end - begin));
             typename std::vector<typename std::iterator_traits<RandomIt>::value_type>::iterator oi = temporary_array.begin();
             std::vector<uint32_t> counting_buffer(static_cast<size_t>(UCHAR_MAX) + 1, 0);
             counting_sort(begin, end, UCHAR_MAX, begin, end, oi, counting_buffer);
@@ -327,7 +328,7 @@ namespace
                 sizeof(typename std::iterator_traits<RandomIt>::value_type) == 1,
                 "must be an one-byte integer"
             );
-            std::vector<typename std::iterator_traits<RandomIt>::value_type> temporary_array(end - begin);
+            std::vector<typename std::iterator_traits<RandomIt>::value_type> temporary_array(static_cast<size_t>(end - begin));
             auto separator = partition(begin, end);
             std::vector<uint32_t> counting_buffer(static_cast<size_t>(UCHAR_MAX) + 1, 0);
             counting_sort(

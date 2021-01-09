@@ -38,23 +38,9 @@ struct SortingThreshold
 {
     enum
     {
-        THRESHOLD = 512 / sizeof(typename std::iterator_traits<RandomIt>::value_type)
+        THRESHOLD = 256 / sizeof(typename std::iterator_traits<RandomIt>::value_type)
     };
 };
-
-/*
-template <typename Sorting, typename RandomIt>
-void insertion_sort(Sorting sorting, RandomIt begin, RandomIt end)
-{
-    auto diff = std::distance(begin, end);
-    if (diff > SortingThreshold<RandomIt>::THRESHOLD) {
-        sorting(begin, end);
-    }
-    else if (diff > 0) {
-        insertion_sort<RandomIt>(begin, end);
-    }
-}
-*/
 
 template <typename Sorting, typename RandomIt, typename... Args>
 void insertion_sort(Sorting sorting, RandomIt begin, RandomIt end, Args... args)
@@ -65,6 +51,18 @@ void insertion_sort(Sorting sorting, RandomIt begin, RandomIt end, Args... args)
     }
     else if (diff > 0) {
         insertion_sort<RandomIt>(begin, end);
+    }
+}
+
+template <typename Sorting, typename Compare, typename RandomIt, typename... Args>
+void insertion_sort(Sorting sorting, Compare comp, RandomIt begin, RandomIt end, Args... args)
+{
+    auto diff = std::distance(begin, end);
+    if (diff > SortingThreshold<RandomIt>::THRESHOLD) {
+        sorting(begin, end, args...);
+    }
+    else if (diff > 0) {
+        insertion_sort<RandomIt>(begin, end, comp);
     }
 }
 

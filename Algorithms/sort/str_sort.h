@@ -1,6 +1,7 @@
 #ifndef STRING_SORT_H_F02ABCD3_2DDF_4127_815F_84FDF6A80E00
 #define STRING_SORT_H_F02ABCD3_2DDF_4127_815F_84FDF6A80E00
 
+#include <string.h>
 #include <iterator>
 #include "counting_sort.h"
 #include "insertion_sort.h"
@@ -105,13 +106,15 @@ namespace
             typedef typename std::iterator_traits<RandomIt>::iterator_category iterator_category;
             typedef typename std::iterator_traits<RandomIt>::difference_type difference_type;
             typedef typename std::iterator_traits<RandomIt>::pointer pointer;
-            //typedef decltype((*m_i)[0]) value_type;
-            typedef unsigned char value_type;
-            typedef value_type& reference;
+            typedef std::remove_cv_t<std::remove_reference_t<decltype((*m_i)[0])>> value_type;
+            // typedef unsigned char value_type;
+            typedef const value_type& reference;
 
             explicit CStrIterator(RandomIt i, size_t offset) : m_i(i), m_offset(offset)
             {
             }
+
+            RandomIt inner() const { return m_i; }
 
             reference operator*() const
             {
@@ -200,6 +203,14 @@ namespace
         };
 
         template <typename RandomIt>
+        void iter_swap(CStrIterator<RandomIt> a, CStrIterator<RandomIt> b)
+        {
+            if (a != b) {
+                std::iter_swap(a.inner(), b.inner());
+            }
+        }
+
+        template <typename RandomIt>
         inline void unsigned_char_sort(RandomIt begin, RandomIt end, size_t d, std::vector<uint32_t>& counting_buffer)
         {
             static_assert(
@@ -248,36 +259,39 @@ namespace
         {
             static_assert(
                 (
-                    std::is_same<typename std::iterator_traits<RandomIt>::value_type, char>::value ||
-                    std::is_same<typename std::iterator_traits<RandomIt>::value_type, int8_t>::value
+                    std::is_same_v<std::remove_cv_t<std::remove_reference_t<decltype((*begin)[0])>>, char> ||
+                    std::is_same_v<std::remove_cv_t<std::remove_reference_t<decltype((*begin)[0])>>, int8_t>
                 ) &&
-                sizeof(typename std::iterator_traits<RandomIt>::value_type) == 1,
+                sizeof(std::remove_cv_t<std::remove_reference_t<decltype((*begin)[0])>>) == 1,
                 "must be an one-byte integer"
             );
-            std::vector<typename std::iterator_traits<RandomIt>::value_type> temporary_array(end - begin);
-            auto separator = partition(begin, end);
+            std::vector<typename std::iterator_traits<RandomIt>::value_type> temporary_array(static_cast<size_t>(end - begin));
+            auto separator = partition(CStrIterator<RandomIt>(begin, d), CStrIterator<RandomIt>(end, d));
             counting_sort(
-                CStrIterator<RandomIt>(begin, d), CStrIterator<RandomIt>(separator, d),
+                CStrIterator<RandomIt>(begin, d), separator,
                 UCHAR_MAX,
-                begin, separator,
+                begin, separator.inner(),
                 temporary_array.begin(),
                 counting_buffer
             );
-            std::copy(temporary_array.begin(), temporary_array.begin() + (separator - begin), begin);
+            std::copy(temporary_array.begin(), temporary_array.begin() + (separator.inner() - begin), begin);
             counting_sort(
-                CStrIterator<RandomIt>(separator, d), CStrIterator<RandomIt>(end, d),
+                separator, CStrIterator<RandomIt>(end, d),
                 CHAR_MAX,
-                separator, end,
+                separator.inner(), end,
                 temporary_array.begin(),
                 counting_buffer
             );
-            std::copy(temporary_array.begin(), temporary_array.begin() + (end - separator), separator);
-            return separator;
+            std::copy(temporary_array.begin(), temporary_array.begin() + (end - separator.inner()), separator.inner());
+            return separator.inner();
         }
 
         template <typename RandomIt>
         void c_str_msd_sort(RandomIt begin, RandomIt end, size_t d, char_type)
         {
+            auto comp = [](auto a, auto b) {
+                return strcmp(a, b) <= 0;
+            };
             auto sorting = [d](RandomIt begin, RandomIt end) {
                 std::vector<uint32_t> counting_buffer(static_cast<size_t>(UCHAR_MAX) + 1, 0);
                 auto separator = char_sort<RandomIt>(begin, end, d, counting_buffer);
@@ -312,7 +326,7 @@ namespace
                     }
                 }
             };
-            insertion_sort<decltype(sorting), RandomIt>(sorting, begin, end);
+            insertion_sort<decltype(sorting), decltype(comp), RandomIt>(sorting, comp, begin, end);
         }
 
         template <typename RandomIt>
@@ -332,7 +346,7 @@ void msd_sort(RandomIt begin, RandomIt end)
     if constexpr (std::is_pointer_v<typename std::iterator_traits<RandomIt>::value_type>) {
         details::c_str_msd_sort(begin, end);
     } else {
-        auto distance = std::distance(begin, end);
+        size_t distance = static_cast<size_t>(std::distance(begin, end));
         std::vector<typename std::iterator_traits<RandomIt>::value_type> moved;
         moved.reserve(distance);
         std::for_each(begin, end, [&moved](auto& s) { moved.emplace_back(std::move(s)); });

@@ -42,22 +42,14 @@ void merge(RandomIt b1, RandomIt e1, RandomIt b2, RandomIt e2, Compare comp)
 template <typename RandomIt, typename Compare>
 void merge_sort(RandomIt begin, RandomIt end, Compare comp)
 {
-    enum
-    {
-        THRESHOLD = 512 / sizeof(typename std::iterator_traits<RandomIt>::value_type)
-    };
-    auto distance = std::distance(begin, end);
-    if (distance > THRESHOLD)
-    {
+    auto sorting = [](RandomIt begin, RandomIt end, Compare comp) {
+        auto distance = std::distance(begin, end);
         RandomIt mid = begin + (distance + 1) / 2;
         merge_sort(begin, mid, comp);
         merge_sort(mid, end, comp);
         merge(begin, mid, mid, end, comp);
-    }
-    else
-    {
-        insertion_sort<RandomIt, Compare>(begin, end, comp);
-    }
+    };
+    insertion_sort<decltype(sorting), RandomIt, Compare>(sorting, begin, end, comp);
 }
 
 template <typename RandomIt>

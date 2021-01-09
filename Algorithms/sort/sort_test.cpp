@@ -109,13 +109,8 @@ std::vector<std::string> create_string_buffer(
 
 void str_sort_test(const size_t buf_size)
 {
-//#if ( defined( _DEBUG ) || defined( DEBUG ) || defined( DBG ) )
     std::uniform_int_distribution<int16_t> value_dist(' ', '~');
-//#else
-//    std::uniform_int_distribution<int16_t> value_dist(1, UCHAR_MAX);
-//#endif
     std::uniform_int_distribution<size_t> length_dist(4, 128);
-    //EXECUTE(data, msd_sort, true);
     using details::V4_1Partitioner;
     using details::V4_2Partitioner;
     for (int i = 0; i < 3; ++i) {
@@ -123,11 +118,11 @@ void str_sort_test(const size_t buf_size)
         print_separator();
         printf("%zu strings:\n", size);
         auto data = create_string_buffer(size, value_dist, length_dist);
+        EXECUTE(data, msd_sort, true);
         EXECUTE(data, str_sort<V4_1Partitioner>, true);
         EXECUTE(data, str_sort<V4_2Partitioner>, true);
         EXECUTE(data, std::sort, true);
     }
-    printf("\n");
 }
 
 template <typename T>
@@ -281,6 +276,7 @@ int main()
                 "1233545", "426346", "345634", "456345", "23423", "435234", "564745",
                 "2", "9", "8", "7", "6", "5", "4", "1"
             };
+            EXECUTE(data, msd_sort, false);
             using details::V4_1Partitioner;
             using details::V4_2Partitioner;
             EXECUTE(data, str_sort<V4_1Partitioner>, false);
