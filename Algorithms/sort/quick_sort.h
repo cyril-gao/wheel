@@ -5,7 +5,7 @@
 #include <iterator>
 #include <algorithm>
 #include <utility>
-#include "insertion_sort.h"
+#include "merge_sort.h"
 
 template <typename RandomIt>
 struct V1_1Partitioner
@@ -162,14 +162,26 @@ struct V2_2Partitioner
 };
 
 template <template <typename> class Partitioner, typename RandomIt>
+void two_way_quick_sort(RandomIt begin, RandomIt end, size_t factor)
+{
+    auto sorting = [](RandomIt begin, RandomIt end, size_t factor) {
+        if (factor != 0) {
+            factor = (factor >> 1) + (factor >> 3);
+            auto m = Partitioner<RandomIt>()(begin, end);
+            two_way_quick_sort<Partitioner, RandomIt>(begin, m, factor);
+            two_way_quick_sort<Partitioner, RandomIt>(m + 1, end, factor);
+        }
+        else {
+            merge_sort<RandomIt>(begin, end);
+        }
+    };
+    insertion_sort<decltype(sorting), RandomIt, size_t>(sorting, begin, end, factor);
+}
+
+template <template <typename> class Partitioner, typename RandomIt>
 void two_way_quick_sort(RandomIt begin, RandomIt end)
 {
-    auto sorting = [](RandomIt begin, RandomIt end) {
-        auto m = Partitioner<RandomIt>()(begin, end);
-        two_way_quick_sort<Partitioner, RandomIt>(begin, m);
-        two_way_quick_sort<Partitioner, RandomIt>(m + 1, end);
-    };
-    insertion_sort<decltype(sorting), RandomIt>(sorting, begin, end);
+    two_way_quick_sort<Partitioner, RandomIt>(begin, end, static_cast<size_t>(end - begin));
 }
 
 template <typename RandomIt>
@@ -425,5 +437,34 @@ namespace v2
         insertion_sort<decltype(sorting), RandomIt>(sorting, begin, end);
     }
 } // namespace v2
+
+namespace v3
+{
+    namespace details
+    {
+        template <typename RandomIt>
+        void three_way_quick_sort(RandomIt begin, RandomIt end, size_t factor)
+        {
+            auto sorting = [](RandomIt begin, RandomIt end, size_t factor) {
+                if (factor != 0) {
+                    factor = (factor >> 1) + (factor >> 3);
+                    auto m = V3_4Partitioner<RandomIt>()(begin, end);
+                    three_way_quick_sort<RandomIt>(begin, m.first, factor);
+                    three_way_quick_sort<RandomIt>(m.second, end, factor);
+                }
+                else {
+                    merge_sort(begin, end);
+                }
+            };
+            insertion_sort<decltype(sorting), RandomIt, size_t>(sorting, begin, end, factor);
+        }
+    }
+
+    template <typename RandomIt>
+    void three_way_quick_sort(RandomIt begin, RandomIt end)
+    {
+        details::three_way_quick_sort<RandomIt>(begin, end, static_cast<size_t>(end - begin));
+    }
+}
 
 #endif //QUICK_SORT_H_F02ABCD3_2DDF_4127_815F_84FDF6A80E00

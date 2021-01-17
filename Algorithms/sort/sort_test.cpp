@@ -159,12 +159,13 @@ void quick_sort_extreme_cases(const size_t buf_size)
         print_separator();
         printf("1/%u:\n", i);
         EXECUTE(data, std::sort, true);
+        EXECUTE(data, v2::two_way_quick_sort, true);
+        EXECUTE(data, v3::three_way_quick_sort, true);
         EXECUTE(data, three_way_quick_sort<V3_1Partitioner>, true);
         EXECUTE(data, three_way_quick_sort<V3_2Partitioner>, true);
         EXECUTE(data, three_way_quick_sort<V3_3Partitioner>, true);
         EXECUTE(data, three_way_quick_sort<V3_4Partitioner>, true);
-        EXECUTE(data, v2::two_way_quick_sort, true);
-        if (i > 4) {
+        /*if (i > 4)*/ {
             // may crash !!!
             EXECUTE(data, two_way_quick_sort<V1_1Partitioner>, true);
             EXECUTE(data, two_way_quick_sort<V1_2Partitioner>, true);
@@ -172,7 +173,7 @@ void quick_sort_extreme_cases(const size_t buf_size)
             EXECUTE(data, two_way_quick_sort<V1_4Partitioner>, true);
         }
         EXECUTE(data, two_way_quick_sort<V2_1Partitioner>, true);
-        if (i > 4) {
+        /*if (i > 4)*/ {
             // may crash !!!
             EXECUTE(data, two_way_quick_sort<V2_2Partitioner>, true);
         }
@@ -193,7 +194,9 @@ void performance_test(const size_t buf_size, const double factor)
 
     print_separator();
     printf("factor: %f\n", factor);
+    EXECUTE(data, std::sort, true);
     EXECUTE(data, v2::two_way_quick_sort, true);
+    EXECUTE(data, v3::three_way_quick_sort, true);
     EXECUTE(data, two_way_quick_sort<V1_1Partitioner>, true);
     EXECUTE(data, two_way_quick_sort<V1_2Partitioner>, true);
     EXECUTE(data, two_way_quick_sort<V1_3Partitioner>, true);
@@ -206,7 +209,6 @@ void performance_test(const size_t buf_size, const double factor)
     EXECUTE(data, three_way_quick_sort<V3_4Partitioner>, true);
     EXECUTE(data, merge_sort, true);
     EXECUTE(data, heap_sort, true);
-    EXECUTE(data, std::sort, true);
 }
 
 template <typename T>
