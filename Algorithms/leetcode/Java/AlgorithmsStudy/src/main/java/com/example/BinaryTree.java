@@ -9,10 +9,11 @@ public class BinaryTree {
         TreeNode right;
 
         TreeNode() {
+            this(0, null, null);
         }
 
         TreeNode(int val) {
-            this.val = val;
+            this(val, null, null);
         }
 
         TreeNode(int val, TreeNode left, TreeNode right) {

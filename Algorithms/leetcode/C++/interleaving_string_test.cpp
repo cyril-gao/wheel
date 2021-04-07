@@ -21,7 +21,7 @@ t = t1 + t2 + ... + tm
 
 The interleaving is s1 + t1 + s2 + t2 + s3 + t3 + ... or t1 + s1 + t2 + s2 + t3 + s3 + ...
 Note: a + b is the concatenation of strings a and b.
- 
+
 
 Example 1:
 Input: s1 = "aabcc", s2 = "dbbca", s3 = "aadbbcbcac"
@@ -438,6 +438,3 @@ int main()
     printf("OK\n");
     return 0;
 }
-
-
-

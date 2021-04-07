@@ -11,7 +11,6 @@ Given an unsorted array of integers nums, return the length of the longest conse
 
 Follow up: Could you implement the O(n) solution? 
 
- 
 
 Example 1:
 Input: nums = [100,4,200,1,3,2]

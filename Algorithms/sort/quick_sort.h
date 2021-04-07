@@ -166,7 +166,7 @@ void two_way_quick_sort(RandomIt begin, RandomIt end, size_t factor)
 {
     auto sorting = [](RandomIt begin, RandomIt end, size_t factor) {
         if (factor != 0) {
-            factor = (factor >> 1) + (factor >> 3);
+            factor = (factor >> 1) + (factor >> 2);
             auto m = Partitioner<RandomIt>()(begin, end);
             two_way_quick_sort<Partitioner, RandomIt>(begin, m, factor);
             two_way_quick_sort<Partitioner, RandomIt>(m + 1, end, factor);
@@ -442,28 +442,98 @@ namespace v3
 {
     namespace details
     {
-        template <typename RandomIt>
-        void three_way_quick_sort(RandomIt begin, RandomIt end, size_t factor)
+        template <typename RandomIt, size_t THRESHOLD>
+        void three_way_quick_sort(RandomIt begin, RandomIt end, size_t trying)
         {
-            auto sorting = [](RandomIt begin, RandomIt end, size_t factor) {
-                if (factor != 0) {
-                    factor = (factor >> 1) + (factor >> 3);
+            auto sorting = [](RandomIt begin, RandomIt end, size_t trying) {
+                if (trying != 0) {
                     auto m = V3_4Partitioner<RandomIt>()(begin, end);
-                    three_way_quick_sort<RandomIt>(begin, m.first, factor);
-                    three_way_quick_sort<RandomIt>(m.second, end, factor);
-                }
-                else {
-                    merge_sort(begin, end);
+                    if (static_cast<size_t>(m.second - m.first) < THRESHOLD) {
+                        --trying;
+                    }
+                    three_way_quick_sort<RandomIt, THRESHOLD>(begin, m.first, trying);
+                    three_way_quick_sort<RandomIt, THRESHOLD>(m.second, end, trying);
+                } else {
+                    v2::two_way_quick_sort(begin, end);
                 }
             };
-            insertion_sort<decltype(sorting), RandomIt, size_t>(sorting, begin, end, factor);
+            insertion_sort<decltype(sorting), RandomIt, size_t>(sorting, begin, end, trying);
         }
     }
 
-    template <typename RandomIt>
-    void three_way_quick_sort(RandomIt begin, RandomIt end)
+    template <size_t THRESHOLD, size_t TRYING>
+    struct ThreeWayQuickSort
     {
-        details::three_way_quick_sort<RandomIt>(begin, end, static_cast<size_t>(end - begin));
+        template <typename RandomIt>
+        void operator()(RandomIt begin, RandomIt end)
+        {
+            details::three_way_quick_sort<RandomIt, THRESHOLD>(begin, end, TRYING);
+        }
+    };
+}
+
+namespace v4
+{
+    namespace details
+    {
+        template <typename RandomIt>
+        auto partition2(RandomIt begin, RandomIt end)
+        {
+            auto distance = std::distance(begin, end);
+            auto sentinel = *begin;
+            RandomIt ge = begin + distance;
+            size_t count = 0;
+
+            for (RandomIt i = ge; i != begin;)
+            {
+                RandomIt j = i - 1;
+                if (sentinel <= *j)
+                {
+                    count += (sentinel == *j);
+                    std::iter_swap(--ge, j);
+                }
+                i = j;
+            }
+            return std::make_pair(ge, count);
+        }
+
+        template <typename RandomIt>
+        auto partition3(RandomIt begin, RandomIt end)
+        {
+            auto distance = std::distance(begin, end);
+            auto sentinel = *begin;
+
+            RandomIt bigger = begin + distance;
+            for (RandomIt i = begin + 1; i != bigger;)
+            {
+                if (*i > sentinel)
+                {
+                    std::iter_swap(--bigger, i);
+                }
+                else
+                {
+                    ++i;
+                }
+            }
+            return std::make_pair(begin, bigger);
+        }
+    }
+
+    template <size_t THRESHOLD, typename RandomIt>
+    void hybird_quick_sort(RandomIt begin, RandomIt end)
+    {
+        auto sorting = [](RandomIt begin, RandomIt end) {
+            auto [separator, count] = details::partition2<RandomIt>(begin, end);
+            if (count < THRESHOLD) {
+                hybird_quick_sort<THRESHOLD, RandomIt>(begin, separator);
+                hybird_quick_sort<THRESHOLD, RandomIt>(separator + 1, end);
+            } else {
+                hybird_quick_sort<THRESHOLD, RandomIt>(begin, separator);
+                auto m = details::partition3<RandomIt>(separator, end);
+                hybird_quick_sort<THRESHOLD, RandomIt>(m.second, end);
+            }
+        };
+        insertion_sort<decltype(sorting), RandomIt>(sorting, begin, end);
     }
 }
 

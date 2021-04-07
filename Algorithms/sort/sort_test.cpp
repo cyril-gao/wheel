@@ -160,7 +160,7 @@ void quick_sort_extreme_cases(const size_t buf_size)
         printf("1/%u:\n", i);
         EXECUTE(data, std::sort, true);
         EXECUTE(data, v2::two_way_quick_sort, true);
-        EXECUTE(data, v3::three_way_quick_sort, true);
+        //EXECUTE(data, v3::three_way_quick_sort, true);
         EXECUTE(data, three_way_quick_sort<V3_1Partitioner>, true);
         EXECUTE(data, three_way_quick_sort<V3_2Partitioner>, true);
         EXECUTE(data, three_way_quick_sort<V3_3Partitioner>, true);
@@ -177,6 +177,9 @@ void quick_sort_extreme_cases(const size_t buf_size)
             // may crash !!!
             EXECUTE(data, two_way_quick_sort<V2_2Partitioner>, true);
         }
+        v3::ThreeWayQuickSort<16, 8> three_way_quick_sort;
+        EXECUTE(data, three_way_quick_sort, true);
+        EXECUTE(data, v4::hybird_quick_sort<16>, true);
         printf("\n");
     }
 }
@@ -196,7 +199,7 @@ void performance_test(const size_t buf_size, const double factor)
     printf("factor: %f\n", factor);
     EXECUTE(data, std::sort, true);
     EXECUTE(data, v2::two_way_quick_sort, true);
-    EXECUTE(data, v3::three_way_quick_sort, true);
+    //EXECUTE(data, v3::three_way_quick_sort, true);
     EXECUTE(data, two_way_quick_sort<V1_1Partitioner>, true);
     EXECUTE(data, two_way_quick_sort<V1_2Partitioner>, true);
     EXECUTE(data, two_way_quick_sort<V1_3Partitioner>, true);
@@ -209,6 +212,17 @@ void performance_test(const size_t buf_size, const double factor)
     EXECUTE(data, three_way_quick_sort<V3_4Partitioner>, true);
     EXECUTE(data, merge_sort, true);
     EXECUTE(data, heap_sort, true);
+    v3::ThreeWayQuickSort<16, 8> three_way_quick_sort_1;
+    EXECUTE(data, three_way_quick_sort_1, true);
+    v3::ThreeWayQuickSort<16, 16> three_way_quick_sort_2;
+    EXECUTE(data, three_way_quick_sort_2, true);
+    v3::ThreeWayQuickSort<8, 8> three_way_quick_sort_3;
+    EXECUTE(data, three_way_quick_sort_3, true);
+    v3::ThreeWayQuickSort<4, 8> three_way_quick_sort_4;
+    EXECUTE(data, three_way_quick_sort_4, true);
+    EXECUTE(data, v4::hybird_quick_sort<32>, true);
+    EXECUTE(data, v4::hybird_quick_sort<16>, true);
+    EXECUTE(data, v4::hybird_quick_sort<8>, true);
 }
 
 template <typename T>
@@ -265,7 +279,7 @@ int main()
 #if ( defined( _DEBUG ) || defined( DEBUG ) || defined( DBG ) )
     const size_t BUF_SIZE = 107;
 #else
-    const size_t BUF_SIZE = 1023437;
+    const size_t BUF_SIZE = 1923437;
 #endif
     try
     {
@@ -297,20 +311,21 @@ int main()
         counting_sort_test(BUF_SIZE);
         printf("\n");
 
-        str_sort_test(BUF_SIZE);
-        printf("\n");
-
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_real_distribution<> dis(0.0, 1.0);
         
         for (double i = 0; i <= 16; i += 1.0)
         {
-            performance_test<int64_t>(BUF_SIZE, i + dis(gen));
+            performance_test<int64_t>(BUF_SIZE + i * 235437, i + dis(gen));
             printf("\n");
         }
 
         quick_sort_extreme_cases<int64_t>(BUF_SIZE / 10);
+        printf("\n");
+
+        str_sort_test(BUF_SIZE);
+        printf("\n");
     }
     catch (std::exception const &e)
     {
