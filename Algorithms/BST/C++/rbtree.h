@@ -318,7 +318,7 @@ class RedBlackTree
             if (
                 (position == LEFT_CHILD && left_nephew_color == RED) ||
                 (position == RIGHT_CHILD && right_nephew_color == RED)
-                ) {
+            ) {
                 if (position == LEFT_CHILD) {
                     auto left_child_of_nephew = left_nephew->left_child;
                     auto right_child_of_nephew = left_nephew->right_child;
