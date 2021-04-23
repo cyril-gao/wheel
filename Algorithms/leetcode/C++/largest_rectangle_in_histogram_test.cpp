@@ -207,7 +207,7 @@ int main()
             }
             auto r1 = brute_force::get_largest_rectangle_area(heights.begin(), heights.end());
             auto r2 = divide_conquer::get_largest_rectangle_area(heights.begin(), heights.end());
-            examine(r1 == r2, "the result of the burte force method is different from that of the divide conquer method\n");
+            examine(r1 == r2, "the result of the brute force method is different from that of the divide conquer method\n");
         }
     }
     printf("OK\n");
