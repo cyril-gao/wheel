@@ -70,3 +70,5 @@ add_executable(median_of_two_sorted_arrays_test median_of_two_sorted_arrays_test
 add_test(NAME median_of_two_sorted_arrays_test COMMAND median_of_two_sorted_arrays_test)
 add_executable(largest_rectangle_in_histogram_test largest_rectangle_in_histogram_test.cpp check.h)
 add_test(NAME largest_rectangle_in_histogram_test COMMAND largest_rectangle_in_histogram_test)
+add_executable(linked_list_test linked_list_test.cpp check.h)
+add_test(NAME linked_list_test COMMAND linked_list_test)
