@@ -1239,6 +1239,303 @@ void merge_lists_test()
     }
 }
 
+
+/*
+Given a linked list, reverse the nodes of a linked list k at a time and return its modified list.
+
+k is a positive integer and is less than or equal to the length of the linked list. If the number of nodes is not a multiple of k then left-out nodes, in the end, should remain as it is.
+*/
+template <typename T>
+ListNode<T> * reverse_in_group(ListNode<T>* head, size_t k)
+{
+    ListNode<T> * retval = head;
+    if (head != nullptr && head->next != nullptr && k > 1) {
+        retval = nullptr;
+        ListNode<T> * tail = nullptr;
+        for (ListNode<T> * i = head; i != nullptr;) {
+            ListNode<T> * group_head = i;
+            ListNode<T> * group_tail = i;
+            ListNode<T> * j = i->next;
+            group_tail->next = nullptr;
+            size_t c = 1;
+            while (c < k && j != nullptr) {
+                auto next = j->next;
+                j->next = group_head;
+                group_head = j;
+                ++c;
+                j = next;
+            }
+            if (c < k) {
+                group_head = reverse(group_head);
+            }
+            if (tail != nullptr) {
+                tail->next = group_head;
+            } else {
+                retval = group_head;
+            }
+            tail = group_tail;
+            i = j;
+        }
+    }
+    return retval;
+}
+
+void reverse_in_group_test()
+{
+    {
+        ListNode<int> n1{1}, n2{2}, n3{3}, n4{4}, n5{5}, n6{6}, n7{7}, n8{8}, n9{9}, n10{10}, n11{11}, n12{12};
+        n1.next = &n2, n2.next = &n3, n3.next = &n4, n4.next = &n5, n5.next = &n6, n6.next = &n7, n7.next = &n8, n8.next = &n9, n9.next = &n10, n10.next = &n11, n11.next = &n12;
+        auto result = reverse_in_group(&n1, 2);
+        examine(
+            result->data == 2 &&
+            result->next->data == 1 &&
+            result->next->next->data == 4 &&
+            result->next->next->next->data == 3 &&
+            result->next->next->next->next->data == 6 &&
+            result->next->next->next->next->next->data == 5 &&
+            result->next->next->next->next->next->next->data == 8 &&
+            result->next->next->next->next->next->next->next->data == 7 &&
+            result->next->next->next->next->next->next->next->next->data == 10 &&
+            result->next->next->next->next->next->next->next->next->next->data == 9 &&
+            result->next->next->next->next->next->next->next->next->next->next->data == 12 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->data == 11 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->next == nullptr,
+            "reverse_in_group is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        ListNode<int> n1{1}, n2{2}, n3{3}, n4{4}, n5{5}, n6{6}, n7{7}, n8{8}, n9{9}, n10{10}, n11{11}, n12{12};
+        n1.next = &n2, n2.next = &n3, n3.next = &n4, n4.next = &n5, n5.next = &n6, n6.next = &n7, n7.next = &n8, n8.next = &n9, n9.next = &n10, n10.next = &n11, n11.next = &n12;
+        auto result = reverse_in_group(&n1, 3);
+        examine(
+            result->data == 3 &&
+            result->next->data == 2 &&
+            result->next->next->data == 1 &&
+            result->next->next->next->data == 6 &&
+            result->next->next->next->next->data == 5 &&
+            result->next->next->next->next->next->data == 4 &&
+            result->next->next->next->next->next->next->data == 9 &&
+            result->next->next->next->next->next->next->next->data == 8 &&
+            result->next->next->next->next->next->next->next->next->data == 7 &&
+            result->next->next->next->next->next->next->next->next->next->data == 12 &&
+            result->next->next->next->next->next->next->next->next->next->next->data == 11 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->data == 10 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->next == nullptr,
+            "reverse_in_group is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        ListNode<int> n1{1}, n2{2}, n3{3}, n4{4}, n5{5}, n6{6}, n7{7}, n8{8}, n9{9}, n10{10}, n11{11}, n12{12};
+        n1.next = &n2, n2.next = &n3, n3.next = &n4, n4.next = &n5, n5.next = &n6, n6.next = &n7, n7.next = &n8, n8.next = &n9, n9.next = &n10, n10.next = &n11, n11.next = &n12;
+        auto result = reverse_in_group(&n1, 4);
+        examine(
+            result->data == 4 &&
+            result->next->data == 3 &&
+            result->next->next->data == 2 &&
+            result->next->next->next->data == 1 &&
+            result->next->next->next->next->data == 8 &&
+            result->next->next->next->next->next->data == 7 &&
+            result->next->next->next->next->next->next->data == 6 &&
+            result->next->next->next->next->next->next->next->data == 5 &&
+            result->next->next->next->next->next->next->next->next->data == 12 &&
+            result->next->next->next->next->next->next->next->next->next->data == 11 &&
+            result->next->next->next->next->next->next->next->next->next->next->data == 10 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->data == 9 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->next == nullptr,
+            "reverse_in_group is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        ListNode<int> n1{1}, n2{2}, n3{3}, n4{4}, n5{5}, n6{6}, n7{7}, n8{8}, n9{9}, n10{10}, n11{11}, n12{12};
+        n1.next = &n2, n2.next = &n3, n3.next = &n4, n4.next = &n5, n5.next = &n6, n6.next = &n7, n7.next = &n8, n8.next = &n9, n9.next = &n10, n10.next = &n11, n11.next = &n12;
+        auto result = reverse_in_group(&n1, 5);
+        examine(
+            result->data == 5 &&
+            result->next->data == 4 &&
+            result->next->next->data == 3 &&
+            result->next->next->next->data == 2 &&
+            result->next->next->next->next->data == 1 &&
+            result->next->next->next->next->next->data == 10 &&
+            result->next->next->next->next->next->next->data == 9 &&
+            result->next->next->next->next->next->next->next->data == 8 &&
+            result->next->next->next->next->next->next->next->next->data == 7 &&
+            result->next->next->next->next->next->next->next->next->next->data == 6 &&
+            result->next->next->next->next->next->next->next->next->next->next->data == 11 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->data == 12 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->next == nullptr,
+            "reverse_in_group is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        ListNode<int> n1{1}, n2{2}, n3{3}, n4{4}, n5{5}, n6{6}, n7{7}, n8{8}, n9{9}, n10{10}, n11{11}, n12{12};
+        n1.next = &n2, n2.next = &n3, n3.next = &n4, n4.next = &n5, n5.next = &n6, n6.next = &n7, n7.next = &n8, n8.next = &n9, n9.next = &n10, n10.next = &n11, n11.next = &n12;
+        auto result = reverse_in_group(&n1, 6);
+        examine(
+            result->data == 6 &&
+            result->next->data == 5 &&
+            result->next->next->data == 4 &&
+            result->next->next->next->data == 3 &&
+            result->next->next->next->next->data == 2 &&
+            result->next->next->next->next->next->data == 1 &&
+            result->next->next->next->next->next->next->data == 12 &&
+            result->next->next->next->next->next->next->next->data == 11 &&
+            result->next->next->next->next->next->next->next->next->data == 10 &&
+            result->next->next->next->next->next->next->next->next->next->data == 9 &&
+            result->next->next->next->next->next->next->next->next->next->next->data == 8 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->data == 7 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->next == nullptr,
+            "reverse_in_group is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        ListNode<int> n1{1}, n2{2}, n3{3}, n4{4}, n5{5}, n6{6}, n7{7}, n8{8}, n9{9}, n10{10}, n11{11}, n12{12};
+        n1.next = &n2, n2.next = &n3, n3.next = &n4, n4.next = &n5, n5.next = &n6, n6.next = &n7, n7.next = &n8, n8.next = &n9, n9.next = &n10, n10.next = &n11, n11.next = &n12;
+        auto result = reverse_in_group(&n1, 7);
+        examine(
+            result->data == 7 &&
+            result->next->data == 6 &&
+            result->next->next->data == 5 &&
+            result->next->next->next->data == 4 &&
+            result->next->next->next->next->data == 3 &&
+            result->next->next->next->next->next->data == 2 &&
+            result->next->next->next->next->next->next->data == 1 &&
+            result->next->next->next->next->next->next->next->data == 8 &&
+            result->next->next->next->next->next->next->next->next->data == 9 &&
+            result->next->next->next->next->next->next->next->next->next->data == 10 &&
+            result->next->next->next->next->next->next->next->next->next->next->data == 11 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->data == 12 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->next == nullptr,
+            "reverse_in_group is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        ListNode<int> n1{1}, n2{2}, n3{3}, n4{4}, n5{5}, n6{6}, n7{7}, n8{8}, n9{9}, n10{10}, n11{11}, n12{12};
+        n1.next = &n2, n2.next = &n3, n3.next = &n4, n4.next = &n5, n5.next = &n6, n6.next = &n7, n7.next = &n8, n8.next = &n9, n9.next = &n10, n10.next = &n11, n11.next = &n12;
+        auto result = reverse_in_group(&n1, 8);
+        examine(
+            result->data == 8 &&
+            result->next->data == 7 &&
+            result->next->next->data == 6 &&
+            result->next->next->next->data == 5 &&
+            result->next->next->next->next->data == 4 &&
+            result->next->next->next->next->next->data == 3 &&
+            result->next->next->next->next->next->next->data == 2 &&
+            result->next->next->next->next->next->next->next->data == 1 &&
+            result->next->next->next->next->next->next->next->next->data == 9 &&
+            result->next->next->next->next->next->next->next->next->next->data == 10 &&
+            result->next->next->next->next->next->next->next->next->next->next->data == 11 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->data == 12 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->next == nullptr,
+            "reverse_in_group is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        ListNode<int> n1{1}, n2{2}, n3{3}, n4{4}, n5{5}, n6{6}, n7{7}, n8{8}, n9{9}, n10{10}, n11{11}, n12{12};
+        n1.next = &n2, n2.next = &n3, n3.next = &n4, n4.next = &n5, n5.next = &n6, n6.next = &n7, n7.next = &n8, n8.next = &n9, n9.next = &n10, n10.next = &n11, n11.next = &n12;
+        auto result = reverse_in_group(&n1, 9);
+        examine(
+            result->data == 9 &&
+            result->next->data == 8 &&
+            result->next->next->data == 7 &&
+            result->next->next->next->data == 6 &&
+            result->next->next->next->next->data == 5 &&
+            result->next->next->next->next->next->data == 4 &&
+            result->next->next->next->next->next->next->data == 3 &&
+            result->next->next->next->next->next->next->next->data == 2 &&
+            result->next->next->next->next->next->next->next->next->data == 1 &&
+            result->next->next->next->next->next->next->next->next->next->data == 10 &&
+            result->next->next->next->next->next->next->next->next->next->next->data == 11 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->data == 12 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->next == nullptr,
+            "reverse_in_group is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        ListNode<int> n1{1}, n2{2}, n3{3}, n4{4}, n5{5}, n6{6}, n7{7}, n8{8}, n9{9}, n10{10}, n11{11}, n12{12};
+        n1.next = &n2, n2.next = &n3, n3.next = &n4, n4.next = &n5, n5.next = &n6, n6.next = &n7, n7.next = &n8, n8.next = &n9, n9.next = &n10, n10.next = &n11, n11.next = &n12;
+        auto result = reverse_in_group(&n1, 10);
+        examine(
+            result->data == 10 &&
+            result->next->data == 9 &&
+            result->next->next->data == 8 &&
+            result->next->next->next->data == 7 &&
+            result->next->next->next->next->data == 6 &&
+            result->next->next->next->next->next->data == 5 &&
+            result->next->next->next->next->next->next->data == 4 &&
+            result->next->next->next->next->next->next->next->data == 3 &&
+            result->next->next->next->next->next->next->next->next->data == 2 &&
+            result->next->next->next->next->next->next->next->next->next->data == 1 &&
+            result->next->next->next->next->next->next->next->next->next->next->data == 11 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->data == 12 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->next == nullptr,
+            "reverse_in_group is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        ListNode<int> n1{1}, n2{2}, n3{3}, n4{4}, n5{5}, n6{6}, n7{7}, n8{8}, n9{9}, n10{10}, n11{11}, n12{12};
+        n1.next = &n2, n2.next = &n3, n3.next = &n4, n4.next = &n5, n5.next = &n6, n6.next = &n7, n7.next = &n8, n8.next = &n9, n9.next = &n10, n10.next = &n11, n11.next = &n12;
+        auto result = reverse_in_group(&n1, 11);
+        examine(
+            result->data == 11 &&
+            result->next->data == 10 &&
+            result->next->next->data == 9 &&
+            result->next->next->next->data == 8 &&
+            result->next->next->next->next->data == 7 &&
+            result->next->next->next->next->next->data == 6 &&
+            result->next->next->next->next->next->next->data == 5 &&
+            result->next->next->next->next->next->next->next->data == 4 &&
+            result->next->next->next->next->next->next->next->next->data == 3 &&
+            result->next->next->next->next->next->next->next->next->next->data == 2 &&
+            result->next->next->next->next->next->next->next->next->next->next->data == 1 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->data == 12 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->next == nullptr,
+            "reverse_in_group is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        ListNode<int> n1{1}, n2{2}, n3{3}, n4{4}, n5{5}, n6{6}, n7{7}, n8{8}, n9{9}, n10{10}, n11{11}, n12{12};
+        n1.next = &n2, n2.next = &n3, n3.next = &n4, n4.next = &n5, n5.next = &n6, n6.next = &n7, n7.next = &n8, n8.next = &n9, n9.next = &n10, n10.next = &n11, n11.next = &n12;
+        auto result = reverse_in_group(&n1, 12);
+        examine(
+            result->data == 12 &&
+            result->next->data == 11 &&
+            result->next->next->data == 10 &&
+            result->next->next->next->data == 9 &&
+            result->next->next->next->next->data == 8 &&
+            result->next->next->next->next->next->data == 7 &&
+            result->next->next->next->next->next->next->data == 6 &&
+            result->next->next->next->next->next->next->next->data == 5 &&
+            result->next->next->next->next->next->next->next->next->data == 4 &&
+            result->next->next->next->next->next->next->next->next->next->data == 3 &&
+            result->next->next->next->next->next->next->next->next->next->next->data == 2 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->data == 1 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->next == nullptr,
+            "reverse_in_group is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        ListNode<int> n1{1}, n2{2}, n3{3}, n4{4}, n5{5}, n6{6}, n7{7}, n8{8}, n9{9}, n10{10}, n11{11}, n12{12};
+        n1.next = &n2, n2.next = &n3, n3.next = &n4, n4.next = &n5, n5.next = &n6, n6.next = &n7, n7.next = &n8, n8.next = &n9, n9.next = &n10, n10.next = &n11, n11.next = &n12;
+        auto result = reverse_in_group(&n1, 13);
+        examine(
+            result->data == 1 &&
+            result->next->data == 2 &&
+            result->next->next->data == 3 &&
+            result->next->next->next->data == 4 &&
+            result->next->next->next->next->data == 5 &&
+            result->next->next->next->next->next->data == 6 &&
+            result->next->next->next->next->next->next->data == 7 &&
+            result->next->next->next->next->next->next->next->data == 8 &&
+            result->next->next->next->next->next->next->next->next->data == 9 &&
+            result->next->next->next->next->next->next->next->next->next->data == 10 &&
+            result->next->next->next->next->next->next->next->next->next->next->data == 11 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->data == 12 &&
+            result->next->next->next->next->next->next->next->next->next->next->next->next == nullptr,
+            "reverse_in_group is failed at the line: %d\n", __LINE__
+        );
+    }
+}
+
 int main()
 {
     add_two_numbers_test();
@@ -1250,6 +1547,7 @@ int main()
     reverse_between_test();
     reorder_list_test();
     merge_lists_test();
+    reverse_in_group_test();
     printf("OK\n");
     return 0;
 }
