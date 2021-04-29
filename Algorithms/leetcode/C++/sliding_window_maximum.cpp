@@ -285,7 +285,7 @@ int main()
             if (n > k) {
                 retval.reserve(input.size() - k + 1);
                 auto begin = input.begin(), end = begin + k;
-                for (size_t i = 0, ie = (n-k+1); i < ie; ++i, ++begin, ++end) {
+                for (size_t i = 0, ie = (n-k+1); i < ie; ++i, ++begin, i < ie ? ++end : end) {
                     auto r = std::max_element(begin, end);
                     retval.push_back(*r);
                 }

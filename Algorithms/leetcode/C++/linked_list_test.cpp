@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <algorithm>
+#include <vector>
 #include <utility>
 #include "check.h"
 
@@ -1011,6 +1013,232 @@ void reorder_list_test()
     }
 }
 
+
+/*
+You are given an array of k linked-lists lists, each linked-list is sorted in ascending order.
+
+Merge all the linked-lists into one sorted linked-list and return it.
+*/
+template <typename T>
+ListNode<T> * merge_two_lists(ListNode<T>* l1, ListNode<T> * l2)
+{
+    ListNode<T> * retval = nullptr;
+    if (l1 != nullptr && l2 != nullptr) {
+        ListNode<T> * i = nullptr;
+        while (l1 != nullptr && l2 != nullptr) {
+            if (l1->data <= l2->data) {
+                if (i != nullptr) {
+                    i->next = l1;
+                } else {
+                    retval = l1;
+                }
+                i = l1;
+                l1 = l1->next;
+            } else {
+                if (i != nullptr) {
+                    i->next = l2;
+                } else {
+                    retval = l2;
+                }
+                i = l2;
+                l2 = l2->next;
+            }
+        }
+        i->next = l1 != nullptr ? l1 : l2;
+    } else {
+        retval = l1 != nullptr ? l1 : l2;
+    }
+    return retval;
+}
+
+template <typename T>
+ListNode<T> * merge_lists(std::vector<ListNode<T>*>& lists)
+{
+    ListNode<T> * retval = nullptr;
+    size_t n = lists.size();
+    if (n > 2) {
+        auto comp = [](ListNode<T>* n1, ListNode<T>* n2) {
+            return n1->data > n2->data;
+        };
+        std::vector<ListNode<T>*> cache;
+        cache.reserve(n);
+        for (auto n : lists) {
+            if (n != nullptr) {
+                cache.push_back(n);
+            }
+        }
+        if (!cache.empty()) {
+            ListNode<T> * i = nullptr;
+            std::make_heap(cache.begin(), cache.end(), comp);
+            for (n = cache.size(); n > 1; n = cache.size()) {
+                std::pop_heap(cache.begin(), cache.end(), comp);
+                ListNode<T> * j = cache.back();
+                if (i != nullptr) {
+                    i->next = j;
+                } else {
+                    retval = j;
+                }
+                i = j;
+                j = j->next;
+                if (j != nullptr) {
+                    cache.back() = j;
+                    std::push_heap(cache.begin(), cache.end(), comp);
+                } else {
+                    cache.pop_back();
+                }
+            }
+            i->next = cache[0];
+        }
+    } else {
+        if (n == 2) {
+            retval = merge_two_lists(lists[0], lists[1]);
+        } else if (n == 1) {
+            retval = lists[0];
+        }
+    }
+    return retval;
+}
+
+void merge_lists_test()
+{
+    {
+        ListNode<int> n5{5};
+        ListNode<int> n1{1}, n6{6};
+        n1.next = &n6;
+        std::vector<ListNode<int>*> lists{&n5, &n1};
+        auto result = merge_lists(lists);
+        examine(
+            result->data == 1 &&
+            result->next->data == 5 &&
+            result->next->next->data == 6 &&
+            result->next->next->next == nullptr,
+            "merge_lists is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        ListNode<int> n5{5}, n9{9};
+        ListNode<int> n1{1}, n6{6};
+        n5.next = &n9;
+        n1.next = &n6;
+        std::vector<ListNode<int>*> lists{&n5, &n1};
+        auto result = merge_lists(lists);
+        examine(
+            result->data == 1 &&
+            result->next->data == 5 &&
+            result->next->next->data == 6 &&
+            result->next->next->next->data == 9 &&
+            result->next->next->next->next == nullptr,
+            "merge_lists is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        ListNode<int> n5{5}, n7{7}, n8{8};
+        ListNode<int> n1{1}, n10{10};
+        n5.next = &n7, n7.next = &n8;
+        n1.next = &n10;
+        std::vector<ListNode<int>*> lists{&n5, &n1};
+        auto result = merge_lists(lists);
+        examine(
+            result->data == 1 &&
+            result->next->data == 5 &&
+            result->next->next->data == 7 &&
+            result->next->next->next->data == 8 &&
+            result->next->next->next->next->data == 10 &&
+            result->next->next->next->next->next == nullptr,
+            "merge_lists is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        ListNode<int> n5{5};
+        ListNode<int> n1{1}, n6{6};
+        ListNode<int> n2{2}, n9{9};
+        ListNode<int> n3{3}, n8{8};
+        ListNode<int> n4{4}, n7{7};
+        n1.next = &n6;
+        n2.next = &n9;
+        n3.next = &n8;
+        n4.next = &n7;
+        std::vector<ListNode<int>*> lists{&n5, &n1, &n2, &n3, &n4};
+        auto result = merge_lists(lists);
+        examine(
+            result->data == 1 &&
+            result->next->data == 2 &&
+            result->next->next->data == 3 &&
+            result->next->next->next->data == 4 &&
+            result->next->next->next->next->data == 5 &&
+            result->next->next->next->next->next->data == 6 &&
+            result->next->next->next->next->next->next->data == 7 &&
+            result->next->next->next->next->next->next->next->data == 8 &&
+            result->next->next->next->next->next->next->next->next->data == 9 &&
+            result->next->next->next->next->next->next->next->next->next == nullptr,
+            "merge_lists is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        ListNode<int> n5{5}, n6_2{6}, n10{10};
+        ListNode<int> n1{1}, n6{6};
+        ListNode<int> n2{2}, n9{9};
+        ListNode<int> n3{3}, n8{8};
+        ListNode<int> n4{4}, n7{7};
+        n5.next = &n6_2, n6_2.next = &n10;
+        n1.next = &n6;
+        n2.next = &n9;
+        n3.next = &n8;
+        n4.next = &n7;
+        std::vector<ListNode<int>*> lists{&n5, &n1, &n2, &n3, &n4};
+        auto result = merge_lists(lists);
+        examine(
+            result->data == 1 &&
+            result->next->data == 2 &&
+            result->next->next->data == 3 &&
+            result->next->next->next->data == 4 &&
+            result->next->next->next->next->data == 5 &&
+            result->next->next->next->next->next->data == 6 &&
+            result->next->next->next->next->next->next->data == 6 &&
+            result->next->next->next->next->next->next->next->data == 7 &&
+            result->next->next->next->next->next->next->next->next->data == 8 &&
+            result->next->next->next->next->next->next->next->next->next->data == 9 &&
+            result->next->next->next->next->next->next->next->next->next->next->data == 10 &&
+            result->next->next->next->next->next->next->next->next->next->next->next == nullptr,
+            "merge_lists is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        ListNode<int> n5{5}, n6_2{6}, n10{10};
+        ListNode<int> n1{1}, n6{6};
+        ListNode<int> n2{2}, n9{9};
+        ListNode<int> n3{3}, n8{8};
+        ListNode<int> n4{4}, n7{7};
+        n5.next = &n6_2, n6_2.next = &n10;
+        n1.next = &n6;
+        n2.next = &n9;
+        n3.next = &n8;
+        n4.next = &n7;
+        std::vector<ListNode<int>*> lists{&n5, &n1, &n2, &n3, &n4, nullptr};
+        auto result = merge_lists(lists);
+        examine(
+            result->data == 1 &&
+            result->next->data == 2 &&
+            result->next->next->data == 3 &&
+            result->next->next->next->data == 4 &&
+            result->next->next->next->next->data == 5 &&
+            result->next->next->next->next->next->data == 6 &&
+            result->next->next->next->next->next->next->data == 6 &&
+            result->next->next->next->next->next->next->next->data == 7 &&
+            result->next->next->next->next->next->next->next->next->data == 8 &&
+            result->next->next->next->next->next->next->next->next->next->data == 9 &&
+            result->next->next->next->next->next->next->next->next->next->next->data == 10 &&
+            result->next->next->next->next->next->next->next->next->next->next->next == nullptr,
+            "merge_lists is failed at the line: %d\n", __LINE__
+        );
+    }
+    {
+        std::vector<ListNode<int>*> lists{nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+        auto result = merge_lists(lists);
+        examine(result == nullptr, "merge_lists is failed at the line: %d\n", __LINE__);
+    }
+}
+
 int main()
 {
     add_two_numbers_test();
@@ -1021,6 +1249,7 @@ int main()
     partition_test();
     reverse_between_test();
     reorder_list_test();
+    merge_lists_test();
     printf("OK\n");
     return 0;
 }
