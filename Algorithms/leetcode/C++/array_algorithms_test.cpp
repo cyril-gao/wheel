@@ -71,10 +71,7 @@ void first_missing_positive_test()
 
 int main()
 {
-    {
-
-    }
-
+    first_missing_positive_test();
     printf("OK\n");
     return 0;
 }
