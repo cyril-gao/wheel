@@ -72,3 +72,5 @@ add_executable(largest_rectangle_in_histogram_test largest_rectangle_in_histogra
 add_test(NAME largest_rectangle_in_histogram_test COMMAND largest_rectangle_in_histogram_test)
 add_executable(linked_list_test linked_list_test.cpp check.h)
 add_test(NAME linked_list_test COMMAND linked_list_test)
+add_executable(array_algorithms_test array_algorithms_test.cpp check.h)
+add_test(NAME array_algorithms_test COMMAND array_algorithms_test)
