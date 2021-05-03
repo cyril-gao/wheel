@@ -1,4 +1,4 @@
-## Implement some algorithms
+## Implement some data structures and algorithms
 
 #### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/sort">sort:</a>
 
