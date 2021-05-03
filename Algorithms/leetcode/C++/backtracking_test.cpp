@@ -7,6 +7,8 @@
 #include <iterator>
 #include <set>
 #include <vector>
+#include <unordered_set>
+#include <unordered_map>
 #include <utility>
 
 #include "check.h"
@@ -83,9 +85,102 @@ void combination_sum_test()
     }
 }
 
+/*
+Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent. Return the answer in any order.
+
+A mapping of digit to letters (just like on the telephone buttons) is given below. Note that 1 does not map to any letters.
+*/
+namespace
+{
+    std::unordered_map<char, std::vector<char>> mapping_table = {
+        {'2', {'a', 'b', 'c'}},
+        {'3', {'d', 'e', 'f'}},
+        {'4', {'g', 'h', 'i'}},
+        {'5', {'j', 'k', 'l'}},
+        {'6', {'m', 'n', 'o'}},
+        {'7', {'p', 'q', 'r', 's'}},
+        {'8', {'t', 'u', 'v'}},
+        {'9', {'w', 'x', 'y', 'z'}}
+    };
+
+    std::vector<char> empty;
+
+    std::vector<char> const& get_mapping(char c)
+    {
+        auto i = mapping_table.find(c);
+        if (i != mapping_table.end()) {
+            return i->second;
+        }
+        return empty;
+    }
+
+    void next_element(
+        std::string const& digits,
+        size_t index,
+        std::vector<char>& selected,
+        std::vector<std::string>& result
+    ) {
+        if (index < digits.length()) {
+            decltype(auto) mapping = get_mapping(digits[index]);
+            if (!mapping.empty()) {
+                for (char c : mapping) {
+                    selected.push_back(c);
+                    next_element(digits, index + 1, selected, result);
+                    selected.pop_back();
+                }
+            } else {
+                next_element(digits, index + 1, selected, result);
+            }
+        } else {
+            selected.push_back('\0');
+            result.emplace_back(&selected[0]);
+            selected.pop_back();
+        }
+    }
+}
+
+std::vector<std::string> letter_combinations(std::string const& digits)
+{
+    std::vector<std::string> retval;
+    if (!digits.empty()) {
+        std::vector<char> selected;
+        next_element(digits, 0, selected, retval);
+    }
+    return retval;
+}
+
+void letter_combinations_test()
+{
+    {
+        auto result = letter_combinations("23");
+        std::unordered_set<std::string> no_dup{result.begin(), result.end()};
+        examine(no_dup.size() == 9, "letter_combinations is failed at the line: %d\n", __LINE__);
+    }
+    {
+        auto result = letter_combinations("279");
+        std::unordered_set<std::string> no_dup{result.begin(), result.end()};
+        examine(no_dup.size() == 48, "letter_combinations is failed at the line: %d\n", __LINE__);
+    }
+    {
+        auto result = letter_combinations("");
+        examine(result.empty(), "letter_combinations is failed at the line: %d\n", __LINE__);
+    }
+    {
+        auto result = letter_combinations("2");
+        std::unordered_set<std::string> no_dup{result.begin(), result.end()};
+        examine(no_dup.size() == 3, "letter_combinations is failed at the line: %d\n", __LINE__);
+    }
+    {
+        auto result = letter_combinations("7");
+        std::unordered_set<std::string> no_dup{result.begin(), result.end()};
+        examine(no_dup.size() == 4, "letter_combinations is failed at the line: %d\n", __LINE__);
+    }
+}
+
 int main()
 {
     combination_sum_test();
+    letter_combinations_test();
     printf("OK\n");
     return 0;
 }
