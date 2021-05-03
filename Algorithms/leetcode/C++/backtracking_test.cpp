@@ -1,0 +1,91 @@
+#include <assert.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <algorithm>
+#include <iterator>
+#include <set>
+#include <vector>
+#include <utility>
+
+#include "check.h"
+
+/*
+Given an array of distinct integers candidates and a target integer target, return a list of all unique combinations of candidates where the chosen numbers sum to target. You may return the combinations in any order.
+
+The same number may be chosen from candidates an unlimited number of times. Two combinations are unique if the frequency of at least one of the chosen numbers is different.
+
+It is guaranteed that the number of unique combinations that sum up to target is less than 150 combinations for the given input.
+
+Constraints:
+    1 <= candidates.length <= 30
+    1 <= candidates[i] <= 200
+    All elements of candidates are distinct.
+    1 <= target <= 500
+*/
+namespace
+{
+    template <typename T>
+    void next_element(
+        std::vector<T> const& input, size_t index, T target,
+        std::vector<T>& selected,
+        std::vector<std::vector<T>>& result
+    ) {
+        if (target != 0) {
+            for (size_t i = index, n = input.size(); i < n && input[i] <= target; ++i) {
+                selected.push_back(input[i]);
+                next_element(input, i, target - input[i], selected, result);
+                selected.pop_back();
+            }
+        } else {
+            result.push_back(selected);
+        }
+    }
+}
+
+template <typename T>
+std::vector<std::vector<T>> combination_sum(std::vector<T> const& candidates, T target)
+{
+    std::set<T> no_dup{candidates.cbegin(), candidates.cend()};
+    std::vector<T> input{no_dup.cbegin(), no_dup.cend()};
+    std::vector<T> selected;
+    std::vector<std::vector<T>> retval;
+    next_element(input, 0, target, selected, retval);
+    return retval;
+}
+
+void combination_sum_test()
+{
+    {
+        std::vector<int> candidates = {2, 3, 5};
+        int target = 8;
+        auto result = combination_sum(candidates, target);
+        examine(result.size() == 3, "combination_sum is failed at the line: %d\n", __LINE__);
+    }
+    {
+        std::vector<int> candidates = {2, 3, 5};
+        int target = 1;
+        auto result = combination_sum(candidates, target);
+        examine(result.empty(), "combination_sum is failed at the line: %d\n", __LINE__);
+    }
+    {
+        std::vector<int> candidates = {2};
+        int target = 2;
+        auto result = combination_sum(candidates, target);
+        examine(result.size() == 1, "combination_sum is failed at the line: %d\n", __LINE__);
+    }
+    {
+        std::vector<int> candidates = {1, 1};
+        int target = 2;
+        auto result = combination_sum(candidates, target);
+        examine(result.size() == 1, "combination_sum is failed at the line: %d\n", __LINE__);
+    }
+}
+
+int main()
+{
+    combination_sum_test();
+    printf("OK\n");
+    return 0;
+}
