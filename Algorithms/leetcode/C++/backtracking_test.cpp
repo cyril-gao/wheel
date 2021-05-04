@@ -177,10 +177,87 @@ void letter_combinations_test()
     }
 }
 
+
+/*
+Given a collection of candidate numbers (candidates) and a target number (target), find all unique combinations in candidates where the candidate numbers sum to target.
+
+Each number in candidates may only be used once in the combination.
+
+Note: The solution set must not contain duplicate combinations.
+*/
+namespace only_once
+{
+    template <typename T>
+    struct Hash
+    {
+        std::size_t operator()(std::vector<T> const& vt) const noexcept
+        {
+            std::hash<T> hasher;
+            const size_t mask = 37;
+            size_t retval = 0;
+            for (auto t : vt) {
+                retval = retval * mask + hasher(t);
+            }
+            return retval;
+        }
+    };
+
+    template <typename T>
+    void next_element(
+        std::vector<T> const& input, size_t index,
+        T target,
+        std::vector<T>& selected,
+        std::unordered_set<std::vector<T>, Hash<T>>& result
+    ) {
+        if (target != 0) {
+            for (size_t i = index, n = input.size(); i < n && input[i] <= target; ++i) {
+                selected.push_back(input[i]);
+                next_element(input, i + 1, target - input[i], selected, result);
+                selected.pop_back();
+            }
+        } else {
+            result.insert(selected);
+        }
+    }
+
+    template <typename T>
+    std::vector<std::vector<T>> combination_sum(std::vector<T> const& candidates, T target)
+    {
+        std::vector<std::vector<T>> retval;
+        if (!candidates.empty()) {
+            auto input{candidates};
+            std::sort(input.begin(), input.end());
+            std::unordered_set<std::vector<T>, Hash<T>> result;
+            std::vector<T> selected;
+            next_element(input, 0, target, selected, result);
+            retval.assign(result.begin(), result.end());
+        }
+        return retval;
+    }
+
+    void combination_sum_test()
+    {
+        {
+            std::vector<int> candidates = {2, 5, 2, 1, 2};
+            int target = 5;
+            auto result = combination_sum(candidates, target);
+            examine(result.size() == 2, "combination_sum(each candidate is used only once) is failed at the line: %d\n", __LINE__);
+        }
+        {
+            std::vector<int> candidates = {10, 1, 2, 7, 6, 1, 5};
+            int target = 8;
+            auto result = combination_sum(candidates, target);
+            examine(result.size() == 4, "combination_sum(each candidate is used only once) is failed at the line: %d\n", __LINE__);
+        }
+    }
+}
+
+
 int main()
 {
     combination_sum_test();
     letter_combinations_test();
+    only_once::combination_sum_test();
     printf("OK\n");
     return 0;
 }
