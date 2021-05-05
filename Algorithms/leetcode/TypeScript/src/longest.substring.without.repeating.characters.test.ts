@@ -1,7 +1,7 @@
 import { lengthOfLongestSubstring } from "./longest.substring.without.repeating.characters";
 
 test(
-    "check the result value of the call to the function maximumGap",
+    "check the result value of the call to the function lengthOfLongestSubstring",
     () => {
         let result = lengthOfLongestSubstring("abcabcbb");
         expect(result).toEqual(3);
