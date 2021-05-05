@@ -30,4 +30,33 @@ public class Parentheses {
             return retval;
         }
     }
+
+    /*
+     * Given a string containing just the characters '(' and ')', find the length of
+     * the longest valid (well-formed) parentheses substring.
+     */
+    public int longestValidParentheses(String s) {
+        int retval = 0;
+        int n = s.length();
+        if (n > 1) {
+            int[] cache = new int[n];
+            Arrays.fill(cache, 0);
+            for (int i = 0; i < n; ++i) {
+                if (s.charAt(i) == ')' && i > 0) {
+                    int j = i - 1;
+                    j -= cache[j];
+                    if (j >= 0 && s.charAt(j) == '(') {
+                        int l = i - j + 1;
+                        int k = j - 1;
+                        if (k >= 0) {
+                            l += cache[k];
+                        }
+                        cache[i] = l;
+                        retval = Math.max(retval, l);
+                    }
+                }
+            }
+        }
+        return retval;
+    }
 }

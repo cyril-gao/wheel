@@ -150,6 +150,23 @@ public class AppTest {
         assertEquals(p.generateParenthesis(4).size(), 14);
     }
 
+    @Test
+    public void testLongestValidParentheses() {
+        var p = new Parentheses();
+        var result = p.longestValidParentheses("(()(()((()))())");
+        assertEquals(result, 14);
+        result = p.longestValidParentheses("(()");
+        assertEquals(result, 2);
+        result = p.longestValidParentheses(")()())");
+        assertEquals(result, 4);
+        result = p.longestValidParentheses("");
+        assertEquals(result, 0);
+        result = p.longestValidParentheses("))(((");
+        assertEquals(result, 0);
+        result = p.longestValidParentheses("()))(");
+        assertEquals(result, 2);
+    }
+
     private boolean equals(List<Integer> result, Integer[] expection) {
         boolean retval = result.size() == expection.length;
         if (retval) {
