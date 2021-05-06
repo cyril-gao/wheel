@@ -120,24 +120,3 @@ export function findMedianSortedArrays(nums1: number[], nums2: number[]): number
         return 0;
     }
 };
-
-export function randomInt(lower: number, upper: number): number {
-    let v = Math.floor(Math.random() * (upper - lower + 1));
-    return v + lower;
-}
-
-export function sortNumber(a: number, b: number) {
-    return a < b ? -1 : a > b ? 1 : 0;
-}
-
-export function randomSortedNumbers(): number[] {
-    let upperLength = 873427;
-    let lowerLength = 3573;
-
-    let retval = new Array<number>(randomInt(lowerLength, upperLength));
-    for (let i = 0; i < retval.length; ++i) {
-        retval[i] = randomInt(1, Number.MAX_SAFE_INTEGER);
-    }
-    retval.sort(sortNumber);
-    return retval;
-}

@@ -1,4 +1,26 @@
-import { searchSortedArrays, findMedianSortedArrays, randomSortedNumbers, sortNumber } from "./median.of.two.sorted.arrays";
+import { searchSortedArrays, findMedianSortedArrays } from "./median.of.two.sorted.arrays";
+
+
+function randomInt(lower: number, upper: number): number {
+    let v = Math.floor(Math.random() * (upper - lower + 1));
+    return v + lower;
+}
+
+function sortNumber(a: number, b: number) {
+    return a < b ? -1 : a > b ? 1 : 0;
+}
+
+function randomSortedNumbers(): number[] {
+    let upperLength = 8737;
+    let lowerLength = 353;
+
+    let retval = new Array<number>(randomInt(lowerLength, upperLength));
+    for (let i = 0; i < retval.length; ++i) {
+        retval[i] = randomInt(1, Number.MAX_SAFE_INTEGER);
+    }
+    retval.sort(sortNumber);
+    return retval;
+}
 
 test(
     "check the result value of the call to the function searchSortedArrays, findMedianSortedArrays",
