@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <iterator>
 #include <set>
+#include <stdexcept>
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
@@ -253,11 +254,174 @@ namespace only_once
 }
 
 
+/*
+Write a program to solve a Sudoku puzzle by filling the empty cells.
+
+A sudoku solution must satisfy all of the following rules:
+    1. Each of the digits 1-9 must occur exactly once in each row.
+    2. Each of the digits 1-9 must occur exactly once in each column.
+    3. Each of the digits 1-9 must occur exactly once in each of the 9 3x3 sub-boxes of the grid.
+
+The '.' character indicates empty cells.
+*/
+namespace
+{
+    bool is_used(char c)
+    {
+        return (c >= '1' && c <= '9');
+    }
+
+    void clear_cell(char& c)
+    {
+        c = '.';
+    }
+
+    bool contains(std::unordered_set<char> const& set, char item)
+    {
+        return (set.find(item) != set.end());
+    }
+
+    const std::unordered_set<char> sudoku_digits = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+
+    std::unordered_set<char> get_row_candidates(std::vector<std::vector<char>> const& board, int row)
+    {
+        auto retval{sudoku_digits};
+        for (char c : board[row]) {
+            if (is_used(c)) {
+                if (contains(retval, c)) {
+                    retval.erase(c);
+                } else {
+                    throw std::invalid_argument("The board argument is invalid");
+                }
+            }
+        }
+        return retval;
+    }
+
+    std::unordered_set<char> get_col_candidates(std::vector<std::vector<char>> const& board, int col)
+    {
+        auto retval{sudoku_digits};
+        for (int i = 0; i < 9; ++i) {
+            char c = board[i][col];
+            if (is_used(c)) {
+                if (contains(retval, c)) {
+                    retval.erase(c);
+                } else {
+                    throw std::invalid_argument("The board argument is invalid");
+                }
+            }
+        }
+        return retval;
+    }
+
+    std::unordered_set<char> get_grid_candidates(std::vector<std::vector<char>> const& board, int row, int col)
+    {
+        auto retval{sudoku_digits};
+        int grid_row_start = (row / 3) * 3;
+        int grid_col_start = (col / 3) * 3;
+        for (int i = 0, row = grid_row_start; i < 3; ++i, ++row) {
+            for (int j = 0, col = grid_col_start; j < 3; ++j, ++col) {
+                char c = board[row][col];
+                if (is_used(c)) {
+                    if (contains(retval, c)) {
+                        retval.erase(c);
+                    } else {
+                        throw std::invalid_argument("The board argument is invalid");
+                    }
+                }
+            }
+        }
+        return retval;
+    }
+
+    std::vector<char> get_candidates(std::vector<std::vector<char>> const& board, int row, int col)
+    {
+        assert(row >= 0 && row < 9 && col >= 0 && col < 9);
+        auto c1 = get_row_candidates(board, row);
+        auto c2 = get_col_candidates(board, col);
+        auto c3 = get_grid_candidates(board, row, col);
+
+        std::vector<char> retval;
+        retval.reserve(9);
+        for (char c : sudoku_digits) {
+            if (contains(c1, c) && contains(c2, c) && contains(c3, c)) {
+                retval.push_back(c);
+            }
+        }
+        return retval;
+    }
+}
+
+bool next_element(std::vector<std::vector<char>>& board, int row, int col)
+{
+    bool retval = true;
+    if (row < 9) {
+        int new_row = row;
+        int new_col = col + 1;
+        if (new_col >= 9) {
+            new_col -= 9;
+            ++new_row;
+        }
+        retval = false;
+        if (is_used(board[row][col])) {
+            retval = next_element(board, new_row, new_col);
+        } else {
+            auto candidates = get_candidates(board, row, col);
+            if (!candidates.empty()) {
+                for (char c : candidates) {
+                    board[row][col] = c;
+                    if (next_element(board, new_row, new_col)) {
+                        retval = true;
+                        break;
+                    }
+                    clear_cell(board[row][col]);
+                }
+            }
+        }
+    }
+    return retval;
+}
+
+void solve_sudoku(std::vector<std::vector<char>>& board)
+{
+    next_element(board, 0, 0);
+}
+
+void sudoku_test()
+{
+    std::vector<std::vector<char>> board = {
+        {'5','3','.','.','7','.','.','.','.'},
+        {'6','.','.','1','9','5','.','.','.'},
+        {'.','9','8','.','.','.','.','6','.'},
+        {'8','.','.','.','6','.','.','.','3'},
+        {'4','.','.','8','.','3','.','.','1'},
+        {'7','.','.','.','2','.','.','.','6'},
+        {'.','6','.','.','.','.','2','8','.'},
+        {'.','.','.','4','1','9','.','.','5'},
+        {'.','.','.','.','8','.','.','7','9'}
+    };
+    std::vector<std::vector<char>> expectation = {
+        {'5','3','4','6','7','8','9','1','2'},
+        {'6','7','2','1','9','5','3','4','8'},
+        {'1','9','8','3','4','2','5','6','7'},
+        {'8','5','9','7','6','1','4','2','3'},
+        {'4','2','6','8','5','3','7','9','1'},
+        {'7','1','3','9','2','4','8','5','6'},
+        {'9','6','1','5','3','7','2','8','4'},
+        {'2','8','7','4','1','9','6','3','5'},
+        {'3','4','5','2','8','6','1','7','9'}
+    };
+    solve_sudoku(board);
+    examine(board == expectation, "solve_sudoku is failed\n");
+}
+
+
 int main()
 {
     combination_sum_test();
     letter_combinations_test();
     only_once::combination_sum_test();
+    sudoku_test();
     printf("OK\n");
     return 0;
 }
