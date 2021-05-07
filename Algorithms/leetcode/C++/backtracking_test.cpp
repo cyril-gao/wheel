@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include <algorithm>
+#include <initializer_list>
 #include <iterator>
 #include <set>
 #include <stdexcept>
@@ -264,7 +265,7 @@ A sudoku solution must satisfy all of the following rules:
 
 The '.' character indicates empty cells.
 */
-namespace
+namespace v1
 {
     bool is_used(char c)
     {
@@ -350,78 +351,290 @@ namespace
         }
         return retval;
     }
-}
 
-bool next_element(std::vector<std::vector<char>>& board, int row, int col)
-{
-    bool retval = true;
-    if (row < 9) {
-        int new_row = row;
-        int new_col = col + 1;
-        if (new_col >= 9) {
-            new_col -= 9;
-            ++new_row;
-        }
-        retval = false;
-        if (is_used(board[row][col])) {
-            retval = next_element(board, new_row, new_col);
-        } else {
-            auto candidates = get_candidates(board, row, col);
-            if (!candidates.empty()) {
-                for (char c : candidates) {
-                    board[row][col] = c;
-                    if (next_element(board, new_row, new_col)) {
-                        retval = true;
-                        break;
+    bool next_element(std::vector<std::vector<char>>& board, int row, int col)
+    {
+        bool retval = true;
+        if (row < 9) {
+            int new_row = row;
+            int new_col = col + 1;
+            if (new_col >= 9) {
+                new_col -= 9;
+                ++new_row;
+            }
+            retval = false;
+            if (is_used(board[row][col])) {
+                retval = next_element(board, new_row, new_col);
+            } else {
+                auto candidates = get_candidates(board, row, col);
+                if (!candidates.empty()) {
+                    for (char c : candidates) {
+                        board[row][col] = c;
+                        if (next_element(board, new_row, new_col)) {
+                            retval = true;
+                            break;
+                        }
+                        clear_cell(board[row][col]);
                     }
-                    clear_cell(board[row][col]);
                 }
             }
         }
+        return retval;
     }
-    return retval;
+
+    void solve_sudoku(std::vector<std::vector<char>>& board)
+    {
+        next_element(board, 0, 0);
+    }
+
+    void sudoku_test()
+    {
+        std::vector<std::vector<char>> board = {
+            {'5','3','.','.','7','.','.','.','.'},
+            {'6','.','.','1','9','5','.','.','.'},
+            {'.','9','8','.','.','.','.','6','.'},
+            {'8','.','.','.','6','.','.','.','3'},
+            {'4','.','.','8','.','3','.','.','1'},
+            {'7','.','.','.','2','.','.','.','6'},
+            {'.','6','.','.','.','.','2','8','.'},
+            {'.','.','.','4','1','9','.','.','5'},
+            {'.','.','.','.','8','.','.','7','9'}
+        };
+        std::vector<std::vector<char>> expectation = {
+            {'5','3','4','6','7','8','9','1','2'},
+            {'6','7','2','1','9','5','3','4','8'},
+            {'1','9','8','3','4','2','5','6','7'},
+            {'8','5','9','7','6','1','4','2','3'},
+            {'4','2','6','8','5','3','7','9','1'},
+            {'7','1','3','9','2','4','8','5','6'},
+            {'9','6','1','5','3','7','2','8','4'},
+            {'2','8','7','4','1','9','6','3','5'},
+            {'3','4','5','2','8','6','1','7','9'}
+        };
+        solve_sudoku(board);
+        examine(board == expectation, "v1::solve_sudoku is failed\n");
+    }
 }
 
-void solve_sudoku(std::vector<std::vector<char>>& board)
+namespace v2
 {
-    next_element(board, 0, 0);
-}
+    const u_int16_t s_bitset[] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512};
+    const u_int16_t s_maskset[] = {0xfffe, 0xfffd, 0xfffb, 0xfff7, 0xffef, 0xffdf, 0xffbf, 0xff7f, 0xfeff, 0xfdff};
 
-void sudoku_test()
-{
-    std::vector<std::vector<char>> board = {
-        {'5','3','.','.','7','.','.','.','.'},
-        {'6','.','.','1','9','5','.','.','.'},
-        {'.','9','8','.','.','.','.','6','.'},
-        {'8','.','.','.','6','.','.','.','3'},
-        {'4','.','.','8','.','3','.','.','1'},
-        {'7','.','.','.','2','.','.','.','6'},
-        {'.','6','.','.','.','.','2','8','.'},
-        {'.','.','.','4','1','9','.','.','5'},
-        {'.','.','.','.','8','.','.','7','9'}
-    };
-    std::vector<std::vector<char>> expectation = {
-        {'5','3','4','6','7','8','9','1','2'},
-        {'6','7','2','1','9','5','3','4','8'},
-        {'1','9','8','3','4','2','5','6','7'},
-        {'8','5','9','7','6','1','4','2','3'},
-        {'4','2','6','8','5','3','7','9','1'},
-        {'7','1','3','9','2','4','8','5','6'},
-        {'9','6','1','5','3','7','2','8','4'},
-        {'2','8','7','4','1','9','6','3','5'},
-        {'3','4','5','2','8','6','1','7','9'}
-    };
-    solve_sudoku(board);
-    examine(board == expectation, "solve_sudoku is failed\n");
-}
+    bool is_sudoku_digit(char c)
+    {
+        return (c > '0' && c <= '9');
+    }
 
+    class DigitSet
+    {
+        uint16_t m_bits;
+        explicit DigitSet(uint16_t bits) : m_bits(bits) {}
+    public:
+        DigitSet() : m_bits(0) {}
+        template <typename T>
+        DigitSet(std::initializer_list<T> init) : m_bits(0)
+        {
+            for (auto v : init) {
+                insert(v);
+            }
+        }
+
+        void insert(int i)
+        {
+            if (i >= 0 && i <= 9) {
+                m_bits |= s_bitset[i];
+            }
+        }
+        void insert(char c)
+        {
+            if (is_sudoku_digit(c)) {
+                insert(static_cast<int>(c - '0'));
+            }
+        }
+
+        void erase(int i)
+        {
+            if (i >= 0 && i <= 9) {
+                m_bits &= s_maskset[i];
+            }
+        }
+        void erase(char c)
+        {
+            if (is_sudoku_digit(c)) {
+                erase(static_cast<int>(c - '0'));
+            }
+        }
+
+        bool contains(int i)
+        {
+            bool retval = false;
+            if (i >= 0 && i <= 9) {
+                retval = (m_bits & s_bitset[i]) != 0;
+            }
+            return retval;
+        }
+        bool contains(char c)
+        {
+            bool retval = false;
+            if (is_sudoku_digit(c)) {
+                retval = (m_bits & s_bitset[c - '0']) != 0;
+            }
+            return retval;
+        }
+
+        bool empty() const
+        {
+            return m_bits == 0;
+        }
+
+        friend DigitSet operator&(DigitSet s1, DigitSet s2)
+        {
+            return DigitSet(s1.m_bits & s2.m_bits);
+        }
+
+        friend DigitSet operator|(DigitSet s1, DigitSet s2)
+        {
+            return DigitSet(s1.m_bits | s2.m_bits);
+        }
+    };
+
+    const DigitSet s_sudoku_digits{1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    std::vector<DigitSet> get_row_candidates(std::vector<std::vector<char>> const& board)
+    {
+        std::vector<DigitSet> retval(9, s_sudoku_digits);
+        for (int row = 0; row < 9; ++row) {
+            for (char c : board[row]) {
+                if (is_sudoku_digit(c)) {
+                    assert(retval[row].contains(c));
+                    retval[row].erase(c);
+                }
+            }
+        }
+        return retval;
+    }
+
+    std::vector<DigitSet> get_col_candidates(std::vector<std::vector<char>> const& board)
+    {
+        std::vector<DigitSet> retval(9, s_sudoku_digits);
+        for (int j = 0; j < 9; ++j) {
+            for (int i = 0; i < 9; ++i) {
+                char c = board[i][j];
+                if (is_sudoku_digit(c)) {
+                    assert(retval[j].contains(c));
+                    retval[j].erase(c);
+                }
+            }
+        }
+        return retval;
+    }
+
+    std::vector<DigitSet> get_grid_candidates(std::vector<std::vector<char>> const& board)
+    {
+        std::vector<DigitSet> retval(9, s_sudoku_digits);
+        for (int grid_row = 0; grid_row < 3; ++grid_row) {
+            for (int grid_col = 0; grid_col < 3; ++grid_col) {
+                int grid_index = grid_row * 3 + grid_col;
+                for (int i = 0, row = grid_row * 3; i < 3; ++i, ++row) {
+                    for (int j = 0, col = grid_col * 3; j < 3; ++j, ++col) {
+                        char c = board[row][col];
+                        if (is_sudoku_digit(c)) {
+                            assert(retval[grid_index].contains(c));
+                            retval[grid_index].erase(c);
+                        }
+                    }
+                }
+            }
+        }
+        return retval;
+    }
+
+    bool next_step(int row, int col, std::vector<std::vector<char>>& board, std::vector<DigitSet>& rowCandidates, std::vector<DigitSet>& colCandidates, std::vector<DigitSet>& gridCandidates)
+    {
+        bool retval = true;
+        if (row < 9) {
+            int new_row = row;
+            int new_col = col + 1;
+            if (new_col >= 9) {
+                new_col = 0;
+                ++new_row;
+            }
+            if (is_sudoku_digit(board[row][col])) {
+                retval = next_step(new_row, new_col, board, rowCandidates, colCandidates, gridCandidates);
+            } else {
+                int grid_index = (row / 3) * 3 + (col / 3);
+                DigitSet candidates = rowCandidates[row] & colCandidates[col] & gridCandidates[grid_index];
+                if (!candidates.empty()) {
+                    retval = false;
+                    for (char i = '1'; i <= '9'; ++i) {
+                        if (candidates.contains(i)) {
+                            board[row][col] = i;
+                            rowCandidates[row].erase(i);
+                            colCandidates[col].erase(i);
+                            gridCandidates[grid_index].erase(i);
+                            if (next_step(new_row, new_col, board, rowCandidates, colCandidates, gridCandidates)) {
+                                retval = true;
+                                break;
+                            }
+                            gridCandidates[grid_index].insert(i);
+                            colCandidates[col].insert(i);
+                            rowCandidates[row].insert(i);
+                            board[row][col] = '.';
+                        }
+                    }
+                } else {
+                    retval = false;
+                }
+            }
+        }
+        return retval;
+    }
+
+    void solve_sudoku(std::vector<std::vector<char>>& board)
+    {
+        auto rowCandidates = get_row_candidates(board);
+        auto colCandidates = get_col_candidates(board);
+        auto gridCandidates = get_grid_candidates(board);
+        next_step(0, 0, board, rowCandidates, colCandidates, gridCandidates);
+    }
+
+    void sudoku_test()
+    {
+        std::vector<std::vector<char>> board = {
+            {'5','3','.','.','7','.','.','.','.'},
+            {'6','.','.','1','9','5','.','.','.'},
+            {'.','9','8','.','.','.','.','6','.'},
+            {'8','.','.','.','6','.','.','.','3'},
+            {'4','.','.','8','.','3','.','.','1'},
+            {'7','.','.','.','2','.','.','.','6'},
+            {'.','6','.','.','.','.','2','8','.'},
+            {'.','.','.','4','1','9','.','.','5'},
+            {'.','.','.','.','8','.','.','7','9'}
+        };
+        std::vector<std::vector<char>> expectation = {
+            {'5','3','4','6','7','8','9','1','2'},
+            {'6','7','2','1','9','5','3','4','8'},
+            {'1','9','8','3','4','2','5','6','7'},
+            {'8','5','9','7','6','1','4','2','3'},
+            {'4','2','6','8','5','3','7','9','1'},
+            {'7','1','3','9','2','4','8','5','6'},
+            {'9','6','1','5','3','7','2','8','4'},
+            {'2','8','7','4','1','9','6','3','5'},
+            {'3','4','5','2','8','6','1','7','9'}
+        };
+        solve_sudoku(board);
+        examine(board == expectation, "v2::solve_sudoku is failed\n");
+    }
+}
 
 int main()
 {
     combination_sum_test();
     letter_combinations_test();
     only_once::combination_sum_test();
-    sudoku_test();
+    v1::sudoku_test();
+    v2::sudoku_test();
     printf("OK\n");
     return 0;
 }
