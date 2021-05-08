@@ -1,5 +1,7 @@
 package com.example;
 
+import java.util.*;
+
 public class DynamicProgramming {
     private static boolean equals(String s1, int begin, int end, String s2, int start) {
         boolean retval = true;
@@ -50,6 +52,138 @@ public class DynamicProgramming {
                     }
                 }
             }
+        }
+        return retval;
+    }
+
+    /*
+     * Given an input string (s) and a pattern (p), implement regular expression
+     * matching with support for '.' and '*' where:
+     *   - '.' Matches any single character.​​​​
+     *   - '*' Matches zero or more of the preceding element.
+     *
+     * The matching should cover the entire input string (not partial).
+     */
+    private List<String> divide(String pattern) {
+        List<String> retval = new ArrayList<String>();
+        for (int i = 0, n = pattern.length(); i < n;) {
+            int j = i;
+            while (j < n && pattern.charAt(j) != '*') {
+                ++j;
+            }
+            if (j < n) {
+                assert((j - 1) >= 0);
+                if (j - 1 - i > 0) {
+                    retval.add(pattern.substring(i, j - 1));
+                }
+                i = j + 1;
+                retval.add(pattern.substring(j - 1, i));
+            } else {
+                retval.add(pattern.substring(i));
+                i = j;
+            }
+        }
+        return retval;
+    }
+
+    private boolean containsAsterisk(String pattern) {
+        boolean retval = false;
+        for (int i = 0, n = pattern.length(); i < n; ++i) {
+            if (pattern.charAt(i) == '*') {
+                retval = true;
+                break;
+            }
+        }
+        return retval;
+    }
+
+    private boolean isMatch(String s, int begin, String p) {
+        boolean retval = true;
+        for (int i = 0, n = p.length(); i < n; ++i) {
+            char c = p.charAt(i);
+            if (c != '.' && c != s.charAt(begin + i)) {
+                retval = false;
+                break;
+            }
+        }
+        return retval;
+    }
+
+    private boolean isMatch(String s, int begin, int span, String p) {
+        assert(containsAsterisk(p) && p.length() == 2);
+        boolean retval = true;
+        char c = p.charAt(0);
+        if (c != '.') {
+            for (int i = 0; i < span; ++i, ++begin) {
+                if (s.charAt(begin) != c) {
+                    retval = false;
+                    break;
+                }
+            }
+        }
+        return retval;
+    }
+
+    private List<Integer> getCandidates(boolean[][] matchingInfo, int begin)
+    {
+        List<Integer> retval = new ArrayList<Integer>();
+        for (int i = 0; i < matchingInfo.length; ++i) {
+            for (int j = 0; j < matchingInfo[i].length; ++j) {
+                if (matchingInfo[i][j] && i == begin) {
+                    retval.add(j);
+                }
+            }
+        }
+        return retval;
+    }
+
+    private boolean isMatch(String txt, int txtIndex, List<String> patterns, int pIndex, boolean[][][] matchingInfo) {
+        boolean retval = false;
+        if (pIndex < patterns.size()) {
+            List<Integer> candidates = getCandidates(matchingInfo[pIndex], txtIndex);
+            if (!candidates.isEmpty()) {
+                for (int l : candidates) {
+                    if (isMatch(txt, txtIndex + l, patterns, pIndex + 1, matchingInfo)) {
+                        retval = true;
+                        break;
+                    }
+                }
+            }
+        } else {
+            retval = txtIndex >= txt.length();
+        }
+        return retval;
+    }
+
+    public boolean isMatch(String s, String p) {
+        boolean retval = false;
+        List<String> patterns = divide(p);
+        if (!patterns.isEmpty()) {
+            int n = patterns.size();
+            int m = s.length();
+            boolean[][][] matchingInfo = new boolean[n][m+1][m+1];
+            for (int i = 0; i < n; ++i) {
+                String pattern = patterns.get(i);
+                if (containsAsterisk(pattern)) {
+                    for (int span = 0; span <= m; ++span) {
+                        for (int start = 0, end = span; end <= m; ++start, ++end) {
+                            if (isMatch(s, start, span, pattern)) {
+                                matchingInfo[i][start][span] = true;
+                            }
+                        }
+                    }
+                } else {
+                    int k = pattern.length();
+                    for (int start = 0, end = start + k; end <= m; ++start, ++end) {
+                        if (isMatch(s, start, pattern)) {
+                            matchingInfo[i][start][k] = true;
+                        }
+                    }
+                }
+            }
+            retval = isMatch(s, 0, patterns, 0, matchingInfo);
+        } else {
+            retval = s.isEmpty();
         }
         return retval;
     }

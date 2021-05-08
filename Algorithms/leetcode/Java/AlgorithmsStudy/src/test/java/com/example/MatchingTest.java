@@ -72,6 +72,7 @@ public class MatchingTest {
         assertTrue(rem.isMatch("aaa", "ab*ac*a"));
         assertTrue(rem.isMatch("ab", ".*.."));
         assertTrue(rem.isMatch("ab", ".*..c*"));
+        assertTrue(rem.isMatch("mississippi", "mis*is*ip*."));
 
         assertTrue(rem.isValid("()"));
         assertTrue(rem.isValid("()[]{}"));
@@ -80,6 +81,21 @@ public class MatchingTest {
         assertFalse(rem.isValid("([{((})"));
         assertFalse(rem.isValid("(]"));
         assertFalse(rem.isValid("([)]"));
+
+        var dp = new DynamicProgramming();
+        assertTrue(dp.isMatch("", ""));
+        assertTrue(dp.isMatch("", "a*"));
+        assertTrue(dp.isMatch("", "a*.*c*a*"));
+        assertTrue(dp.isMatch("", ".*"));
+        assertFalse(dp.isMatch("ab", "a"));
+        assertFalse(dp.isMatch("ab", ".*c"));
+        assertTrue(dp.isMatch("aa", "a*"));
+        assertTrue(dp.isMatch("aaa", "a*a"));
+        assertFalse(dp.isMatch("a", "ab*a"));
+        assertTrue(dp.isMatch("aaa", "ab*ac*a"));
+        assertTrue(dp.isMatch("ab", ".*.."));
+        assertTrue(dp.isMatch("ab", ".*..c*"));
+        assertTrue(dp.isMatch("mississippi", "mis*is*ip*."));
     }
 
     @Test
