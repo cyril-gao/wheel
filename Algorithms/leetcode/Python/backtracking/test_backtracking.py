@@ -8,6 +8,7 @@ from sudoku import fill_empty_cells
 from combination import k_combination
 from additive_number import is_additive_number
 from binary_watch import read_binary_watch
+from subsets import subsets
 
 
 class BacktrackingTester(unittest.TestCase):
@@ -170,3 +171,17 @@ class BacktrackingTester(unittest.TestCase):
         self.assertEqual(len(r), 44)
         r = read_binary_watch(9)
         self.assertEqual(r, [])
+
+    def test_subsets(self):
+        elements = []
+        result = subsets(elements)
+        self.assertEqual(len(result), 1)
+        elements = [0]
+        result = subsets(elements)
+        self.assertEqual(len(result), 2)
+        elements = [1, 2, 3]
+        result = subsets(elements)
+        self.assertEqual(len(result), 8)
+        elements = [1, 2, 3, 4]
+        result = subsets(elements)
+        self.assertEqual(len(result), 16)
