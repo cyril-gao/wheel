@@ -6,6 +6,7 @@ from decode_ways import number_of_decodings
 from edit_distance import minimum_distance, minimum_distance_2
 from triangle import minimum_path_in_triangle
 from subsequence import lis
+from scramble_string import is_scramble
 
 
 class DPTester(unittest.TestCase):
@@ -99,3 +100,15 @@ class DPTester(unittest.TestCase):
     def test_lis(self):
         input = [7, 1, 2, 10, 9, 8, 6, 4, 7, 3, 5, 2, 4, 7]
         self.assertEqual(len(lis(input)), 5)
+
+    def test_is_scramble(self):
+        self.assertTrue(is_scramble("abcdbdacbdac", "bdacabcdbdac"))
+        self.assertTrue(is_scramble("great", "rgeat"))
+        self.assertTrue(is_scramble("abcd", "cabd"))
+        self.assertTrue(is_scramble("abcd", "dbac"))
+        self.assertTrue(is_scramble("abcde", "edcba"))
+        self.assertTrue(is_scramble("abcdbdacbdac", "bdacabcdbdac"))
+        self.assertTrue(is_scramble("ccbabcbabbbbcbbabcdbdacac", "bbbbcccbbbabcbabdacabcdac"))
+        self.assertFalse(is_scramble("abcde", "caebd"))
+        self.assertFalse(is_scramble("dcoiorfhkqdwp", "rdpihwfkcooqd"))
+        self.assertTrue(is_scramble("ccabcbabcbabbbbcbbabcdbdacbdacabcdbdacbdac", "bbbbabccccbbbabcbabdacabcdbdacbdacabcdbdac"))
