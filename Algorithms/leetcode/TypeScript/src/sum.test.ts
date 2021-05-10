@@ -1,4 +1,4 @@
-import { threeSum } from "./sum";
+import { threeSum, threeSumClosest } from "./sum";
 
 test(
     "check the result value of the call to the function threeSum",
@@ -18,5 +18,26 @@ test(
         expect(threeSum([]).length).toEqual(0);
         expect(threeSum([0]).length).toEqual(0);
         expect(threeSum([0, 0]).length).toEqual(0);
+    }
+);
+
+test(
+    "check the result value of the call to the function threeSumClosest",
+    () => {
+        let nums = [0, 2, 1, -3];
+        let result = threeSumClosest(nums, 1);
+        expect(result).toEqual(0);
+
+        nums = [0, 0, 0];
+        result = threeSumClosest(nums, 1);
+        expect(result).toEqual(0);
+
+        nums = [0, 1, 2];
+        result = threeSumClosest(nums, 0);
+        expect(result).toEqual(3);
+
+        nums = [-1, 0, 1, 1, 55];
+        result = threeSumClosest(nums, 3);
+        expect(result).toEqual(2);
     }
 );
