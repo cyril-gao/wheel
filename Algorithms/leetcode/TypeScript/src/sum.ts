@@ -148,3 +148,53 @@ export function threeSumClosest(nums: number[], target: number): number {
         }
     }
 }
+
+
+/*
+Given an array nums of n integers, return an array of all the unique quadruplets [nums[a], nums[b], nums[c], nums[d]] such that:
+- 0 <= a, b, c, d < n
+- a, b, c, and d are distinct.
+- nums[a] + nums[b] + nums[c] + nums[d] == target
+You may return the answer in any order.
+*/
+
+export function fourSum(nums: number[], target: number): number[][] {
+    let retval = [];
+    if (nums.length > 3) {
+        nums.sort((a, b) => a < b ? -1 : a > b ? 1 : 0);
+        let cache = new Map<number, Map<number, Set<number>>>();
+        for (let i = 0, ie = nums.length - 3; i < ie; ++i) {
+            let first = nums[i];
+            for (let j = i + 1, je = ie + 1; j < je; ++j) {
+                let second = nums[j];
+                for (let k = j + 1, ke = je + 1; k < ke; ++k) {
+                    let third = nums[k];
+                    let remains = target - (first + second + third);
+                    let p = binarySearch(nums, k + 1, nums.length, remains);
+                    if (p != nums.length && nums[p] === remains) {
+                        let h1 = cache.get(first);
+                        if (h1 === undefined || !h1.has(second)) {
+                            let set = new Set<number>();
+                            set.add(third);
+                            let map = new Map<number, Set<number>>();
+                            map.set(second, set);
+                            if (h1 === undefined) {
+                                cache.set(first, map);
+                            } else {
+                                h1.set(second, set);
+                            }
+                            retval.push([first, second, third, remains]);
+                        } else {
+                            let h2 = h1.get(second);
+                            if (!h2.has(third)) {
+                                retval.push([first, second, third, remains]);
+                                h2.add(third);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return retval;
+};
