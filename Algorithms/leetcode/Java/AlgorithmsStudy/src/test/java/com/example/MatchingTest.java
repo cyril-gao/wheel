@@ -111,4 +111,27 @@ public class MatchingTest {
         assertEquals(kmp.find("ABABAAAAABABABABAABABAAAA", "ABABABAB"), 8);
         assertEquals(kmp.find("ABABAAAAABABABABAABABAAAA", "ABABABABB"), -1);
     }
+
+    private boolean isValidIpv4(String input) {
+        String strPattern = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$";
+        return java.util.regex.Pattern.compile(strPattern).matcher(input).find();
+    }
+
+    @Test
+    public void testRegexForIPAddress() {
+        assertTrue(isValidIpv4("2.0.2.53"));
+        assertTrue(isValidIpv4("200.0.255.253"));
+        assertTrue(isValidIpv4("10.2.2.3"));
+        assertTrue(isValidIpv4("0.0.0.0"));
+        assertFalse(isValidIpv4("300.10.10.10"));
+        assertFalse(isValidIpv4("0.510.10.10"));
+        assertFalse(isValidIpv4("0.10.510.10"));
+        assertFalse(isValidIpv4("0.10.10.256"));
+        assertFalse(isValidIpv4("2.0.2.53a"));
+        assertFalse(isValidIpv4("a2.0.2.53"));
+        assertFalse(isValidIpv4("2.c0.2.53"));
+        assertFalse(isValidIpv4("200-0.255.253"));
+        assertFalse(isValidIpv4("10_2.2.3"));
+        assertFalse(isValidIpv4("0.0.00.0"));
+    }
 }
