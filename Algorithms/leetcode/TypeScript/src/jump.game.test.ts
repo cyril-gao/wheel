@@ -11,4 +11,4 @@ test(
 
         expect(minimumJump([0])).toEqual(0);
     }
-)
+);
