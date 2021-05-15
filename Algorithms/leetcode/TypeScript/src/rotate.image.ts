@@ -24,3 +24,46 @@ export function rotate(matrix: number[][]): void {
         --rightCol;
     }
 }
+
+
+/*
+Given an m x n matrix, return all elements of the matrix in spiral order.
+*/
+export function spiralOrder<T>(matrix: T[][]): T[] {
+    let retval = [];
+    let m = matrix.length;
+    if (m > 0) {
+        let n = matrix[0].length;
+        if (n > 0) {
+            retval = new Array<T>(m * n);
+            let outputIndex = 0;
+            let topRow = 0;
+            let bottomRow = m - 1;
+            let leftCol = 0;
+            let rightCol = n - 1;
+            while (topRow <= bottomRow && leftCol <= rightCol) {
+                for (let i = 0, ie = rightCol - leftCol + 1; i < ie; ++i) {
+                    retval[outputIndex++] = matrix[topRow][leftCol + i];
+                }
+                for (let i = 0, ie = bottomRow - topRow - 1; i < ie; ++i) {
+                    retval[outputIndex++] = matrix[topRow + 1 + i][rightCol];
+                }
+                if (topRow < bottomRow) {
+                    for (let i = 0, ie = rightCol - leftCol + 1; i < ie; ++i) {
+                        retval[outputIndex++] = matrix[bottomRow][rightCol - i];
+                    }
+                }
+                if (leftCol < rightCol) {
+                    for (let i = 0, ie = bottomRow - topRow - 1; i < ie; ++i) {
+                        retval[outputIndex++] = matrix[bottomRow - 1 - i][leftCol];
+                    }
+                }
+                ++topRow;
+                --bottomRow;
+                ++leftCol;
+                --rightCol;
+            }
+        }
+    }
+    return retval;
+}
