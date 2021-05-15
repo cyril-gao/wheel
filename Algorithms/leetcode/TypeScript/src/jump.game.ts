@@ -34,3 +34,29 @@ export function minimumJump(nums: number[]): number {
     }
     return retval;
 }
+
+/*
+Given an array of non-negative integers nums, you are initially positioned at the first index of the array.
+
+Each element in the array represents your maximum jump length at that position.
+
+Determine if you are able to reach the last index.
+*/
+
+export function canJump(nums: number[]): boolean {
+    let retval = true;
+    if (nums.length > 1) {
+        let last = nums.length - 1;
+        let jumpFurthest = nums[0];
+        for (let i = 1; jumpFurthest >= i && jumpFurthest < last;) {
+            let nextFurthest = 0;
+            for (let j = i; j <= jumpFurthest; ++j) {
+                nextFurthest = Math.max(nextFurthest, j + nums[j]);
+            }
+            i = jumpFurthest + 1;
+            jumpFurthest = nextFurthest;
+        }
+        retval = (jumpFurthest >= last);
+    }
+    return retval;
+}
