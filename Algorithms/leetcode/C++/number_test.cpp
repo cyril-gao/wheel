@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 
 #include <vector>
 #include "check.h"
@@ -177,11 +178,65 @@ void divide_test()
     }
 }
 
+/*
+Implement pow(x, n), which calculates x raised to the power n (i.e., x^n).
+*/
+namespace study
+{
+    double positive_pow(double x, unsigned int n)
+    {
+        assert(n > 0);
+        double retval = 1.0;
+        double power = x;
+        for (
+            unsigned bit = 1, mask = 1;
+            (n & bit) != 0 || (n & ~mask) != 0;
+            bit <<= 1, mask = ((mask << 1) | 1u), power = power * power
+        ) {
+            if ((n & bit) != 0) {
+                retval *= power;
+            }
+        }
+        return retval;
+    }
+
+    double pow(double x, int n)
+    {
+        if (n > 0) {
+            return positive_pow(x, static_cast<unsigned int>(n));
+        } else if (n < 0) {
+            if (n != INT_MIN) {
+                return 1 / positive_pow(x, static_cast<unsigned int>(-n));
+            }
+            return 1 / positive_pow(x, static_cast<unsigned int>(INT_MAX) + 1u);
+        } else {
+            return 1.0;
+        }
+    }
+
+    bool equal(double x, double y)
+    {
+        return fabs(x - y) < 0.001;
+    }
+}
+
+void pow_test()
+{
+    double xs[] = {1.02345, 1.656, 1.0035, -1.0334, -1.004657};
+    int ns[] = {-101, -53, -29, -17, -11, -7, -3, -1, 0, 1, 3, 5, 7, 9, 11, 13, 17, 19, 23, 29, 53};
+    for (auto x : xs) {
+        for (auto n : ns) {
+            // there are significant difference between the two results
+            examine(study::equal(study::pow(x, n), pow(x, n)), "pow is failed for the input: %f ^ %d\n", x, n);
+        }
+    }
+}
 
 int main()
 {
     str_to_int_test();
     divide_test();
+    pow_test();
     printf("OK\n");
     return 0;
 }
