@@ -55,3 +55,54 @@ export function solveNQueens(n: number): string[][] {
     }
     throw new Error(`Bad argument: ${n}, it must be bigger than 0`);
 }
+
+
+/*
+The n-queens puzzle is the problem of placing n queens on an n x n chessboard such that no two queens attack each other.
+
+Given an integer n, return the number of distinct solutions to the n-queens puzzle.
+*/
+
+function explorer(
+    n: number,
+    row: number,
+    col: number,
+    selectedCols: number[],
+    result: number[]
+) {
+    let valid = true;
+    for (let i = 0; i < row; ++i) {
+        if (
+            (selectedCols[i] === col) ||
+            ((i - selectedCols[i]) === (row - col)) ||
+            ((i + selectedCols[i]) === (row + col))
+        ) {
+            valid = false;
+            break;
+        }
+    }
+    if (valid) {
+        selectedCols.push(col);
+        let nextRow = row + 1;
+        if (nextRow < n) {
+            for (let i = 0; i < n; ++i) {
+                explorer(n, nextRow, i, selectedCols, result);
+            }
+        } else {
+            ++result[0];
+        }
+        selectedCols.pop();
+    }
+}
+
+export function totalNQueens(n: number): number {
+    let retval = 0;
+    if (n > 0) {
+        let result = [0];
+        for (let i = 0; i < n; ++i) {
+            explorer(n, 0, i, [], result);
+        }
+        retval = result[0];
+    }
+    return retval;
+}

@@ -1,4 +1,4 @@
-import { solveNQueens } from "./n.queens";
+import { solveNQueens, totalNQueens } from "./n.queens";
 
 test(
     "check the result value of the call to the function solveNQueens",
@@ -18,5 +18,22 @@ test(
 
         result = solveNQueens(5);
         expect(result.length).toEqual(10);
+    }
+);
+
+test(
+    "check the result value of the call to the function totalNQueens",
+    () => {
+        let result = totalNQueens(1);
+        expect(result).toEqual(1);
+
+        result = totalNQueens(2);
+        expect(result).toEqual(0);
+
+        result = totalNQueens(4);
+        expect(result).toEqual(2);
+
+        result = totalNQueens(5);
+        expect(result).toEqual(10);
     }
 );
