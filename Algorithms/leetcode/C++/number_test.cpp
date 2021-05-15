@@ -189,9 +189,9 @@ namespace study
         double retval = 1.0;
         double power = x;
         for (
-            unsigned bit = 1, mask = 1;
-            (n & bit) != 0 || (n & ~mask) != 0;
-            bit <<= 1, mask = ((mask << 1) | 1u), power = power * power
+            unsigned bit = 1, mask = -1;
+            (n & bit) != 0 || (n & mask) != 0;
+            bit <<= 1, mask <<= 1 , power = power * power
         ) {
             if ((n & bit) != 0) {
                 retval *= power;
