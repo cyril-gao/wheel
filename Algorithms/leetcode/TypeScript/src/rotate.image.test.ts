@@ -1,4 +1,4 @@
-import { rotate, spiralOrder } from "./rotate.image";
+import { rotate, spiralOrder, generateMatrix } from "./rotate.image";
 
 test(
     "check the result value of the call to the function rotate",
@@ -80,6 +80,47 @@ test(
         expect(result.length).toEqual(expectation.length);
         for (let i = 0; i < result.length; ++i) {
             expect(result[i]).toEqual(expectation[i]);
+        }
+    }
+);
+
+test(
+    "check the result value of the call to the function generateMatrix",
+    () => {
+        let expectation = [[1]];
+        let result = generateMatrix(1);
+        expect(result.length).toEqual(expectation.length);
+        for (let i = 0; i < result.length; ++i) {
+            for (let j = 0; j < result[i].length; ++j) {
+                expect(result[i][j]).toEqual(expectation[i][j]);
+            }
+        }
+
+        expectation = [[1, 2], [4, 3]];
+        result = generateMatrix(2);
+        expect(result.length).toEqual(expectation.length);
+        for (let i = 0; i < result.length; ++i) {
+            for (let j = 0; j < result[i].length; ++j) {
+                expect(result[i][j]).toEqual(expectation[i][j]);
+            }
+        }
+
+        expectation = [[1, 2, 3], [8, 9, 4], [7, 6, 5]];
+        result = generateMatrix(3);
+        expect(result.length).toEqual(expectation.length);
+        for (let i = 0; i < result.length; ++i) {
+            for (let j = 0; j < result[i].length; ++j) {
+                expect(result[i][j]).toEqual(expectation[i][j]);
+            }
+        }
+
+        expectation = [[1, 2, 3, 4], [12, 13, 14, 5], [11, 16, 15, 6], [10, 9, 8, 7]];
+        result = generateMatrix(4);
+        expect(result.length).toEqual(expectation.length);
+        for (let i = 0; i < result.length; ++i) {
+            for (let j = 0; j < result[i].length; ++j) {
+                expect(result[i][j]).toEqual(expectation[i][j]);
+            }
         }
     }
 );

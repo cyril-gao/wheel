@@ -67,3 +67,48 @@ export function spiralOrder<T>(matrix: T[][]): T[] {
     }
     return retval;
 }
+
+
+/*
+Given a positive integer n, generate an n x n matrix filled with elements
+from 1 to n2 in spiral order.
+*/
+
+export function generateMatrix(n: number): number[][] {
+    if (n > 0) {
+        let retval = new Array<number[]>(n);
+        for (let i = 0; i < n; ++i) {
+            retval[i] = new Array<number>(n);
+        }
+        let nextNumber = 0;
+        let topRow = 0;
+        let bottomRow = n - 1;
+        let leftCol = 0;
+        let rightCol = n - 1;
+        while (topRow <= bottomRow && leftCol <= rightCol) {
+            for (let i = 0, ie = rightCol - leftCol + 1; i < ie; ++i) {
+                retval[topRow][leftCol + i] = ++nextNumber;
+            }
+            for (let i = 0, ie = bottomRow - topRow - 1; i < ie; ++i) {
+                retval[topRow + 1 + i][rightCol] = ++nextNumber;
+            }
+            if (topRow < bottomRow) {
+                for (let i = 0, ie = rightCol - leftCol + 1; i < ie; ++i) {
+                    retval[bottomRow][rightCol - i] = ++nextNumber;
+                }
+            }
+            if (leftCol < rightCol) {
+                for (let i = 0, ie = bottomRow - topRow - 1; i < ie; ++i) {
+                    retval[bottomRow - 1 - i][leftCol] = ++nextNumber;
+                }
+            }
+            ++topRow;
+            --bottomRow;
+            ++leftCol;
+            --rightCol;
+        }
+        return retval;
+    } else {
+        throw new Error(`Bad number: ${n}, it must be bigger than 0`);
+    }
+}
