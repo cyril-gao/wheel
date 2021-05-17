@@ -419,6 +419,7 @@ int main()
     divide_test();
     pow_test();
     is_number_test();
+    sqrt_test();
     printf("OK\n");
     return 0;
 }
