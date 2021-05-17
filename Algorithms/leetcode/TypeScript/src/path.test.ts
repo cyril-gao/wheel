@@ -1,4 +1,4 @@
-import { uniquePaths, uniquePathsWithObstacles } from "./path";
+import { uniquePaths, uniquePathsWithObstacles, minPathSum } from "./path";
 
 test(
     "check the result value of the call to the function uniquePaths",
@@ -26,5 +26,17 @@ test(
 
         obstacleGrid = [[1, 1], [0, 0]];
         expect(uniquePathsWithObstacles(obstacleGrid)).toEqual(0);
+    }
+);
+
+
+test(
+    "check the result value of the call to the function minPathSum",
+    () => {
+        let grid = [[1, 3, 1], [1, 5, 1], [4, 2, 1]];
+        expect(minPathSum(grid)).toEqual(7);
+
+        grid = [[1, 2, 3], [4, 5, 6]];
+        expect(minPathSum(grid)).toEqual(12);
     }
 );
