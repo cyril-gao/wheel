@@ -358,6 +358,60 @@ void is_number_test()
     }
 }
 
+/*
+Given a non-negative integer x, compute and return the square root of x.
+
+Since the return type is an integer, the decimal digits are truncated, and only the integer part of the result is returned.
+*/
+
+namespace study
+{
+    int positive_sqrt(unsigned int x)
+    {
+        unsigned int begin = 1;
+        unsigned int end = x;
+        unsigned int mid = x;
+        while (begin < end) {
+            mid = (begin + end) / 2;
+            unsigned int quotient = x / mid;
+            if (quotient < mid) {
+                end = mid;
+                mid = begin;
+            } else if (quotient > mid) {
+                begin = mid + 1;
+                mid = end;
+            } else {
+                break;
+            }
+        }
+        return static_cast<int>(mid);
+    }
+
+    int sqrt(int x)
+    {
+        assert(x >= 0);
+        int retval = positive_sqrt(static_cast<unsigned int>(x));
+        if (retval > 46340 || (retval * retval) > x) {
+            --retval;
+        }
+        return retval;
+    }
+}
+
+void sqrt_test()
+{
+    auto is_valid = [](int r, int x) {
+        int64_t ur = r;
+        int64_t ur1 = ur + 1;
+        int64_t ux = x;
+        return (ur * ur) <= ux && (ur1 * ur1) > ux;
+    };
+    int nums[] = {1, 5, 7, 9, 11, 16, 64, 129, 257, 513, 1025, 28345, 456843, 857643, 92356742, 987654321, INT_MAX};
+    for (auto n : nums) {
+        auto result = study::sqrt(n);
+        examine(is_valid(result, n), "sqrt is failed for the argument: %d\n", n);
+    }
+}
 
 int main()
 {
