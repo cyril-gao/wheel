@@ -494,4 +494,37 @@ public class ArrayOperationsTest {
             assertEquals(ao.maxProfitAtMostTwoTransactions(prices), 391);
         }
     }
+
+    @Test
+    public void testFullJustify() {
+        var ao = new ArrayOperations();
+        {
+            String[] words = { "This", "is", "an", "example", "of", "text", "justification." };
+            var result = ao.fullJustify(words, 16);
+            assertEquals(result.size(), 3);
+            assertEquals(result.get(0), "This    is    an");
+            assertEquals(result.get(1), "example  of text");
+            assertEquals(result.get(2), "justification.  ");
+        }
+        {
+            String[] words = { "What", "must", "be", "acknowledgment", "shall", "be" };
+            var result = ao.fullJustify(words, 16);
+            assertEquals(result.size(), 3);
+            assertEquals(result.get(0), "What   must   be");
+            assertEquals(result.get(1), "acknowledgment  ");
+            assertEquals(result.get(2), "shall be        ");
+        }
+        {
+            String[] words = { "Science", "is", "what", "we", "understand", "well", "enough", "to", "explain", "to",
+                    "a", "computer.", "Art", "is", "everything", "else", "we", "do" };
+            var result = ao.fullJustify(words, 20);
+            assertEquals(result.size(), 6);
+            assertEquals(result.get(0), "Science  is  what we");
+            assertEquals(result.get(1), "understand      well");
+            assertEquals(result.get(2), "enough to explain to");
+            assertEquals(result.get(3), "a  computer.  Art is");
+            assertEquals(result.get(4), "everything  else  we");
+            assertEquals(result.get(5), "do                  ");
+        }
+    }
 }

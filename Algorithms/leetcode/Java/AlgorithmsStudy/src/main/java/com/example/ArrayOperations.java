@@ -792,4 +792,104 @@ public class ArrayOperations {
         }
         return retval;
     }
+
+
+    /*
+     * Given an array of words and a width maxWidth, format the text such that each
+     * line has exactly maxWidth characters and is fully (left and right) justified.
+     * 
+     * You should pack your words in a greedy approach; that is, pack as many words
+     * as you can in each line. Pad extra spaces ' ' when necessary so that each
+     * line has exactly maxWidth characters.
+     * 
+     * Extra spaces between words should be distributed as evenly as possible. If
+     * the number of spaces on a line do not divide evenly between words, the empty
+     * slots on the left will be assigned more spaces than the slots on the right.
+     * 
+     * For the last line of text, it should be left justified and no extra space is
+     * inserted between words.
+     * 
+     * Note:
+     * 1. A word is defined as a character sequence consisting of non-space characters
+     * only. 
+     * 2. Each word's length is guaranteed to be greater than 0 and not exceed
+     * maxWidth. 
+     * 3. The input array words contains at least one word.
+     */
+    static class Record {
+        public String line;
+        public int numberOfWords;
+    }
+
+    static void append(StringBuilder sb, char c, int n) {
+        for (int i = 0; i < n; ++i) {
+            sb.append(c);
+        }
+    }
+
+    private Record generateNormalString(String[] words, int start, int maxWidth) {
+        Record retval = new Record();
+        int totalLength = 0, i, charsLength = 0, j;
+        for (i = 0, j = start; j < words.length; ++i, ++j) {
+            if (i != 0) {
+                int v = totalLength + 1 + words[j].length();
+                if (v <= maxWidth) {
+                    totalLength = v;
+                    charsLength += words[j].length();
+                } else {
+                    break;
+                }
+            } else {
+                totalLength += words[j].length();
+                charsLength += words[j].length();
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        if (i > 1) {
+            int k = i - 1;
+            int v = maxWidth - charsLength;
+            int s = v / k;
+            int r = v % k;
+            sb.append(words[start]);
+            j = start + 1;
+            for (int l = 0; l < k; ++l, ++j) {
+                append(sb, ' ', s);
+                if (r > 0) {
+                    sb.append(' ');
+                    --r;
+                }
+                sb.append(words[j]);
+            }
+        } else {
+            sb.append(words[start]);
+            append(sb, ' ', maxWidth - charsLength);
+        }
+        retval.line = sb.toString();
+        retval.numberOfWords = i;
+        return retval;
+    }
+
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        List<String> retval = new LinkedList<>();
+        for (int i = 0; i < words.length;) {
+            var record = generateNormalString(words, i, maxWidth);
+            int j = i + record.numberOfWords;
+            if (j < words.length) {
+                retval.add(record.line);
+            } else {
+                StringBuilder sb = new StringBuilder();
+                int count = words[i].length();
+                sb.append(words[i]);
+                for (j = i + 1; j < words.length; ++j) {
+                    sb.append(' ');
+                    sb.append(words[j]);
+                    count += (1 + words[j].length());
+                }
+                append(sb, ' ', maxWidth - count);
+                retval.add(sb.toString());
+            }
+            i = j;
+        }
+        return retval;
+    }
 }
