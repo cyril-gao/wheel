@@ -1,4 +1,4 @@
-from typing import List, TypeVar
+from typing import List, TypeVar, Set, Tuple
 from copy import copy
 
 T = TypeVar('T')
@@ -48,4 +48,39 @@ def subsets(elements: List[T]) -> List[List[T]]:
             next_step(elements, n, span, start, 0, [], retval)
     if n > 0:
         retval.append(copy(elements))
+    return retval
+
+
+'''
+Given an array that may contain duplicates, return all possible subsets (the power set).
+
+The solution set must not contain duplicate subsets. Return the solution in any order.
+'''
+def subsets_without_dup(elements: List[T]) -> List[List[T]]:
+    def next_step(
+        elements: List[T],
+        start: int,
+        remains: int,
+        selected: List[T],
+        result: Set[Tuple[T]]
+    ):
+        selected.append(elements[start])
+        if remains > 0:
+            n = len(elements)
+            for i in range(start + 1, n - remains + 1):
+                next_step(elements, i, remains - 1, selected, result)
+        else:
+            value = tuple(sorted(selected))
+            result.add(value)
+        selected.pop()
+
+    retval = [[]]
+    if elements:
+        n = len(elements)
+        result = set()
+        for i in range(1, n + 1):
+            for j in range(n - i + 1):
+                next_step(elements, j, i - 1, [], result)
+        for r in result:
+            retval.append(list(r))
     return retval

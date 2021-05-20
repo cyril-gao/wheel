@@ -8,7 +8,7 @@ from sudoku import fill_empty_cells
 from combination import k_combination
 from additive_number import is_additive_number
 from binary_watch import read_binary_watch
-from subsets import subsets
+from subsets import subsets, subsets_without_dup
 
 
 class BacktrackingTester(unittest.TestCase):
@@ -185,3 +185,14 @@ class BacktrackingTester(unittest.TestCase):
         elements = [1, 2, 3, 4]
         result = subsets(elements)
         self.assertEqual(len(result), 16)
+
+        elements = [1, 1, 2, 2]
+        result = subsets_without_dup(elements)
+        self.assertEqual(len(result), 9)
+        elements = [1, 2, 2]
+        result = subsets_without_dup(elements)
+        self.assertEqual(len(result), 6)
+        result = subsets_without_dup([])
+        self.assertEqual(len(result), 1)
+        result = subsets_without_dup([0])
+        self.assertEqual(len(result), 2)
