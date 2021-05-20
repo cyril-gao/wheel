@@ -114,7 +114,7 @@ export function solve(board: string[][]): void
             };
 
             let adjacencyFilter = {
-                filter: function(vertex: number, graph: Graph): Array<number> {
+                filter: function(vertex: number, state: VertexState, graph: Graph): Array<number> {
                     let filterRetval = [];
                     for (let u of graph.adj(vertex)) {
                         let coor = getCoordinate(n, u);

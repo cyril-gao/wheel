@@ -56,7 +56,7 @@ export function numDistinct(s: string, t: string): number {
                     }
                 };
                 let adjacencyFilter = {
-                    filter: function(vertex: number, graph: Graph): Array<number> {
+                    filter: function(vertex: number, state: VertexState, graph: Graph): Array<number> {
                         let filterRetval = [];
                         let nextIndexInWord = indexInWord + 1;
                         if (nextIndexInWord < t.length) {

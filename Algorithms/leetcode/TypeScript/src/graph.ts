@@ -22,10 +22,23 @@ export enum Color {WHITE, GRAY, BLACK};
 
 export class VertexState
 {
-    public parent: number = -1;
-    public color: Color = Color.WHITE;
-    public enter: number = 0;
-    public leave: number = 0;
+    public parent: number;
+    public color: Color;
+    public distance: number;
+    public enter: number;
+    public leave: number;
+
+    constructor() {
+        this.clear();
+    }
+
+    public clear() {
+        this.parent = -1;
+        this.color = Color.WHITE;
+        this.distance = 0;
+        this.enter = 0;
+        this.leave = 0;
+    }
 }
 
 export interface Consumer {
@@ -33,7 +46,7 @@ export interface Consumer {
 }
 
 export interface AdjacencyFilter {
-    filter(vertex: number, graph: Graph): Array<number>;
+    filter(vertex: number, state: VertexState, graph: Graph): Array<number>;
 }
 
 export interface DfsRecorder {
@@ -72,14 +85,12 @@ export class DfsVisitor
     private dfsRecorder: DfsRecorder;
 
     constructor(private readonly graph: Graph) {
-        this.tick = 0;
-
         let doNothingConsumer: Consumer = {
             accept: function(vertex: number, state: VertexState) {}
         };
 
         let normalAdjacencyFilter: AdjacencyFilter = {
-            filter: function(vertex: number, graph: Graph): Array<number> {
+            filter: function(vertex: number, state: VertexState, graph: Graph): Array<number> {
                 return graph.adj(vertex);
             }
         };
@@ -121,11 +132,12 @@ export class DfsVisitor
         states[vertex].color = Color.GRAY;
         states[vertex].enter = this.tick;
         this.inConsumer.accept(vertex, states[vertex]);
-        let neighbours = this.adjacencyFilter.filter(vertex, this.graph);
+        let neighbours = this.adjacencyFilter.filter(vertex, states[vertex], this.graph);
         for (let neighbour of neighbours) {
             this.traversalConsumer.accept(neighbour, states[neighbour]);
             if (states[neighbour].color === Color.WHITE) {
                 states[neighbour].parent = vertex;
+                states[neighbour].distance = states[vertex].distance + 1;
                 this.dfs(neighbour, states);
             }
         }
@@ -136,7 +148,7 @@ export class DfsVisitor
     }
 
     public visit(...vertices: number[]): VertexStates {
-        this.tick = 0;
+        this.tick = -1;
         let states: Array<VertexState> = new Array<VertexState>(this.graph.V);
         for (let i = 0; i < this.graph.V; ++i) {
             states[i] = new VertexState();
