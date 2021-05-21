@@ -33,6 +33,7 @@ function equals(input: string, start: number, word: string): boolean {
     return retval;
 }
 
+/*
 function nextStep(
     m: number,
     start: number,
@@ -74,6 +75,41 @@ export function wordBreak(s: string, wordDict: string[]): string[] {
         for (let i = 0; i < cache[0].length; ++i) {
             if (cache[0][i] > 0) {
                 nextStep(m, cache[0][i], cache, wordDict, [wordDict[i]], retval);
+            }
+        }
+    }
+    return retval;
+}
+*/
+
+function nextStep(
+    input: string,
+    start: number,
+    wordDick: string[],
+    selected: string[],
+    result: string[]
+): void {
+    if (start < input.length) {
+        let n = wordDick.length;
+        for (let i = 0; i < n; ++i) {
+            if (equals(input, start, wordDick[i])) {
+                selected.push(wordDick[i]);
+                nextStep(input, start + wordDick[i].length, wordDick, selected, result);
+                selected.pop();
+            }
+        }
+    } else {
+        result.push(selected.join(' '));
+    }
+}
+
+export function wordBreak(s: string, wordDict: string[]): string[] {
+    let retval = [];
+    let n = wordDict.length;
+    if (s.length > 0 && n > 0) {
+        for (let i = 0; i < n; ++i) {
+            if (equals(s, 0, wordDict[i])) {
+                nextStep(s, wordDict[i].length, wordDict, [wordDict[i]], retval);
             }
         }
     }
