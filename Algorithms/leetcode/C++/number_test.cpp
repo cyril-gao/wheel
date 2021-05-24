@@ -413,6 +413,37 @@ void sqrt_test()
     }
 }
 
+
+/*
+The gray code is a binary numeral system where two successive values differ in only one bit.
+
+Given an integer n representing the total number of bits in the code, return any sequence of gray code.
+
+A gray code sequence must begin with 0.
+
+Constraints:
+    1 <= n <= 16
+*/
+
+std::vector<size_t> gray_code(size_t n)
+{
+    std::vector<size_t> retval;
+    if (n > 0) {
+        retval.push_back(0);
+        retval.push_back(1);
+        for (size_t i = 1; i < n; ++i) {
+            size_t flag = 1u << i;
+            std::vector<size_t> tmp{retval};
+            tmp.reserve(tmp.size() << 1);
+            for (auto j = retval.crbegin(), je = retval.crend(); j != je; ++j) {
+                tmp.push_back(flag | *j);
+            }
+            retval.swap(tmp);
+        }
+    }
+    return retval;
+}
+
 int main()
 {
     str_to_int_test();
