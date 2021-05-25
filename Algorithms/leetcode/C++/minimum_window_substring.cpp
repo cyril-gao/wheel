@@ -6,6 +6,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <deque>
+#include <set>
 #include <unordered_map>
 #include <unordered_set>
 #include <fstream>
@@ -17,7 +19,6 @@ iven two strings s and t, return the minimum window in s which will contain all 
 
 Note that If there is such a window, it is guaranteed that there will always be only one unique minimum window in s.
 
- 
 
 Example 1:
 
@@ -29,11 +30,11 @@ Input: s = "a", t = "a"
 Output: "a"
 */
 
-namespace
-{
-    template <typename C>
-    using String = std::basic_string<C>;
+template <typename C>
+using String = std::basic_string<C>;
 
+namespace v1
+{
     template <typename C>
     std::pair<size_t, size_t> min_max(std::unordered_map<C, size_t> const& cache)
     {
@@ -200,60 +201,166 @@ namespace
         }
         return retval;
     }
-}
 
-template <typename C>
-String<C> minimum_window(const String<C>& s, const String<C>& t)
-{
-    String<C> retval;
-    size_t m = s.length();
-    if (m > 0) {
-        std::unordered_map<C, size_t> cache;
-        size_t n = t.length();
-        if (n > 0 && m >= n) {
-            if (n > 1) {
-                std::unordered_set<C> pattern;
-                std::unordered_map<C, size_t> advanced_pattern;
-                for (auto c : t) {
-                    pattern.insert(c);
-                    ++advanced_pattern[c];
-                }
-                if (pattern.size() == n) {
-                    retval = _min_window_without_dup_in_pattern(s, pattern);
+    template <typename C>
+    String<C> minimum_window(const String<C>& s, const String<C>& t)
+    {
+        String<C> retval;
+        size_t m = s.length();
+        if (m > 0) {
+            std::unordered_map<C, size_t> cache;
+            size_t n = t.length();
+            if (n > 0 && m >= n) {
+                if (n > 1) {
+                    std::unordered_set<C> pattern;
+                    std::unordered_map<C, size_t> advanced_pattern;
+                    for (auto c : t) {
+                        pattern.insert(c);
+                        ++advanced_pattern[c];
+                    }
+                    if (pattern.size() == n) {
+                        retval = _min_window_without_dup_in_pattern(s, pattern);
+                    } else {
+                        retval = _min_window_with_dup_in_pattern(s, n, advanced_pattern);
+                    }
                 } else {
-                    retval = _min_window_with_dup_in_pattern(s, n, advanced_pattern);
-                }
-            } else {
-                if (s.find(t[0]) != std::string::npos) {
-                    retval = t;
+                    if (s.find(t[0]) != std::string::npos) {
+                        retval = t;
+                    }
                 }
             }
         }
+        return retval;
     }
-    return retval;
 }
 
+namespace v2
+{
+    template <typename C>
+    std::unordered_map<C, std::deque<size_t>> generate_letter_indices_map(const String<C>& input)
+    {
+        std::unordered_map<C, std::deque<size_t>> retval;
+        for (size_t i = 0, ie = input.size(); i < ie; ++i) {
+            C c = input[i];
+            auto p = retval.find(c);
+            if (p == retval.end()) {
+                retval.insert({c, {i}});
+            } else {
+                p->second.push_back(i);
+            }
+        }
+        return retval;
+    }
+
+    template <typename C>
+    struct IndexAndLetter
+    {
+        size_t index;
+        C letter;
+
+        IndexAndLetter(size_t i, C c) : index(i), letter(c) {}
+
+        IndexAndLetter() : IndexAndLetter(-1, '\0') {}
+
+        bool operator<(IndexAndLetter<C> other) const
+        {
+            return index < other.index;
+        }
+    };
+
+    template <typename C>
+    String<C> minimum_window(const String<C>& s, const String<C>& t)
+    {
+        String<C> retval;
+        if (s.length() >= t.length()) {
+            auto letter_indices_map = generate_letter_indices_map(t);
+            auto end = letter_indices_map.end();
+            std::unordered_map<C, std::deque<size_t>> map;
+            size_t count = 0;
+            for (size_t i = 0, ie = s.length(), n = t.length(); i < ie && count < n; ++i) {
+                C c = s[i];
+                auto j = letter_indices_map.find(c);
+                if (j != end) {
+                    auto k = map.find(c);
+                    if (k == map.end()) {
+                        map.insert({c, {i}});
+                        ++count;
+                    } else {
+                        k->second.push_back(i);
+                        if (k->second.size() <= j->second.size()) {
+                            ++count;
+                        } else {
+                            k->second.pop_front();
+                        }
+                    }
+                }
+            }
+            if (count == t.length()) {
+                std::set<IndexAndLetter<C>> cache;
+                for (auto const& m : map) {
+                    for (auto i : m.second) {
+                        cache.emplace(i, m.first);
+                    }
+                }
+                std::unordered_map<C, size_t> letter_to_index;
+                for (auto ial : cache) {
+                    letter_to_index.insert_or_assign(ial.letter, ial.index);
+                }
+                size_t begin = cache.begin()->index;
+                size_t end = cache.rbegin()->index + 1;
+                size_t length = cache.rbegin()->index + 1 - cache.begin()->index;
+                while (true) {
+                    C c = cache.begin()->letter;
+                    auto i = s.find(c, letter_to_index[c] + 1);
+                    if (i != String<C>::npos) {
+                        letter_to_index.insert_or_assign(c, i);
+                        cache.erase(cache.begin());
+                        cache.emplace(static_cast<size_t>(i), c);
+                        size_t l = cache.rbegin()->index - cache.begin()->index + 1;
+                        if (l < length) {
+                            begin = cache.begin()->index;
+                            end = cache.rbegin()->index + 1;
+                            length = l;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+                retval = String<C>{s.begin() + begin, s.begin() + end};
+            }
+        }
+        return retval;
+    }
+}
 
 int main(int argc, char * argv[])
 {
     {
-        auto r = minimum_window<char>("ADOBECOBLAEBANC", "ABC");
-        examine(r == "BANC", "minimum_window is failed at the line: %d\n", __LINE__);
+        auto r = v1::minimum_window<char>("ADOBECOBLAEBANC", "ABC");
+        examine(r == "BANC", "v1::minimum_window is failed at the line: %d\n", __LINE__);
+        r = v2::minimum_window<char>("ADOBECOBLAEBANC", "ABC");
+        examine(r == "BANC", "v2::minimum_window is failed at the line: %d\n", __LINE__);
     }
     
     {
-        auto r = minimum_window<char>("a", "a");
-        examine(r == "a", "minimum_window is failed at the line: %d\n", __LINE__);
+        auto r = v1::minimum_window<char>("a", "a");
+        examine(r == "a", "v1::minimum_window is failed at the line: %d\n", __LINE__);
+        r = v2::minimum_window<char>("a", "a");
+        examine(r == "a", "v2::minimum_window is failed at the line: %d\n", __LINE__);
     }
 
     {
-        auto r = minimum_window<char>("ADOBECOBLAEBANCBA", "ABC");
-        examine(r == "CBA", "minimum_window is failed at the line: %d\n", __LINE__);
+        auto r = v1::minimum_window<char>("ADOBECOBLAEBANCBA", "ABC");
+        examine(r == "CBA", "v1::minimum_window is failed at the line: %d\n", __LINE__);
+        r = v2::minimum_window<char>("ADOBECOBLAEBANCBA", "ABC");
+        examine(r == "CBA", "v2::minimum_window is failed at the line: %d\n", __LINE__);
     }
 
     {
-        auto r = minimum_window<char>("ADOBECOBLAEBANCBA", "AABC");
-        examine(r == "ANCBA", "minimum_window is failed at the line: %d\n", __LINE__);
+        auto r = v1::minimum_window<char>("ADOBECOBLAEBANCBA", "AABC");
+        examine(r == "ANCBA", "v1::minimum_window is failed at the line: %d\n", __LINE__);
+        r = v2::minimum_window<char>("ADOBECOBLAEBANCBA", "AABC");
+        examine(r == "ANCBA", "v2::minimum_window is failed at the line: %d\n", __LINE__);
     }
 
     auto generate_random_input = [](size_t m) {
@@ -274,11 +381,15 @@ int main(int argc, char * argv[])
         for (auto i = 'A'; i <= 'Z'; ++i) {
             pattern.push_back(i);
         }
-        auto r = minimum_window<char>(input, pattern);
+        auto r = v1::minimum_window<char>(input, pattern);
         printf("%s\n", r.c_str());
+        auto r2 = v2::minimum_window<char>(input, pattern);
+        examine(r == r2, "v2 is failed at the line: %d\n", __LINE__);
 
-        r = minimum_window<char>(input, "AAAAABBBBBCCCCCDD");
+        r = v1::minimum_window<char>(input, "AAAAABBBBBCCCCCDD");
         printf("%s\n", r.c_str());
+        r2 = v2::minimum_window<char>(input, "AAAAABBBBBCCCCCDD");
+        examine(r == r2, "v2 is failed at the line: %d\n", __LINE__);
     }
 
     for (int i = 1; i < argc; ++i) {
@@ -287,8 +398,10 @@ int main(int argc, char * argv[])
             std::string input, pattern;
             std::getline(ifs, input);
             std::getline(ifs, pattern);
-            auto r = minimum_window<char>(input, pattern);
+            auto r = v1::minimum_window<char>(input, pattern);
             printf("%s\n", r.c_str());
+            auto r2 = v2::minimum_window<char>(input, pattern);
+            examine(r == r2, "v2 is failed for the input: %s %s\n", input.c_str(), pattern.c_str());
         }
     }
     return 0;
