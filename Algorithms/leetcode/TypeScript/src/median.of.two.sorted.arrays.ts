@@ -120,3 +120,61 @@ export function findMedianSortedArrays(nums1: number[], nums2: number[]): number
         return 0;
     }
 };
+
+
+/*
+There is an array input sorted in non-decreasing order (not necessarily with distinct values).
+
+Before being passed to your function, input is rotated at an unknown pivot index k (0 <= k < input.length)
+such that the resulting array is [input[k], input[k+1], ..., input[n-1], input[0], input[1], ..., input[k-1]] (0-indexed).
+For example, [0,1,2,4,4,4,5,6,6,7] might be rotated at pivot index 5 and become [4,5,6,6,7,0,1,2,4,4].
+
+Given the array input after the rotation and an integer target, return true if target is in input, or false if it is not in input.
+
+You must decrease the overall operation steps as much as possible.
+*/
+
+function searchRotatedSortedArray<T>(input: T[], begin: number, end: number, target: T): boolean {
+    let retval = false;
+    if (begin < end) {
+        if ((end - begin) > 1) {
+            if (target < input[begin]) {
+                let mid = Math.floor((begin + end) / 2);
+                if (input[begin] < input[mid]) {
+                    retval = searchRotatedSortedArray(input, mid + 1, end, target);
+                } else {
+                    retval = searchRotatedSortedArray(input, mid, end, target);
+                    if (!retval) {
+                        retval = searchRotatedSortedArray(input, begin + 1, mid, target);
+                    }
+                }
+            } else if (target > input[begin]) {
+                let mid = Math.floor((begin + end) / 2);
+                if (input[begin] < input[mid]) {
+                    ++mid;
+                    let i = binarySearch(input, begin + 1, mid, target);
+                    if (i !== mid && input[i] === target) {
+                        retval = true;
+                    }
+                    if (!retval) {
+                        retval = searchRotatedSortedArray(input, mid, end, target);
+                    }
+                } else {
+                    retval = searchRotatedSortedArray(input, begin + 1, mid, target);
+                    if (!retval && input[begin] === input[mid]) {
+                        retval = searchRotatedSortedArray(input, mid, end, target);
+                    }
+                }
+            } else {
+                retval = true;
+            }
+        } else {
+            retval = (input[begin] === target);
+        }
+    }
+    return retval;
+}
+
+export function search<T>(input: T[], target: T): boolean {
+    return searchRotatedSortedArray(input, 0, input.length, target);
+}

@@ -1,4 +1,4 @@
-import { searchSortedArrays, findMedianSortedArrays } from "./median.of.two.sorted.arrays";
+import { searchSortedArrays, findMedianSortedArrays, search } from "./median.of.two.sorted.arrays";
 
 
 function randomInt(lower: number, upper: number): number {
@@ -63,5 +63,87 @@ test(
         nums2 = [];
         result = findMedianSortedArrays(nums1, nums2);
         expect(result).toEqual(2);
+    }
+);
+
+test(
+    "check the result value of the call to the function search",
+    () => {
+        let nums = [4, 4, 5, 6, 6, 6, 7, 9, 0, 0, 0, 1, 2, 2, 2, 3, 4, 4, 4];
+        let set = new Set<number>(nums);
+        for (let n of set) {
+            expect(search(nums, n)).toBe(true);
+        }
+        for (let i = -4; i < 15; ++i) {
+            if (!set.has(i)) {
+                expect(search(nums, i)).toBe(false);
+            }
+        }
+
+        nums = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4];
+        set = new Set<number>(nums);
+        for (let n of set) {
+            expect(search(nums, n)).toBe(true);
+        }
+        for (let i = -4; i < 15; ++i) {
+            if (!set.has(i)) {
+                expect(search(nums, i)).toBe(false);
+            }
+        }
+
+        nums = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4];
+        set = new Set<number>(nums);
+        for (let n of set) {
+            expect(search(nums, n)).toBe(true);
+        }
+        for (let i = -4; i < 15; ++i) {
+            if (!set.has(i)) {
+                expect(search(nums, i)).toBe(false);
+            }
+        }
+
+        nums = [4, 4, 4, 4, 4, 4, 9, 4, 4, 4, 4, 4, 4];
+        set = new Set<number>(nums);
+        for (let n of set) {
+            expect(search(nums, n)).toBe(true);
+        }
+        for (let i = -4; i < 15; ++i) {
+            if (!set.has(i)) {
+                expect(search(nums, i)).toBe(false);
+            }
+        }
+
+        nums = [4, 9];
+        set = new Set<number>(nums);
+        for (let n of set) {
+            expect(search(nums, n)).toBe(true);
+        }
+        for (let i = -4; i < 15; ++i) {
+            if (!set.has(i)) {
+                expect(search(nums, i)).toBe(false);
+            }
+        }
+
+        nums = [9, 4];
+        set = new Set<number>(nums);
+        for (let n of set) {
+            expect(search(nums, n)).toBe(true);
+        }
+        for (let i = -4; i < 15; ++i) {
+            if (!set.has(i)) {
+                expect(search(nums, i)).toBe(false);
+            }
+        }
+
+        nums = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1];
+        set = new Set<number>(nums);
+        for (let n of set) {
+            expect(search(nums, n)).toBe(true);
+        }
+        for (let i = -4; i < 15; ++i) {
+            if (!set.has(i)) {
+                expect(search(nums, i)).toBe(false);
+            }
+        }
     }
 );
