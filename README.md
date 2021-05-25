@@ -15,7 +15,7 @@
 #### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BST">Binary Search Tree</a> (BST):
 
 *   insert new node into or remove a node from a red-black/AVL tree
-*   document about how to rebalance the irregular red-black/AVL trees:
+*   document about how to rebalance irregular red-black/AVL trees:
 
     <ul>
         <li><a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/BST/The%20rebalancing%20process%20of%20red-black%20trees.pdf">red-black trees</a></li>
