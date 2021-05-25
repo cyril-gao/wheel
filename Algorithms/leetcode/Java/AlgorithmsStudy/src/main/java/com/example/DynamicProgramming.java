@@ -187,4 +187,46 @@ public class DynamicProgramming {
         }
         return retval;
     }
+
+    public int numDecodings(String s) {
+        int retval = 0;
+        int n = s.length();
+        if (n > 1) {
+            int[] record = new int[3];
+            if (s.charAt(n - 1) != '0') {
+                record[2] = 1;
+            }
+            char c = s.charAt(n - 2);
+            if (c != '0') {
+                record[1] = record[2];
+                if (c == '1' || (c == '2' && s.charAt(n - 1) <= '6')) {
+                    ++record[1];
+                }
+            }
+
+            int current = 1;
+            for (int i = n - 3; i >= 0; --i) {
+                --current;
+                if (current < 0) {
+                    current += 3;
+                }
+                int previous = (current + 1) % 3;
+                c = s.charAt(i);
+                if (c != '0') {
+                    record[current] = record[previous];
+                    if (c == '1' || (c == '2' && s.charAt(i + 1) <= '6')) {
+                        record[current] += record[(previous + 1) % 3];
+                    }
+                } else {
+                    record[current] = 0;
+                }
+            }
+            retval = record[current];
+        } else {
+            if (n == 1 && s.charAt(0) != '0') {
+                retval = 1;
+            }
+        }
+        return retval;
+    }
 }
