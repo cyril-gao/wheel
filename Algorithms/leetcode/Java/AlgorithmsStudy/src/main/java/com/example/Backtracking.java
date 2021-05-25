@@ -228,7 +228,7 @@ public class Backtracking {
         }
     }
 
-    // it performance is not good
+    // its performance is not good
     public int numDecodings(String s) {
         var result = new int[1];
         nextStep(s, 0, result);

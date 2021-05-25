@@ -229,26 +229,41 @@ public class AppTest {
 
     @Test
     public void testNumDecodings() {
-        var b = new DynamicProgramming();
+        var b = new Backtracking();
+        var dp = new DynamicProgramming();
         var result = b.numDecodings("12");
+        assertEquals(result, 2);
+        result = dp.numDecodings("12");
         assertEquals(result, 2);
 
         result = b.numDecodings("226");
         assertEquals(result, 3);
+        result = dp.numDecodings("226");
+        assertEquals(result, 3);
 
         result = b.numDecodings("0");
+        assertEquals(result, 0);
+        result = dp.numDecodings("0");
         assertEquals(result, 0);
 
         result = b.numDecodings("06");
         assertEquals(result, 0);
+        result = dp.numDecodings("06");
+        assertEquals(result, 0);
 
         result = b.numDecodings("27");
+        assertEquals(result, 1);
+        result = dp.numDecodings("27");
         assertEquals(result, 1);
 
         result = b.numDecodings("10");
         assertEquals(result, 1);
+        result = dp.numDecodings("10");
+        assertEquals(result, 1);
 
         result = b.numDecodings("207");
+        assertEquals(result, 1);
+        result = dp.numDecodings("207");
         assertEquals(result, 1);
     }
 }
