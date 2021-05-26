@@ -118,12 +118,10 @@ class AVLTree
             if (i->data == key) {
                 position = CURRENT;
                 break;
-            }
-            else if (i->data < key) {
+            } else if (i->data < key) {
                 position = RIGHT_CHILD;
                 i = i->right_child;
-            }
-            else {
+            } else {
                 position = LEFT_CHILD;
                 i = i->left_child;
             }
@@ -592,13 +590,11 @@ public:
                     }
                     left_child->exchange_content(node);
                     remove(left_child);
-                }
-                else {
+                } else {
                     right_child->exchange_content(node);
                     remove(right_child);
                 }
-            }
-            else {
+            } else {
                 remove(node);
             }
         }
@@ -613,3 +609,4 @@ public:
 };
 
 #endif //AVL_TREE_H_1EA09AC6_A9BB_4D0F_BB17_28ED0242C21E
+

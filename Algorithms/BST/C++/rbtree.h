@@ -119,12 +119,10 @@ class RedBlackTree
             if (i->data == key) {
                 position = CURRENT;
                 break;
-            }
-            else if (i->data < key) {
+            } else if (i->data < key) {
                 position = RIGHT_CHILD;
                 i = i->right_child;
-            }
-            else {
+            } else {
                 position = LEFT_CHILD;
                 i = i->left_child;
             }
@@ -218,16 +216,14 @@ class RedBlackTree
             assert(parent != the_new_one);
             if (parent->left_child == to_be_replaced) {
                 parent->left_child = the_new_one;
-            }
-            else {
+            } else {
                 assert(parent->right_child == to_be_replaced);
                 parent->right_child = the_new_one;
             }
             if (the_new_one != nullptr) {
                 the_new_one->set_parent(parent);
             }
-        }
-        else {
+        } else {
             assert(m_root == to_be_replaced);
             m_root = the_new_one;
             m_root->set_parent(nullptr);
@@ -245,14 +241,12 @@ class RedBlackTree
             assert(node->get_color() == BLACK);
             replace_father_son_relationship(node, right_child);
             right_child->set_color(BLACK);
-        }
-        else if (left_child != nullptr) {
+        } else if (left_child != nullptr) {
             assert(left_child->get_color() == RED && left_child->left_child == nullptr && left_child->right_child == nullptr);
             assert(node->get_color() == BLACK);
             replace_father_son_relationship(node, left_child);
             left_child->set_color(BLACK);
-        }
-        else {
+        } else {
             auto parent = node->get_parent();
             if (parent != nullptr) {
                 auto position = get_position(node, parent);
@@ -308,12 +302,10 @@ class RedBlackTree
                 if (grandparent != nullptr) {
                     reblance_after_deleting(get_position(parent, grandparent), parent, grandparent);
                 }
-            }
-            else {
+            } else {
                 parent->set_color(BLACK);
             }
-        }
-        else {
+        } else {
             position = get_position(node, parent);
             if (
                 (position == LEFT_CHILD && left_nephew_color == RED) ||
@@ -336,8 +328,7 @@ class RedBlackTree
                         right_child_of_nephew->set_parent_and_reserve_color(sibling);
                     }
                     left_nephew->set_color(parent_color);
-                }
-                else {
+                } else {
                     auto left_child_of_nephew = right_nephew->left_child;
                     auto right_child_of_nephew = right_nephew->right_child;
                     replace_father_son_relationship(parent, right_nephew);
@@ -357,8 +348,7 @@ class RedBlackTree
                 }
                 parent->set_color(BLACK);
                 sibling->set_color(BLACK);
-            }
-            else {
+            } else {
                 replace_father_son_relationship(parent, sibling);
                 if (position == LEFT_CHILD) {
                     sibling->left_child = parent;
@@ -368,8 +358,7 @@ class RedBlackTree
                         left_nephew->set_parent_and_reserve_color(parent);
                     }
                     right_nephew->set_color(BLACK);
-                }
-                else {
+                } else {
                     sibling->right_child = parent;
                     parent->set_parent(sibling);
                     parent->left_child = right_nephew;
@@ -397,8 +386,7 @@ class RedBlackTree
                     grandparent->set_color(RED);
                     node = grandparent;
                     parent = node->get_parent();
-                }
-                else {
+                } else {
                     auto sibling = get_sibling(node, parent);
                     auto position = get_position(node, parent);
                     auto parent_position = get_position(parent, grandparent);
@@ -417,8 +405,7 @@ class RedBlackTree
                         grandparent->set_parent(parent);
                         parent->set_color(BLACK);
                         grandparent->set_color(RED);
-                    }
-                    else {
+                    } else {
                         auto left_child = node->left_child;
                         auto right_child = node->right_child;
                         replace_father_son_relationship(grandparent, node);
@@ -433,8 +420,7 @@ class RedBlackTree
                             if (right_child != nullptr) {
                                 right_child->set_parent_and_reserve_color(parent);
                             }
-                        }
-                        else {
+                        } else {
                             grandparent->left_child = right_child;
                             parent->right_child = left_child;
                             node->left_child = parent;
@@ -454,8 +440,7 @@ class RedBlackTree
                     }
                     break;
                 }
-            }
-            else {
+            } else {
                 assert(m_root == parent);
                 break;
             }
@@ -526,13 +511,11 @@ public:
                     }
                     left_child->exchange_content(node);
                     remove(left_child);
-                }
-                else {
+                } else {
                     right_child->exchange_content(node);
                     remove(right_child);
                 }
-            }
-            else {
+            } else {
                 remove(node);
             }
         }
@@ -547,3 +530,4 @@ public:
 };
 
 #endif //RED_BLACK_TREE_H_1EA09AC6_A9BB_4D0F_BB17_28ED0242C21E
+
