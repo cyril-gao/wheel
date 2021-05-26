@@ -105,9 +105,9 @@ void set_vs_bst(bool testing)
     }
     double d1 = 0, d2 = 0;
     for (int i = 0; i < times; ++i) {
-		//if (i > 0) {
-		//	printf("\n");
-		//}
+        //if (i > 0) {
+        //    printf("\n");
+        //}
         auto operations = get_hybrid_operations<size_t>(input);
         {
             auto begin = std::chrono::system_clock::now();
@@ -121,42 +121,42 @@ void set_vs_bst(bool testing)
                     tree.erase(o.key);
                     break;
                 case Operation<size_t>::FINDING:
-					{
-						auto r = tree.find(o.key);
-						break;
-					}
+                    {
+                        auto r = tree.find(o.key);
+                        break;
+                    }
                 }
             }
             auto end = std::chrono::system_clock::now();
             d1 += std::chrono::duration<double>(end - begin).count();
-			#if 0 //(defined(_WIN32) || defined(_WIN64))
-			{
-				PROCESS_MEMORY_COUNTERS counters = {0};
-				counters.cb = sizeof(counters);
-				if (GetProcessMemoryInfo(GetCurrentProcess(), &counters, counters.cb)) {
-					printf(
-						"PageFaultCount=%lu\n"
-						"PeakWorkingSetSize=%llu\n"
-						"WorkingSetSize=%llu\n"
-						"QuotaPeakPagedPoolUsage=%llu\n"
-						"QuotaPagedPoolUsage=%llu\n"
-						"QuotaPeakNonPagedPoolUsage=%llu\n"
-						"QuotaNonPagedPoolUsage=%llu\n"
-						"PagefileUsage=%llu\n"
-						"PeakPagefileUsage=%llu\n",
-						counters.PageFaultCount,
-						counters.PeakWorkingSetSize,
-						counters.WorkingSetSize,
-						counters.QuotaPeakPagedPoolUsage,
-						counters.QuotaPagedPoolUsage,
-						counters.QuotaPeakNonPagedPoolUsage,
-						counters.QuotaNonPagedPoolUsage,
-						counters.PagefileUsage,
-						counters.PeakPagefileUsage
-					);
-				}
-			}
-			#endif
+            #if 0 //(defined(_WIN32) || defined(_WIN64))
+            {
+                PROCESS_MEMORY_COUNTERS counters = {0};
+                counters.cb = sizeof(counters);
+                if (GetProcessMemoryInfo(GetCurrentProcess(), &counters, counters.cb)) {
+                    printf(
+                        "PageFaultCount=%lu\n"
+                        "PeakWorkingSetSize=%llu\n"
+                        "WorkingSetSize=%llu\n"
+                        "QuotaPeakPagedPoolUsage=%llu\n"
+                        "QuotaPagedPoolUsage=%llu\n"
+                        "QuotaPeakNonPagedPoolUsage=%llu\n"
+                        "QuotaNonPagedPoolUsage=%llu\n"
+                        "PagefileUsage=%llu\n"
+                        "PeakPagefileUsage=%llu\n",
+                        counters.PageFaultCount,
+                        counters.PeakWorkingSetSize,
+                        counters.WorkingSetSize,
+                        counters.QuotaPeakPagedPoolUsage,
+                        counters.QuotaPagedPoolUsage,
+                        counters.QuotaPeakNonPagedPoolUsage,
+                        counters.QuotaNonPagedPoolUsage,
+                        counters.PagefileUsage,
+                        counters.PeakPagefileUsage
+                    );
+                }
+            }
+            #endif
         }
         {
             auto begin = std::chrono::system_clock::now();
@@ -176,35 +176,35 @@ void set_vs_bst(bool testing)
             }
             auto end = std::chrono::system_clock::now();
             d2 += std::chrono::duration<double>(end - begin).count();
-			#if 0 //(defined(_WIN32) || defined(_WIN64))
-			{
-				PROCESS_MEMORY_COUNTERS counters = {0};
-				counters.cb = sizeof(counters);
-				if (GetProcessMemoryInfo(GetCurrentProcess(), &counters, counters.cb)) {
-					printf(
-						"********************************************\n"
-						"PageFaultCount=%lu\n"
-						"PeakWorkingSetSize=%llu\n"
-						"WorkingSetSize=%llu\n"
-						"QuotaPeakPagedPoolUsage=%llu\n"
-						"QuotaPagedPoolUsage=%llu\n"
-						"QuotaPeakNonPagedPoolUsage=%llu\n"
-						"QuotaNonPagedPoolUsage=%llu\n"
-						"PagefileUsage=%llu\n"
-						"PeakPagefileUsage=%llu\n",
-						counters.PageFaultCount,
-						counters.PeakWorkingSetSize,
-						counters.WorkingSetSize,
-						counters.QuotaPeakPagedPoolUsage,
-						counters.QuotaPagedPoolUsage,
-						counters.QuotaPeakNonPagedPoolUsage,
-						counters.QuotaNonPagedPoolUsage,
-						counters.PagefileUsage,
-						counters.PeakPagefileUsage
-					);
-				}
-			}
-			#endif
+            #if 0 //(defined(_WIN32) || defined(_WIN64))
+            {
+                PROCESS_MEMORY_COUNTERS counters = {0};
+                counters.cb = sizeof(counters);
+                if (GetProcessMemoryInfo(GetCurrentProcess(), &counters, counters.cb)) {
+                    printf(
+                        "********************************************\n"
+                        "PageFaultCount=%lu\n"
+                        "PeakWorkingSetSize=%llu\n"
+                        "WorkingSetSize=%llu\n"
+                        "QuotaPeakPagedPoolUsage=%llu\n"
+                        "QuotaPagedPoolUsage=%llu\n"
+                        "QuotaPeakNonPagedPoolUsage=%llu\n"
+                        "QuotaNonPagedPoolUsage=%llu\n"
+                        "PagefileUsage=%llu\n"
+                        "PeakPagefileUsage=%llu\n",
+                        counters.PageFaultCount,
+                        counters.PeakWorkingSetSize,
+                        counters.WorkingSetSize,
+                        counters.QuotaPeakPagedPoolUsage,
+                        counters.QuotaPagedPoolUsage,
+                        counters.QuotaPeakNonPagedPoolUsage,
+                        counters.QuotaNonPagedPoolUsage,
+                        counters.PagefileUsage,
+                        counters.PeakPagefileUsage
+                    );
+                }
+            }
+            #endif
         }
         std::random_device rd;
         std::mt19937 g(rd());
