@@ -28,6 +28,8 @@
 *   k-ary heap
 *   fibonacci heap
 
+#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/trie">Trie</a>
+
 ### graph
 
 ##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/ElementaryGraphAlgorithms">Elementary Graph Algorithms</a>:
@@ -49,8 +51,6 @@
 *   Dijkstra
 
 ##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/AllPairsShortestPaths">All Pairs Shortest Paths</a>
-
-#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/trie">Trie</a>
 
 #### leetcode
 
