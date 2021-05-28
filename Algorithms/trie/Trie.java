@@ -11,12 +11,11 @@ public class Trie<V>
     private int size;
 
     public Trie() {
-        root = new Node<V>();
-        size = 0;
+        clear();
     }
 
     public void clear() {
-        root = null;
+        root = new Node<V>();
         size = 0;
     }
 
@@ -169,6 +168,7 @@ public class Trie<V>
         return keysWithPrefix("");
     }
 
+    // run "java -ea Trie.java" to do UT
     public static void main(String[] args) {
         Trie<Integer> dictionary = new Trie<Integer>();
         int index = 0;
@@ -222,6 +222,9 @@ public class Trie<V>
         }
         assert(count == 11);
 
+        dictionary.put("111", index++);
+        dictionary.put("she", index++);
+        dictionary.put("see", index++);
         count = 0;
         iter = dictionary.keysThatMatch(".ad").iterator();
         while (iter.hasNext()) {
@@ -230,5 +233,19 @@ public class Trie<V>
             assert(next.substring(1).equals("ad"));
         }
         assert(count == 3);
+
+        count = 0;
+        iter = dictionary.keysThatMatch("...").iterator();
+        while (iter.hasNext()) {
+            ++count;
+            var next = iter.next();
+            assert(next.length() == 3);
+        }
+        assert(count == 6);
+
+        iter = dictionary.keysThatMatch(".").iterator();
+        assert(iter.hasNext());
+        assert(iter.next().equals("1"));
+        assert(!iter.hasNext());
     }
 }
