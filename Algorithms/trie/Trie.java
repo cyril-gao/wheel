@@ -38,7 +38,7 @@ public class Trie<V>
     ) {
         assert(root != null);
         Node<V> selfOrParent = root;
-        int indexOfLongestPrefix = 0;
+        int indexOfLongestPrefix = -1;
         int i;
         for (i = 0; i < s.length(); ++i) {
             Character c = Character.valueOf(s.charAt(i));
@@ -247,5 +247,7 @@ public class Trie<V>
         assert(iter.hasNext());
         assert(iter.next().equals("1"));
         assert(!iter.hasNext());
+
+        assert(dictionary.longestPrefixOf("see") == "");
     }
 }
