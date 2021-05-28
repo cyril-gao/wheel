@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <ctype.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -444,6 +445,72 @@ std::vector<size_t> gray_code(size_t n)
     return retval;
 }
 
+/*
+Given an integer array nums where every element appears three times except for one,
+which appears exactly once. Find the single.
+*/
+
+template <typename I>
+typename std::iterator_traits<I>::value_type get_single(I begin, I end, size_t bit_position)
+{
+    using value_type = typename std::iterator_traits<I>::value_type;
+    value_type retval = 0;
+    value_type bit = 1;
+    bit <<= bit_position;
+    size_t zero_count = 0;
+    size_t one_count = 0;
+    for (I i = begin; i != end; ++i) {
+        if ((*i & bit) == 0) {
+            ++zero_count;
+        } else {
+            ++one_count;
+        }
+    }
+    return zero_count % 3 == 0 ? bit : 0;
+}
+
+template <typename I>
+typename std::iterator_traits<I>::value_type get_single(I begin, I end)
+{
+    using value_type = typename std::iterator_traits<I>::value_type;
+    auto size = std::distance(begin, end);
+    assert((size - 1) % 3 == 0);
+    value_type retval = 0;
+    for (size_t i = 0; i < sizeof(value_type) * 8; ++i) {
+        retval |= get_single(begin, end, i);
+    }
+    return retval;
+}
+
+void single_test()
+{
+    {
+        std::vector<int> nums = {1, 1, 1, 3, 3, 3, 7, 7, 7, -2, -2, -2, -100, -100, -100, 0};
+        auto result = get_single(nums.begin(), nums.end());
+        examine(result == 0, "get_single is failed at the line: %d\n", __LINE__);
+    }
+    {
+        std::vector<int> nums = {1, 1, 1, 3, 3, 3, 7, 7, 7, -2, -2, -2, -100, -100, -100, -1};
+        auto result = get_single(nums.begin(), nums.end());
+        examine(result == -1, "get_single is failed at the line: %d\n", __LINE__);
+    }
+    {
+        std::vector<int> nums = {1, 1, 1, 3, 3, 3, 7, 7, 7, -2, -2, -2, -100, -100, -100, 11};
+        auto result = get_single(nums.begin(), nums.end());
+        examine(result == 11, "get_single is failed at the line: %d\n", __LINE__);
+    }
+    {
+        std::vector<int> nums = {1, 1, 1, 3, 3, 3, 7, 7, 7, -2, -2, -2, -100, -100, -100, INT_MAX};
+        auto result = get_single(nums.begin(), nums.end());
+        examine(result == INT_MAX, "get_single is failed at the line: %d\n", __LINE__);
+    }
+    {
+        std::vector<int> nums = {1, 1, 1, 3, 3, 3, 7, 7, 7, -2, -2, -2, -100, -100, -100, INT_MIN};
+        auto result = get_single(nums.begin(), nums.end());
+        examine(result == INT_MIN, "get_single is failed at the line: %d\n", __LINE__);
+    }
+}
+
 int main()
 {
     str_to_int_test();
@@ -451,6 +518,7 @@ int main()
     pow_test();
     is_number_test();
     sqrt_test();
+    single_test();
     printf("OK\n");
     return 0;
 }
