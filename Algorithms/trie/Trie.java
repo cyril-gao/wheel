@@ -53,6 +53,8 @@ public class Trie<V>
                     grandchildren = new Node<V>();
                     selfOrParent.children.put(c, grandchildren);
                     selfOrParent = grandchildren;
+                } else {
+                    break;
                 }
             }
         }
@@ -189,6 +191,7 @@ public class Trie<V>
         dictionary.put("pad", index++);
         assert(dictionary.contains("pad"));
         assert(dictionary.size() == 3);
+        assert(!dictionary.contains("pat"));
 
         dictionary.put("pad", index++);
         assert(dictionary.contains("bad"));
@@ -203,6 +206,9 @@ public class Trie<V>
         dictionary.put("1111111111111111111111111111", index++);
         dictionary.put("111111111111111111111111111111111111", index++);
         assert(dictionary.size() == 11);
+        assert(!dictionary.contains("paddle"));
+        assert(!dictionary.contains("111111111"));
+
         var iter = dictionary.keysWithPrefix("11").iterator();
         int count = 0;
         while (iter.hasNext()) {
