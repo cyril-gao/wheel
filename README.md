@@ -30,6 +30,10 @@
 
 #### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/trie">Trie</a>
 
+#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/matrix">matrix</a>:
+
+*   algorithms about matrix
+
 ### graph
 
 ##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/ElementaryGraphAlgorithms">Elementary Graph Algorithms</a>:
@@ -61,7 +65,3 @@
 *   <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/leetcode/Python">Python</a>: use Python to resolve those problems
 
 *   <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/leetcode/TypeScript">TypeScript</a>: use TypeScript to resolve those problems
-
-#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/matrix">matrix</a>:
-
-*   algorithms about matrix
