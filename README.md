@@ -52,7 +52,7 @@
 
 ##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/AllPairsShortestPaths">All Pairs Shortest Paths</a>
 
-#### leetcode
+#### coding exercises
 
 *   <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/leetcode/C%2B%2B">C++</a>: use C++ to resolve those problems
 
