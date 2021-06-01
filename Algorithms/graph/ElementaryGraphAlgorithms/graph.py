@@ -4,7 +4,7 @@ functions related to the data structure
 '''
 
 import copy
-import heapq
+from collections import deque
 
 
 class Graph:
@@ -164,12 +164,12 @@ class Bfs:
         path_dict = {}
         count_of_vertices = len(self.graph)
         marked = [False for _i in range(count_of_vertices)]
-        queue = []
+        queue = deque()
         for v in self.roots:
             marked[v] = True
             queue.append(BfsPath(v, 0, v))
         while queue:
-            bp = queue.pop(0)
+            bp = queue.popleft()
             path_dict[bp.vertex] = bp
             for e in self.graph[bp.vertex]:
                 if not marked[e]:
