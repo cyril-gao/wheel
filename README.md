@@ -28,7 +28,7 @@
 *   k-ary heap
 *   fibonacci heap
 
-#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/trie">Trie</a>
+#### <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/Java/AlgorithmsStudy/src/main/java/com/example/Trie.java">Trie</a>
 
 #### <a href="">Skip list</a>
 
