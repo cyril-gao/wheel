@@ -1,3 +1,5 @@
+package com.example;
+
 import java.util.*;
 
 public class Trie<V>
@@ -168,92 +170,5 @@ public class Trie<V>
 
     public Iterable<String> keys() {
         return keysWithPrefix("");
-    }
-
-    // run "java -ea Trie.java" to do UT
-    public static void main(String[] args) {
-        Trie<Integer> dictionary = new Trie<Integer>();
-        int index = 0;
-        dictionary.put("bad", index++);
-        assert(dictionary.contains("bad"));
-        assert(dictionary.size() == 1);
-        dictionary.put("dad", index++);
-        assert(dictionary.contains("dad"));
-        assert(dictionary.size() == 2);
-        dictionary.put("mad", index++);
-        assert(dictionary.contains("mad"));
-        assert(dictionary.size() == 3);
-
-        dictionary.remove("dad");
-        assert(!dictionary.contains("dad"));
-        assert(dictionary.size() == 2);
-
-        dictionary.put("pad", index++);
-        assert(dictionary.contains("pad"));
-        assert(dictionary.size() == 3);
-        assert(!dictionary.contains("pat"));
-
-        dictionary.put("pad", index++);
-        assert(dictionary.contains("bad"));
-        assert(dictionary.size() == 3);
-
-        dictionary.put("1", index++);
-        dictionary.put("111", index++);
-        dictionary.put("111111", index++);
-        dictionary.put("1111111111", index++);
-        dictionary.put("111111111111111", index++);
-        dictionary.put("111111111111111111111", index++);
-        dictionary.put("1111111111111111111111111111", index++);
-        dictionary.put("111111111111111111111111111111111111", index++);
-        assert(dictionary.size() == 11);
-        assert(!dictionary.contains("paddle"));
-        assert(!dictionary.contains("111111111"));
-
-        var iter = dictionary.keysWithPrefix("11").iterator();
-        int count = 0;
-        while (iter.hasNext()) {
-            ++count;
-            var next = iter.next();
-            assert(next.startsWith("11"));
-        }
-        assert(count == 7);
-        var lp = dictionary.longestPrefixOf("111111111111111111111111111111111111");
-        assert(lp.equals("1111111111111111111111111111"));
-
-        count = 0;
-        iter = dictionary.keys().iterator();
-        while (iter.hasNext()) {
-            ++count;
-            iter.next();
-        }
-        assert(count == 11);
-
-        dictionary.put("111", index++);
-        dictionary.put("she", index++);
-        dictionary.put("see", index++);
-        count = 0;
-        iter = dictionary.keysThatMatch(".ad").iterator();
-        while (iter.hasNext()) {
-            ++count;
-            var next = iter.next();
-            assert(next.substring(1).equals("ad"));
-        }
-        assert(count == 3);
-
-        count = 0;
-        iter = dictionary.keysThatMatch("...").iterator();
-        while (iter.hasNext()) {
-            ++count;
-            var next = iter.next();
-            assert(next.length() == 3);
-        }
-        assert(count == 6);
-
-        iter = dictionary.keysThatMatch(".").iterator();
-        assert(iter.hasNext());
-        assert(iter.next().equals("1"));
-        assert(!iter.hasNext());
-
-        assert(dictionary.longestPrefixOf("see") == "");
     }
 }
