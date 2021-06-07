@@ -30,6 +30,8 @@
 
 #### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/trie">Trie</a>
 
+#### <a href="">Skip list</a>
+
 #### Segment tree
 
 *   <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/C%2B%2B/segment_tree_test.cpp">Use C++ to implement it</a>
