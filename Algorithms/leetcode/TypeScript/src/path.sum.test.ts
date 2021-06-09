@@ -1,4 +1,5 @@
-import { TreeNode, pathSum } from './path.sum';
+import { TreeNode } from './tree.node';
+import { pathSum } from './path.sum';
 
 function equals<T>(elements1: T[], elements2: T[]): boolean {
     let retval = elements1.length === elements2.length;

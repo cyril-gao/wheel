@@ -1,14 +1,4 @@
-export class TreeNode {
-    public val: number;
-    public left: TreeNode | null;
-    public right: TreeNode | null;
-
-    constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
-        this.val = (val===undefined ? 0 : val);
-        this.left = (left===undefined ? null : left);
-        this.right = (right===undefined ? null : right);
-    }
-}
+import { TreeNode } from './tree.node';
 
 /*
 Given the root of a binary tree and an integer targetSum, return all root-to-leaf paths where each path's sum equals targetSum.
