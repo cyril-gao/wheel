@@ -133,7 +133,8 @@ public:
         }
         return retval;
     }
+
+    size_t size() const { return m_size; }
 };
 
 #endif // SKIPLIST_H_1EA09AC6_A9BB_4D0F_BB17_28ED0242C21E
-
