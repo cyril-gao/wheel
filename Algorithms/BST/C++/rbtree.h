@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <stdint.h>
 #include <memory>
+#include <utility>
+
 
 template <typename T>
 class RedBlackTree
@@ -65,6 +67,14 @@ class RedBlackTree
 
         Node(const T& d, Node * parent, Color c, Node * lc = nullptr, Node * rc = nullptr):
             data(d), color_and_parent(parent, c), left_child(lc), right_child(rc)
+        {
+        }
+
+        Node(const Node& other):
+            data(other.data),
+            color_and_parent(nullptr, other.get_color()),
+            left_child(nullptr),
+            right_child(nullptr)
         {
         }
 
@@ -139,6 +149,28 @@ class RedBlackTree
         }
     }
 
+    static Node* copy(Node* node)
+    {
+        Node* retval = nullptr;
+        if (node != nullptr) {
+            try {
+                retval = new Node(*node);
+                retval->left_child = copy(node->left_child);
+                if (retval->left_child != nullptr) {
+                    retval->left_child->set_parent_and_reserve_color(retval);
+                }
+                retval->right_child = copy(node->right_child);
+                if (retval->right_child != nullptr) {
+                    retval->right_child->set_parent_and_reserve_color(retval);
+                }
+            } catch (...) {
+                free(retval);
+                throw;
+            }
+        }
+        return retval;
+    }
+
     static Color get_color(const Node* node)
     {
         Color color = BLACK;
@@ -146,6 +178,23 @@ class RedBlackTree
             color = node->get_color();
         }
         return color;
+    }
+
+    static bool equals(Node* n1, Node * n2)
+    {
+        bool retval = (n1 == n2);
+        if (!retval) {
+            if (n1 != nullptr && n2 != nullptr) {
+                retval = (n1->data == n2->data && n1->get_color() == n2->get_color());
+                if (retval) {
+                    retval = (
+                        equals(n1->left_child, n2->left_child) &&
+                        equals(n1->right_child, n2->right_child)
+                    );
+                }
+            }
+        }
+        return retval;
     }
 
     static Node* get_sibling(const Node* node, const Node* parent)
@@ -456,6 +505,51 @@ public:
     {
         free(m_root);
     }
+    RedBlackTree(const RedBlackTree<T>& other):
+        m_root(copy(other.m_root)), m_count(other.m_count)
+    {
+    }
+    RedBlackTree(RedBlackTree<T>&& other):
+        m_root(other.m_root), m_count(other.m_count)
+    {
+        other.m_root = nullptr;
+        other.m_count = 0;
+    }
+    void swap(RedBlackTree<T>& other)
+    {
+        if (this != &other) {
+            std::swap(m_root, other.m_root);
+            std::swap(m_count, other.m_count);
+        }
+    }
+    RedBlackTree& operator=(RedBlackTree<T> const& other)
+    {
+        if (this != &other) {
+            free(m_root);
+            m_root = copy(other.m_root);
+            m_count = other.m_count;
+        }
+        return *this;
+    }
+    RedBlackTree& operator=(RedBlackTree<T>&& other)
+    {
+        if (this != &other) {
+            free(m_root);
+            m_root = other.m_root;
+            m_count = other.m_count;
+            other.m_root = nullptr;
+            other.m_count = 0;
+        }
+        return *this;
+    }
+    bool operator==(const RedBlackTree<T>& other) const
+    {
+        return m_count == other.m_count && equals(m_root, other.m_root);
+    }
+    bool operator!=(const RedBlackTree<T>& other) const
+    {
+        return !operator==(other);
+    }
 
     bool valid() const
     {
@@ -530,4 +624,3 @@ public:
 };
 
 #endif //RED_BLACK_TREE_H_1EA09AC6_A9BB_4D0F_BB17_28ED0242C21E
-

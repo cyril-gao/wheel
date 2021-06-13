@@ -168,6 +168,10 @@ void tree_test()
             tree.insert(n);
             examine(tree.valid(), "after inserting %zu, the tree is illegal\n", n);
         }
+        {
+            BST<size_t> other(tree);
+            examine(tree == other, "copy constructor is failed\n");
+        }
         for (auto n : input) {
             tree.erase(n);
             examine(tree.valid(), "after removing %zu, the tree is illegal\n", n);
@@ -178,6 +182,10 @@ void tree_test()
         for (auto i = input.rbegin(), e = input.rend(); i != e; ++i) {
             tree.insert(*i);
             examine(tree.valid(), "after inserting %zu, the tree is illegal\n", *i);
+        }
+        {
+            BST<size_t> other(tree);
+            examine(tree == other, "copy constructor is failed\n");
         }
         for (auto i = input.rbegin(), e = input.rend(); i != e; ++i) {
             tree.erase(*i);
@@ -192,6 +200,13 @@ void tree_test()
         for (auto n : input) {
             tree.insert(n);
             examine(tree.valid(), "after inserting %zu, the tree is illegal\n", n);
+        }
+        {
+            BST<size_t> other(tree);
+            examine(tree == other, "copy constructor is failed\n");
+            BST<size_t> third(std::move(other));
+            examine(tree != other, "move constructor is failed\n");
+            examine(tree == third, "move constructor is failed\n");
         }
         for (auto n : input) {
             tree.erase(n);

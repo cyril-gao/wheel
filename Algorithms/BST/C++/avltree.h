@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <stdint.h>
 #include <memory>
+#include <utility>
+
 
 template <typename T>
 class AVLTree
@@ -64,6 +66,14 @@ class AVLTree
 
         Node(const T& d, Node * parent, int balance_factor, Node * lc = nullptr, Node * rc = nullptr):
             data(d), balance_factor_and_parent(parent, balance_factor), left_child(lc), right_child(rc)
+        {
+        }
+
+        Node(const Node& other):
+            data(other.data),
+            balance_factor_and_parent(nullptr, other.get_balance_factor()),
+            left_child(nullptr),
+            right_child(nullptr)
         {
         }
 
@@ -136,6 +146,45 @@ class AVLTree
             free(node->right_child);
             delete node;
         }
+    }
+
+    static Node* copy(Node* node)
+    {
+        Node * retval = nullptr;
+        if (node != nullptr) {
+            try {
+                retval = new Node(*node);
+                retval->left_child = copy(node->left_child);
+                if (retval->left_child != nullptr) {
+                    retval->left_child->set_parent_and_reserve_balance_factor(retval);
+                }
+                retval->right_child = copy(node->right_child);
+                if (retval->right_child != nullptr) {
+                    retval->right_child->set_parent_and_reserve_balance_factor(retval);
+                }
+            } catch (...) {
+                free(retval);
+                throw;
+            }
+        }
+        return retval;
+    }
+
+    static bool equals(Node* n1, Node * n2)
+    {
+        bool retval = (n1 == n2);
+        if (!retval) {
+            if (n1 != nullptr && n2 != nullptr) {
+                retval = (n1->data == n2->data && n1->get_balance_factor() == n2->get_balance_factor());
+                if (retval) {
+                    retval = (
+                        equals(n1->left_child, n2->left_child) &&
+                        equals(n1->right_child, n2->right_child)
+                    );
+                }
+            }
+        }
+        return retval;
     }
 
     static Node* get_sibling(const Node* node, const Node* parent)
@@ -536,6 +585,51 @@ public:
     {
         free(m_root);
     }
+    AVLTree(const AVLTree<T>& other):
+        m_root(copy(other.m_root)), m_count(other.m_count)
+    {
+    }
+    AVLTree(AVLTree<T>&& other):
+        m_root(other.m_root), m_count(other.m_count)
+    {
+        other.m_root = nullptr;
+        other.m_count = 0;
+    }
+    void swap(AVLTree<T>& other)
+    {
+        if (this != &other) {
+            std::swap(m_root, other.m_root);
+            std::swap(m_count, other.m_count);
+        }
+    }
+    AVLTree& operator=(AVLTree<T> const& other)
+    {
+        if (this != &other) {
+            free(m_root);
+            m_root = copy(other.m_root);
+            m_count = other.m_count;
+        }
+        return *this;
+    }
+    AVLTree& operator=(AVLTree<T>&& other)
+    {
+        if (this != &other) {
+            free(m_root);
+            m_root = other.m_root;
+            m_count = other.m_count;
+            other.m_root = nullptr;
+            other.m_count = 0;
+        }
+        return *this;
+    }
+    bool operator==(const AVLTree<T>& other) const
+    {
+        return m_count == other.m_count && equals(m_root, other.m_root);
+    }
+    bool operator!=(const AVLTree<T>& other) const
+    {
+        return !operator==(other);
+    }
 
     bool valid() const
     {
@@ -609,4 +703,3 @@ public:
 };
 
 #endif //AVL_TREE_H_1EA09AC6_A9BB_4D0F_BB17_28ED0242C21E
-
