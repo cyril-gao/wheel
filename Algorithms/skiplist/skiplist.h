@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include <algorithm>
+#include <random>
 #include <vector>
 #include <memory>
 #include <utility>
@@ -14,13 +15,17 @@ class Skiplist
 {
     struct Node {
         T data;
-        std::vector<Node*> nexts;
+        std::vector<Node*> previous;
+        std::vector<Node*> next;
 
-        explicit Node(size_t n = 1) : nexts(n, nullptr) {}
-        explicit Node(T&& t, size_t n = 1) : data(std::move(t)), nexts(n, nullptr) {}
-        explicit Node(T const& t, size_t n = 1) : data(t), nexts(n, nullptr) {}
+        explicit Node(size_t n = 1) : previous(n, nullptr), next(n, nullptr) {}
+        explicit Node(T&& t, size_t n = 1) : data(std::move(t)), previous(n, nullptr), next(n, nullptr) {}
+        explicit Node(T const& t, size_t n = 1) : data(t), previous(n, nullptr), next(n, nullptr) {}
     };
 
+    std::random_device m_rd;
+    std::mt19937 m_gen;
+    std::uniform_real_distribution<double> m_dis;
     Node m_header;
     size_t m_size;
 
@@ -28,21 +33,20 @@ class Skiplist
     {
         std::vector<Node*> ancestors;
         Node* self = nullptr;
-        int n = static_cast<int>(m_header.nexts.size());
+        int n = static_cast<int>(m_header.next.size());
         ancestors.reserve(n);
         Node* previous = const_cast<Node*>(&m_header);
-        while (n >= 0) {
-            Node * i = previous->nexts[n];
+        for (--n; n >= 0; --n) {
+            Node * i = previous->next[n];
             while (i != nullptr && i->data < t) {
                 previous = i;
-                i = i->nexts[n];
+                i = i->next[n];
             }
             ancestors.push_back(previous);
             if (i != nullptr && i->data == t) {
                 self = i;
                 break;
             }
-            --n;
         }
         return std::make_pair(ancestors, self);
     }
@@ -55,9 +59,16 @@ class Skiplist
         return retval;
     }
 public:
-    Skiplist() : m_size(0)
+    Skiplist() : m_gen(m_rd()), m_dis(0, 1.0), m_size(0)
     {
-        m_header.nexts.push_back(nullptr);
+    }
+    ~Skiplist()
+    {
+        for (auto i = m_header.next[0]; i != nullptr;) {
+            auto next = i->next[0];
+            delete i;
+            i = next;
+        }
     }
 
     bool contains(T const& t) const
@@ -70,9 +81,29 @@ public:
         auto result = find(t);
         if (result.second == nullptr) {
             ++m_size;
-            size_t n = log2(m_size);
-            std::unique_ptr<Node> new_node(new Node(t, n));
+            size_t h = 0;
+            for (size_t n = log2(m_size) + 1; h < n && m_dis(m_gen) > 0.5; ++h) {}
+            if (h == 0) {
+                h = 1;
+            }
+            std::unique_ptr<Node> new_node(new Node(t, h));
             std::reverse(result.first.begin(), result.first.end());
+            for (size_t i = 0, n = std::min(result.first.size(), h); i < n; ++i) {
+                auto next = result.first[i]->next[i];
+                new_node->next[i] = next;
+                result.first[i]->next[i] = new_node.get();
+                if (next != nullptr) {
+                    next->previous[i] = new_node.get();
+                }
+                new_node->previous[i] = result.first[i];
+            }
+            if (size_t n = m_header.next.size(); n < h) {
+                m_header.next.resize(h, new_node.get());
+                for (; n < h; ++n) {
+                    new_node->previous[n] = &m_header;
+                }
+            }
+            new_node.release();
         } else {
             result.second->data = t;
         }
@@ -82,9 +113,23 @@ public:
     {
         bool retval = false;
         auto result = find(t);
-        if (result.second != nullptr) {
+        auto to_be_deleted = result.second;
+        if (to_be_deleted != nullptr) {
             retval = true;
             --m_size;
+            assert(to_be_deleted->next.size() == to_be_deleted->previous.size());
+            for (size_t n = to_be_deleted->next.size(); n > 0;) {
+                --n;
+                auto previous = to_be_deleted->previous[n];
+                auto next = to_be_deleted->next[n];
+                if (previous != nullptr) {
+                    previous->next[n] = next;
+                }
+                if (next != nullptr) {
+                    next->previous[n] = previous;
+                }
+            }
+            delete to_be_deleted;
         }
         return retval;
     }
