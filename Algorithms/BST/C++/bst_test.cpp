@@ -57,7 +57,7 @@ std::vector<Operation<T>> get_hybrid_operations(std::vector<T> const& input)
         if (v == start) {
             ++v;
         }
-        for (auto i = start; i < v; ++i) {
+        for (auto i = start, ie = std::min(v, upper_limit); i < ie; ++i) {
             retval.emplace_back(input[i], Operation<T>::INSERTING);
         }
         deleting.insert(deleting.end(), input.begin() + start, input.begin() + v);
@@ -68,7 +68,7 @@ std::vector<Operation<T>> get_hybrid_operations(std::vector<T> const& input)
         if (v == start) {
             ++v;
         }
-        for (auto i = start; i < v; ++i) {
+        for (auto i = start, ie = std::min(v, upper_limit); i < ie; ++i) {
             retval.emplace_back(input[i], Operation<T>::FINDING);
         }
 
@@ -207,6 +207,10 @@ void tree_test()
             BST<size_t> third(std::move(other));
             examine(tree != other, "move constructor is failed\n");
             examine(tree == third, "move constructor is failed\n");
+            for (auto n : input) {
+                third.erase(n);
+                examine(third.valid(), "after removing %zu, the tree is illegal\n", n);
+            }
         }
         for (auto n : input) {
             tree.erase(n);
