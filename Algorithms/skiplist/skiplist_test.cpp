@@ -45,7 +45,7 @@ std::vector<Operation<T>> get_hybrid_operations(std::vector<T> const& input)
         if (v == start) {
             ++v;
         }
-        for (auto i = start; i < v; ++i) {
+        for (auto i = start, ie = std::min(v, upper_limit); i < ie; ++i) {
             retval.emplace_back(input[i], Operation<T>::INSERTING);
         }
         deleting.insert(deleting.end(), input.begin() + start, input.begin() + v);
@@ -56,7 +56,7 @@ std::vector<Operation<T>> get_hybrid_operations(std::vector<T> const& input)
         if (v == start) {
             ++v;
         }
-        for (auto i = start; i < v; ++i) {
+        for (auto i = start, ie = std::min(v, upper_limit); i < ie; ++i) {
             retval.emplace_back(input[i], Operation<T>::FINDING);
         }
 
@@ -155,6 +155,10 @@ void skiplist_test()
             list.insert(n);
             examine(list.contains(n), "Skiplist::insert is failed for the argument: %zu\n", n);
         }
+        {
+            Skiplist<size_t> second{list};
+            examine(second == list, "Skiplist copy constructor is failed\n");
+        }
         for (auto n : input) {
             list.erase(n);
             examine(!list.contains(n), "Skiplist::erase is failed for the argument: %zu\n", n);
@@ -166,9 +170,19 @@ void skiplist_test()
             list.insert(*i);
             examine(list.contains(*i), "Skiplist::insert is failed for the argument: %zu\n", *i);
         }
+        Skiplist<size_t> second;
+        {
+            Skiplist<size_t> third{list};
+            examine(third == list, "Skiplist copy constructor is failed\n");
+            second = std::move(third);
+        }
         for (auto i = input.rbegin(), e = input.rend(); i != e; ++i) {
             list.erase(*i);
             examine(!list.contains(*i), "Skiplist::erase is failed for the argument: %zu\n", *i);
+        }
+        for (auto i = input.rbegin(), e = input.rend(); i != e; ++i) {
+            second.erase(*i);
+            examine(!second.contains(*i), "Skiplist::erase is failed for the argument: %zu\n", *i);
         }
     }
     {
@@ -180,9 +194,19 @@ void skiplist_test()
             list.insert(n);
             examine(list.contains(n), "Skiplist::insert is failed for the argument: %zu\n", n);
         }
+        Skiplist<size_t> second;
+        {
+            Skiplist<size_t> third{list};
+            examine(third == list, "Skiplist copy constructor is failed\n");
+            second = std::move(third);
+        }
         for (auto n : input) {
             list.erase(n);
             examine(!list.contains(n), "Skiplist::erase is failed for the argument: %zu\n", n);
+        }
+        for (auto i = input.rbegin(), e = input.rend(); i != e; ++i) {
+            second.erase(*i);
+            examine(!second.contains(*i), "Skiplist::erase is failed for the argument: %zu\n", *i);
         }
     }
 }
