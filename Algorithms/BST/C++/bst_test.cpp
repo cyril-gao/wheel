@@ -150,7 +150,7 @@ void set_vs_bst(bool testing)
         std::mt19937 g(rd());
         std::shuffle(std::begin(input), std::end(input), g);
     }
-    printf("std: %f, mine: %f\n", d1, d2);
+    printf("std: %f, mine: %f (%4.2f%%)\n", d1, d2, (d2/d1) * 100);
 }
 
 template <template <typename> class BST>
