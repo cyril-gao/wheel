@@ -26,6 +26,22 @@ int longest_consecutive(std::vector<int>& nums)
 {
     integer_sort(nums.begin(), nums.end());
     int retval = 0;
+#if 1
+    for (auto i = nums.cbegin(), ie = nums.cend(); i != ie;) {
+        int count = 1;
+        for (auto j = i++; i != ie; j = i++) {
+            auto diff = *i - *j;
+            if (diff < 2) {
+                count += (diff & 1);
+            } else {
+                break;
+            }
+        }
+        if (count > retval) {
+            retval = count;
+        }
+    }
+#else
     for (int i = 0, n = static_cast<int>(nums.size()); i < n;) {
         int j = i + 1;
         int c = 1;
@@ -45,6 +61,7 @@ int longest_consecutive(std::vector<int>& nums)
         }
         i = j;
     }
+#endif
     return retval;
 }
 
