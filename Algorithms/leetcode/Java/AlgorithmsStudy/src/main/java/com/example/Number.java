@@ -339,4 +339,28 @@ public class Number {
         }
         return "NaN";
     }
+
+    /*
+     * Given an integer array nums where every element appears three times except
+     * for one, which appears exactly once. Find the single element and return it.
+     * 
+     * You must implement a solution with a linear runtime complexity and use only
+     * constant extra space.
+     */
+    public int singleNumber(int[] nums) {
+        int retval = 0;
+        for (int i = 0; i < 32; ++i) {
+            int mask = 1 << i;
+            int zeroCount = 0;
+            for (int n : nums) {
+                if ((n & mask) == 0) {
+                    ++zeroCount;
+                }
+            }
+            if ((zeroCount % 3) == 0) {
+                retval |= mask;
+            }
+        }
+        return retval;
+    }
 }

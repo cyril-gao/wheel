@@ -209,4 +209,19 @@ public class NumberTest {
             }
         }
     }
+
+    @Test
+    public void testSingleNumber() {
+        Number n = new Number();
+        {
+            int nums[] = {2, 2, 3, 2};
+            var result = n.singleNumber(nums);
+            assertEquals(result, 3);
+        }
+        {
+            int nums[] = {0, 1, 0, 1, 0, 1, 99};
+            var result = n.singleNumber(nums);
+            assertEquals(result, 99);
+        }
+    }
 }
