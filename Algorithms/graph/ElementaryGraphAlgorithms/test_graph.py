@@ -29,12 +29,12 @@ class ElementaryGraphAlgorithmsTester(unittest.TestCase):
         self.graph2.add_edge(7, 7)
 
     def test_bfs(self):
-        r = Bfs(self.graph1, 0)()
+        r = Bfs(self.graph1)(0)
         self.assertEqual(r.path_to(13), (0, 5, 12, 9, 10, 13))
         self.assertFalse(r.has_path_to(3))
 
     def test_dfs(self):
-        r = Dfs(self.graph1, 0)()
+        r = Dfs(self.graph1)(0)
         self.assertEqual(r.path_to(11), (0, 5, 12, 9, 11))
         self.assertEqual(r.path_to(12), (0, 5, 12))
         self.assertEqual(r.path_to(13), (0, 5, 12, 9, 10, 13))

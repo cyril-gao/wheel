@@ -146,20 +146,21 @@ class Bfs:
     '''Its instances are function object, we can use them to do
     breadth-first search, and the return value is an instance of BfsPaths'''
 
-    def __init__(self, graph, *vertices):
+    def __init__(self, graph):
         self.graph = graph
-        self.roots = vertices
-        if not self.roots:
-            raise ValueError(
-                "you should have specified at least a starting vertex"
-            )
 
-    def __call__(self):
+    def __call__(self, *vertices):
         class BfsPath:
             def __init__(self, vertex, distance, parent_vertex):
                 self.vertex = vertex
                 self.distance = distance
                 self.parent_vertex = parent_vertex
+
+        self.roots = vertices
+        if not self.roots:
+            raise ValueError(
+                "you should have specified at least a starting vertex"
+            )
 
         path_dict = {}
         count_of_vertices = len(self.graph)
@@ -192,18 +193,12 @@ class Dfs:
     def __init__(
         self,
         graph,
-        *vertices,
         entry_action=None,
         leaving_action=None,
         restart_action=None
     ):
         self.count_of_vertices = len(graph)
         self.graph = graph
-        self.roots = vertices
-        self.dfs_tree_dict = {}
-        n = len(self.roots)
-        if n == 0 or (n == 1 and self.roots[0] < 0):
-            self.roots = [_i for _i in range(self.count_of_vertices)]
 
         def do_nothing(vertex, parent_vertex, time): ...
 
@@ -235,10 +230,16 @@ class Dfs:
         self.leaving_action(s, self.records[s].parent_vertex, self.clock)
         self.dfs_tree_dict[s] = self.records[s]
 
-    def __call__(self):
+    def __call__(self, *vertices):
         class DfsPath:
             def __init__(self, parent_vertex):
                 self.parent_vertex = parent_vertex
+
+        self.roots = vertices
+        self.dfs_tree_dict = {}
+        n = len(self.roots)
+        if n == 0 or (n == 1 and self.roots[0] < 0):
+            self.roots = [_i for _i in range(self.count_of_vertices)]
 
         self.records = [Dfs.Record() for _i in range(self.count_of_vertices)]
         self.clock = 0
@@ -288,7 +289,7 @@ def get_strongly_connected_components(graph):
     def gather_vertices(dfs_tree_dict):
         strongly_connected_components.append(frozenset(dfs_tree_dict.keys()))
 
-    Dfs(~graph, *sorted_vertices, restart_action=gather_vertices)()
+    Dfs(~graph, restart_action=gather_vertices)(*sorted_vertices)
     return strongly_connected_components
 
 

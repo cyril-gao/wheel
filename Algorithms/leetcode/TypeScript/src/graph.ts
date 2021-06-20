@@ -9,8 +9,9 @@ export class Graph
         }
     }
 
-    public addEdge(from: number, to: number): void {
+    public addEdge(from: number, to: number): Graph {
         this.adjacency_list[from].push(to);
+        return this;
     }
 
     public adj(vertex: number): Array<number> {
@@ -164,4 +165,36 @@ export class DfsVisitor
         }
         return new VertexStates(states);
     }  
+}
+
+export class BfsVisitor
+{
+    constructor(private readonly graph: Graph) {}
+
+    public visit(...vertices: number[]): VertexStates {
+        let states: Array<VertexState> = new Array<VertexState>(this.graph.V);
+        for (let i = 0; i < this.graph.V; ++i) {
+            states[i] = new VertexState();
+        }
+        let queue = [];
+        for (let v of vertices) {
+            states[v].color = Color.GRAY;
+            queue.push(v);
+        }
+        while (queue.length > 0) {
+            let u = queue.shift();
+            let newDistance = states[u].distance + 1;
+            for (let v of this.graph.adj(u)) {
+                if (states[v].color === Color.WHITE) {
+                    states[v].color = Color.GRAY;
+                    states[v].distance = newDistance;
+                    states[v].parent = u;
+                    queue.push(v);
+                }
+            }
+            states[u].color = Color.BLACK;
+        }
+
+        return new VertexStates(states);
+    }
 }
