@@ -112,3 +112,31 @@ export function generateMatrix(n: number): number[][] {
         throw new Error(`Bad number: ${n}, it must be bigger than 0`);
     }
 }
+
+
+/*
+Given an array, rotate the array to the right by k steps, where k is non-negative.
+*/
+export function rotateArray<T>(elements: T[], k: number): void {
+    if (elements.length > 0) {
+        k %= elements.length;
+        if (k > 0) {
+            let b1 = 0, e1 = elements.length - k;
+            let b2 = e1, e2 = elements.length;
+            while (b1 < e1 || b2 < e2) {
+                if (b1 < e1 && b2 < e2) {
+                    for (;b1 < e1 && b2 < e2; ++b1, ++b2) {
+                        let tmp = elements[b1];
+                        elements[b1] = elements[b2];
+                        elements[b2] = tmp;
+                    }
+                }
+                if (b1 < e1) {
+                    b2 = e1;
+                } else if (b2 < e2) {
+                    e1 = b2;
+                }
+            }
+        }
+    }
+}
