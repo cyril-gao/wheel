@@ -63,3 +63,32 @@ export function zigzagLevelOrder(root: TreeNode | null): number[][] {
     }
     return retval;
 }
+
+
+/*
+Given the root of a binary tree, return the bottom-up level order
+traversal of its nodes' values. (i.e., from left to right, level by
+level from leaf to root).
+*/
+export function levelOrderBottom(root: TreeNode | null): number[][] {
+    let retval = [];
+    if (root !== null) {
+        let current = [root];
+        while (current.length > 0) {
+            let next = [];
+            let row = [];
+            for (let n of current) {
+                row.push(n.val);
+                if (n.left !== null) {
+                    next.push(n.left);
+                }
+                if (n.right !== null) {
+                    next.push(n.right);
+                }
+            }
+            retval.unshift(row);
+            current = next;
+        }
+    }
+    return retval;
+}
