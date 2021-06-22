@@ -113,7 +113,7 @@ void str_sort_test(const size_t buf_size)
     std::uniform_int_distribution<size_t> length_dist(4, 128);
     using details::V4_1Partitioner;
     using details::V4_2Partitioner;
-    for (int i = 0; i < 3; ++i) {
+    for (size_t i = 0; i < 3; ++i) {
         size_t size = buf_size * (i + 1);
         print_separator();
         printf("%zu strings:\n", size);
@@ -188,7 +188,7 @@ template <typename T>
 void performance_test(const size_t buf_size, const double factor)
 {
     std::random_device rd;
-    std::uniform_int_distribution<T> dist(0, static_cast<T>(buf_size / factor));
+    std::uniform_int_distribution<T> dist(0, static_cast<T>(static_cast<double>(buf_size) / factor));
     std::vector<T> data(buf_size);
     for (auto &v : data)
     {
@@ -317,7 +317,7 @@ int main()
         
         for (double i = 0; i <= 16; i += 1.0)
         {
-            performance_test<int64_t>(BUF_SIZE + i * 235437, i + dis(gen));
+            performance_test<int64_t>(BUF_SIZE + static_cast<size_t>(i * 235437), i + dis(gen));
             printf("\n");
         }
 

@@ -47,7 +47,9 @@ namespace heap
 
     template <typename I, typename C>
     void rise(
-        I begin, I end, I outer,
+        I begin,
+        [[maybe_unused]] I end,
+        I outer,
         C comp = std::greater_equal<typename std::iterator_traits<I>::value_type>())
     {
         assert(outer >= begin && outer != end);

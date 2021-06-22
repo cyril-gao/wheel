@@ -15,7 +15,7 @@ namespace
     void counting_sort(
         DecoratedInputIterator db, DecoratedInputIterator de,
         size_t biggest_item,
-        OriginalInputIterator ob, OriginalInputIterator oe,
+        OriginalInputIterator ob, [[maybe_unused]] OriginalInputIterator oe,
         OutputIterator output,
         std::vector<uint32_t> & counting_buffer
     ) {
