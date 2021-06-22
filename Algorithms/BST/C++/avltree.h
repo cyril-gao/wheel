@@ -14,20 +14,20 @@ class AVLTree
 
     union BalanceFactorAndParentPointer
     {
-        uintptr_t balance_factor;
+        intptr_t balance_factor;
         Node * parent;
 
         BalanceFactorAndParentPointer(): parent(nullptr) {}
-        BalanceFactorAndParentPointer(Node * p, int factor = 0): parent(p)
+        BalanceFactorAndParentPointer(Node * p, intptr_t factor = 0): parent(p)
         {
             assert(factor >= -1 && factor <= 1);
-            uintptr_t v = (factor + 1);
+            intptr_t v = (factor + 1);
             balance_factor |= v;
         }
 
         const Node * get_parent() const
         {
-            const uintptr_t mask = 3;
+            const intptr_t mask = 3;
             return reinterpret_cast<Node*>(balance_factor & (~mask));
         }
 
@@ -37,23 +37,23 @@ class AVLTree
         }
         void set_parent_and_reserve_balance_factor(Node* p)
         {
-            const uintptr_t mask = 3;
-            uintptr_t v = balance_factor & mask;
+            const intptr_t mask = 3;
+            intptr_t v = balance_factor & mask;
             parent = p;
             balance_factor |= v;
         }
 
-        int get_balance_factor() const
+        intptr_t get_balance_factor() const
         {
-            return static_cast<int>(balance_factor & 3U) - 1;
+            return (balance_factor & 3U) - 1;
         }
 
-        void set_balance_factor(int factor)
+        void set_balance_factor(intptr_t factor)
         {
             assert(factor >= -1 && factor <= 1);
-            const uintptr_t mask = 3;
+            const intptr_t mask = 3;
             balance_factor &= (~mask);
-            balance_factor |= static_cast<uintptr_t>(factor + 1);
+            balance_factor |= (factor + 1);
         }
     };
 
@@ -64,7 +64,7 @@ class AVLTree
         Node * left_child;
         Node * right_child;
 
-        Node(const T& d, Node * parent, int balance_factor, Node * lc = nullptr, Node * rc = nullptr):
+        Node(const T& d, Node * parent, intptr_t balance_factor, Node * lc = nullptr, Node * rc = nullptr):
             data(d), balance_factor_and_parent(parent, balance_factor), left_child(lc), right_child(rc)
         {
         }
@@ -102,16 +102,16 @@ class AVLTree
             balance_factor_and_parent.set_parent_and_reserve_balance_factor(parent);
         }
 
-        int get_balance_factor() const
+        intptr_t get_balance_factor() const
         {
             return balance_factor_and_parent.get_balance_factor();
         }
-        int get_balance_factor()
+        intptr_t get_balance_factor()
         {
             return const_cast<const Node*>(this)->get_balance_factor();
         }
 
-        void set_balance_factor(int factor)
+        void set_balance_factor(intptr_t factor)
         {
             balance_factor_and_parent.set_balance_factor(factor);
         }
@@ -221,7 +221,7 @@ class AVLTree
         Internal internal;
         if (node != nullptr) {
             internal.valid = false;
-            int balance_factor = node->get_balance_factor();
+            auto balance_factor = node->get_balance_factor();
             if (
                 balance_factor >= -1 && balance_factor <= 1 &&
                 (node->left_child == nullptr || (node->left_child->data < node->data && node->left_child->get_parent() == node)) &&

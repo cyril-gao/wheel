@@ -12,7 +12,7 @@ class RedBlackTree
 {
     struct Node;
 
-    enum Color { BLACK = 0, RED = 1 };
+    enum Color : uintptr_t { BLACK = 0, RED = 1 };
 
     union ColorAndParentPointer
     {

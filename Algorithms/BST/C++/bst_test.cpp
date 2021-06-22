@@ -36,7 +36,7 @@ N randnum(N start, N end)
 {
     assert(start <= end);
     N diff = end - start + 1;
-    N r = rand();
+    N r = static_cast<N>(rand());
     r %= diff;
     return r + start;
 }
@@ -44,13 +44,14 @@ N randnum(N start, N end)
 template <typename T>
 std::vector<Operation<T>> get_hybrid_operations(std::vector<T> const& input)
 {
+    using difference_type = typename std::vector<T>::iterator::difference_type;
     srand(static_cast<unsigned int>(time(nullptr)));
 
     std::vector<Operation<T>> retval;
-    auto upper_limit = input.size();
+    size_t upper_limit = input.size();
     retval.reserve(upper_limit);
     std::vector<T> deleting;
-    decltype(upper_limit) start = 0;
+    size_t start = 0;
     while (start < upper_limit) {
         auto end = std::min(start + 20, upper_limit);
         auto v = randnum(start, end);
@@ -60,7 +61,11 @@ std::vector<Operation<T>> get_hybrid_operations(std::vector<T> const& input)
         for (auto i = start, ie = std::min(v, upper_limit); i < ie; ++i) {
             retval.emplace_back(input[i], Operation<T>::INSERTING);
         }
-        deleting.insert(deleting.end(), input.begin() + start, input.begin() + v);
+        deleting.insert(
+            deleting.end(),
+            input.begin() + static_cast<difference_type>(start),
+            input.begin() + static_cast<difference_type>(v)
+        );
         start = v;
 
         end = std::min(start + 60, upper_limit);
@@ -81,7 +86,7 @@ std::vector<Operation<T>> get_hybrid_operations(std::vector<T> const& input)
             for (decltype(v) i = 0; i < v; ++i) {
                 retval.emplace_back(deleting[i], Operation<T>::DELETING);
             }
-            deleting = std::vector<T>(deleting.begin() + v, deleting.end());
+            deleting = std::vector<T>(deleting.begin() + static_cast<difference_type>(v), deleting.end());
         }
     }
     for (auto v : deleting) {
@@ -119,7 +124,7 @@ void set_vs_bst(bool testing)
                     break;
                 case Operation<size_t>::FINDING:
                     {
-                        auto r = tree.find(o.key);
+                        [[maybe_unused]] auto r = tree.find(o.key);
                         break;
                     }
                 }
