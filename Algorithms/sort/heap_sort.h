@@ -14,7 +14,7 @@ namespace heap
         I begin, I end, I outer,
         C comp = std::greater_equal<typename std::iterator_traits<I>::value_type>())
     {
-        int64_t len = std::distance(begin, end);
+        auto len = std::distance(begin, end);
         assert(outer >= begin && outer != end);
         while (true)
         {
@@ -55,7 +55,7 @@ namespace heap
         assert(outer >= begin && outer != end);
         while (true)
         {
-            int64_t d = std::distance(begin, outer);
+            auto d = std::distance(begin, outer);
             I parent;
             if (d > 0 && comp(*(parent = begin + ((d - 1) >> 1)), *outer))
             {
@@ -70,10 +70,10 @@ namespace heap
     }
 
     template <typename I, typename C>
-    int64_t make_heap(I begin, I end, C c)
+    auto make_heap(I begin, I end, C c)
     {
         assert(begin <= end);
-        int64_t len = static_cast<int64_t>(std::distance(begin, end));
+        auto len = std::distance(begin, end);
         if (len > 1)
         {
             for (auto i = len >> 1; i >= 0; --i)
@@ -88,10 +88,10 @@ namespace heap
 template <typename RandomIt, typename Compare>
 void heap_sort(RandomIt begin, RandomIt end, Compare comp)
 {
-    int64_t len = heap::make_heap<RandomIt, Compare>(begin, end, comp);
+    auto len = heap::make_heap<RandomIt, Compare>(begin, end, comp);
     if (len > 1)
     {
-        for (int64_t i = len - 1; i > 0; --i)
+        for (auto i = len - 1; i > 0; --i)
         {
             RandomIt last = begin + i;
             std::iter_swap(begin, last);

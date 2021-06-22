@@ -57,16 +57,16 @@ struct V1_3Partitioner
         RandomIt last = begin + distance - 1;
         auto sentinel = *last;
 
-        int64_t le = -1;
+        typename std::iterator_traits<RandomIt>::difference_type le = 0;
         for (RandomIt i = begin; i != last; ++i)
         {
             if (*i <= sentinel)
             {
-                ++le;
                 std::iter_swap(begin + le, i);
+                ++le;
             }
         }
-        RandomIt separator = begin + (le + 1);
+        RandomIt separator = begin + le;
         std::iter_swap(separator, last);
         return separator;
     }

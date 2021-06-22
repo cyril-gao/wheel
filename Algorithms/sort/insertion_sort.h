@@ -10,7 +10,7 @@ inline void insertion_sort(RandomIt begin, RandomIt end, Compare comp)
     for (RandomIt i = begin + 1; i < end; ++i)
     {
         auto sentinel = *i;
-        int64_t j = static_cast<int64_t>(std::distance(begin, i)) - 1;
+        auto j = std::distance(begin, i) - 1;
         for (; j >= 0; --j)
         {
             if (comp(sentinel, *(begin + j)))
