@@ -98,7 +98,7 @@ std::vector<Operation<T>> get_hybrid_operations(std::vector<T> const& input)
 template <template <typename> class BST>
 void set_vs_bst(bool testing)
 {
-    const size_t limit = 1000000;
+    const size_t limit = 1234567;
     int times = 100;
     if (testing) {
         times = 3;

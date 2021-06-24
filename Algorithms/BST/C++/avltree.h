@@ -212,8 +212,8 @@ class AVLTree
 
     struct Internal
     {
-        int  height{0};
-        bool valid{true};
+        intptr_t height{0};
+        bool     valid{true};
     };
 
     static Internal get_internal(const Node* const node)
@@ -230,7 +230,7 @@ class AVLTree
                 auto li = get_internal(node->left_child);
                 auto ri = get_internal(node->right_child);
                 if (li.valid && ri.valid) {
-                    int diff = li.height - ri.height;
+                    auto diff = li.height - ri.height;
                     if (balance_factor == diff) {
                         internal.height = (li.height < ri.height ? ri.height : li.height) + 1;
                         internal.valid = true;

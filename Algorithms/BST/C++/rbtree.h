@@ -231,7 +231,8 @@ class RedBlackTree
         Internal internal;
         if (node != nullptr) {
             internal.valid = false;
-            int inc = -1;
+            enum { INVALID = 2 };
+            size_t inc = INVALID;
             if (node->get_color() == RED) {
                 auto left_child_color = get_color(node->left_child);
                 auto right_child_color = get_color(node->right_child);
@@ -241,7 +242,7 @@ class RedBlackTree
             } else {
                 inc = 1;
             }
-            if (inc >= 0) {
+            if (inc != INVALID) {
                 auto li = get_internal(node->left_child);
                 auto ri = get_internal(node->right_child);
                 if (li.valid && ri.valid && li.height == ri.height) {
@@ -249,7 +250,7 @@ class RedBlackTree
                         (node->left_child == nullptr || (node->left_child->data < node->data && node->left_child->get_parent() == node)) &&
                         (node->right_child == nullptr || (node->right_child->data > node->data && node->right_child->get_parent() == node))
                     ) {
-                        internal.height = li.height + static_cast<size_t>(inc);
+                        internal.height = li.height + inc;
                         internal.valid = true;
                     }
                 }
