@@ -37,6 +37,8 @@
 *   <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/C%2B%2B/segment_tree_test.cpp">Use C++ to implement it</a>
 *   <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/TypeScript/src/segment.trees.ts">Use TypeScript to implement it</a>
 
+#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/number">Number-Theoretic Algorithms</a>
+
 #### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/matrix">matrix</a>:
 
 *   algorithms about matrix
