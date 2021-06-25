@@ -66,7 +66,7 @@ public class NumberTest {
             for (var b : nums) {
                 //System.out.printf("gcd(%s, %s)%n", a.toString(), b.toString());
                 var result = Number.euclid(a, b);
-                assertEquals(result[0].multiply(a).add(result[1].multiply(b)), result[2]);
+                assertEquals(result[1].multiply(a).add(result[2].multiply(b)), result[0]);
             }
         }
     }

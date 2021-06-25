@@ -48,17 +48,17 @@ public class Number {
 
     /*
     Input: two positive integers a and b with a >= 0 and b >= 0
-    Output: Integers x, y, d such that d = gcd(a, b) and ax + by = d
+    Output: Integers d, x, y such that d = gcd(a, b) and ax + by = d
     */
     private static BigInteger[] _euclid(BigInteger a, BigInteger b) {
         assert(b.compareTo(BigInteger.ZERO) >= 0);
         assert(a.compareTo(b) >= 0); 
         if (b.compareTo(BigInteger.ZERO) == 0) {
-            return new BigInteger[]{BigInteger.ONE, BigInteger.ZERO, a};
+            return new BigInteger[]{a, BigInteger.ONE, BigInteger.ZERO};
         } else {
             var result = _euclid(b, a.mod(b));
             return new BigInteger[]{
-                result[1], result[0].subtract(a.divide(b).multiply(result[1])), result[2]
+                result[0], result[2], result[1].subtract(a.divide(b).multiply(result[2]))
             };
         }
     }
@@ -68,9 +68,9 @@ public class Number {
             return _euclid(a, b);
         } else {
             var result = _euclid(b, a);
-            var tmp = result[0];
-            result[0] = result[1];
-            result[1] = tmp;
+            var tmp = result[1];
+            result[1] = result[2];
+            result[2] = tmp;
             return result;
         }
     }
