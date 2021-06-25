@@ -1,5 +1,5 @@
 import { TreeNode } from './tree.node';
-import { zigzagLevelOrder, levelOrderBottom } from "./zigzag.level.order.traversal";
+import { zigzagLevelOrder, levelOrderBottom, levelOrder } from "./zigzag.level.order.traversal";
 
 function equals<T>(elements1: T[], elements2: T[]): boolean {
     let retval = elements1.length === elements2.length;
@@ -85,6 +85,34 @@ test(
         {
             let n1 = new TreeNode(1);
             let result = levelOrderBottom(n1);
+            expect(result.length).toEqual(1);
+            expect(equals(result[0], [1])).toBe(true);
+        }
+    }
+);
+
+test(
+    "check the result value of the call to the function levelOrder",
+    () => {
+        {
+            let n3 = new TreeNode(3);
+            let n9 = new TreeNode(9);
+            let n20 = new TreeNode(20);
+            n3.left = n9;
+            n3.right = n20;
+            let n15 = new TreeNode(15);
+            let n7 = new TreeNode(7);
+            n20.left = n15;
+            n20.right = n7;
+            let result = levelOrder(n3);
+            expect(result.length).toEqual(3);
+            expect(equals(result[2], [15, 7])).toBe(true);
+            expect(equals(result[1], [9, 20])).toBe(true);
+            expect(equals(result[0], [3])).toBe(true);
+        }
+        {
+            let n1 = new TreeNode(1);
+            let result = levelOrder(n1);
             expect(result.length).toEqual(1);
             expect(equals(result[0], [1])).toBe(true);
         }

@@ -92,3 +92,30 @@ export function levelOrderBottom(root: TreeNode | null): number[][] {
     }
     return retval;
 }
+
+
+/*
+Given the root of a binary tree, return the level order traversal of its nodes' values. (i.e., from left to right, level by level).
+*/
+export function levelOrder(root: TreeNode | null): number[][] {
+    let retval = [];
+    if (root !== null) {
+        let current = [root];
+        while (current.length > 0) {
+            let row = [];
+            let next = [];
+            for (let node of current) {
+                row.push(node.val);
+                if (node.left !== null) {
+                    next.push(node.left);
+                }
+                if (node.right !== null) {
+                    next.push(node.right);
+                }
+            }
+            retval.push(row);
+            current = next;
+        }
+    }
+    return retval;
+}
