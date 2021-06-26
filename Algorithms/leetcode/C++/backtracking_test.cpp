@@ -418,8 +418,8 @@ namespace v1
 
 namespace v2
 {
-    const u_int16_t s_bitset[] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512};
-    const u_int16_t s_maskset[] = {0xfffe, 0xfffd, 0xfffb, 0xfff7, 0xffef, 0xffdf, 0xffbf, 0xff7f, 0xfeff, 0xfdff};
+    const uint16_t s_bitset[] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512};
+    const uint16_t s_maskset[] = {0xfffe, 0xfffd, 0xfffb, 0xfff7, 0xffef, 0xffdf, 0xffbf, 0xff7f, 0xfeff, 0xfdff};
 
     bool is_sudoku_digit(char c)
     {
