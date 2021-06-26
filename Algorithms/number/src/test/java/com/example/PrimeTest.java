@@ -10,6 +10,7 @@ import org.testng.annotations.*;
 public class PrimeTest {
     @Test
     public void primeTest() {
+        assertTrue(Prime.isProbablePrime(BigInteger.TWO));
         int certainty = 40;
         var random = new SecureRandom();
         byte[] bytes = new byte[256];

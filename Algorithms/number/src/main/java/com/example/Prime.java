@@ -52,6 +52,8 @@ public class Prime {
                     ++i;
                 }
             }
+        } else {
+            retval = (num.compareTo(BigInteger.TWO) == 0);
         }
         return retval;
     }
