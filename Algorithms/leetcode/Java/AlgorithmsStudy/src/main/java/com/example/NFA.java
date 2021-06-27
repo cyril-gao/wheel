@@ -3,6 +3,10 @@ package com.example;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/*
+Book: <<Algorithms Fourth Edition>>
+Chapter: 5.4 Regular Expressions
+*/
 public class NFA {
     private char[] regexp;
     private int numberOfStates;
@@ -69,20 +73,10 @@ public class NFA {
                     return Integer.valueOf(vertex.intValue() + 1);
                 }).collect(Collectors.toCollection(ArrayList<Integer>::new));
 
-                /*
-                 * Collection<Integer> match = new ArrayList<>(); for (int v :
-                 * reachableVertices) { if (v < numberOfStates) { if (regexp[v] == input[i] ||
-                 * regexp[v] == '.') { match.add(v + 1); } } }
-                 */
-
                 result = new DfsVisitor(graph, match).go();
                 reachableVertices = getReachableVertices(result);
             }
             retval = reachableVertices.stream().anyMatch(v -> v.intValue() == numberOfStates);
-            /*
-             * retval = false; for (int v : reachableVertices) { if (v == numberOfStates) {
-             * retval = true; break; } }
-             */
         }
         return retval;
     }
