@@ -29,13 +29,13 @@
         <li><a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/BST/The%20rebalancing%20process%20of%20AVL%20trees.pdf">AVL trees</a></li>
     </ul>
 
+#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/skiplist">Skip list</a>
+
 #### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/heap">Mergeable heaps</a>
 
 *   binary heap
 *   k-ary heap
 *   fibonacci heap
-
-#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/skiplist">Skip list</a>
 
 #### Segment tree
 
