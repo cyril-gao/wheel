@@ -1,6 +1,6 @@
 ## Implement some data structures and algorithms
 
-#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/sort">sort</a>
+#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/sort">Sort</a>
 
 *   merge sort
 *   heap sort
@@ -44,11 +44,11 @@
 
 #### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/number">Number-Theoretic Algorithms</a>
 
-#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/matrix">matrix</a>
+#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/matrix">Matrix</a>
 
 *   algorithms about matrix
 
-### graph
+### Graph
 
 ##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/ElementaryGraphAlgorithms">Elementary Graph Algorithms</a>
 
@@ -70,7 +70,7 @@
 
 ##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/AllPairsShortestPaths">All Pairs Shortest Paths</a>
 
-### coding exercises
+### Coding exercises
 
 *   <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/leetcode/C%2B%2B">C++</a>: use C++ to resolve those problems
 
