@@ -1,6 +1,6 @@
 ## Implement some data structures and algorithms
 
-#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/sort">sort:</a>
+#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/sort">sort</a>
 
 *   merge sort
 *   heap sort
@@ -8,11 +8,16 @@
 *   counting sort
 *   MSD string sort and three-way string quicksort
 
-#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BinaryTreeTraversal">Binary Tree Traversal:</a>
+#### String matching/Substring searching
+*   <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/Java/AlgorithmsStudy/src/main/java/com/example/KMPSearcher.java">The Knuth-Morris-Pratt algorithm</a>
+
+#### <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/Java/AlgorithmsStudy/src/main/java/com/example/Trie.java">Trie</a>
+
+#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BinaryTreeTraversal">Binary Tree Traversal</a>
 
 *   traverse a binary tree: preorder, inorder, postorder, levelorder iteratively or recursively.
 
-#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BST">Binary Search Tree</a> (BST):
+#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BST">Binary Search Tree</a> (BST)
 
 *   insert new node into or remove a node from a red-black/AVL tree
 *   document about how to rebalance irregular red-black/AVL trees:
@@ -28,8 +33,6 @@
 *   k-ary heap
 *   fibonacci heap
 
-#### <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/Java/AlgorithmsStudy/src/main/java/com/example/Trie.java">Trie</a>
-
 #### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/skiplist">Skip list</a>
 
 #### Segment tree
@@ -39,25 +42,25 @@
 
 #### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/number">Number-Theoretic Algorithms</a>
 
-#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/matrix">matrix</a>:
+#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/matrix">matrix</a>
 
 *   algorithms about matrix
 
 ### graph
 
-##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/ElementaryGraphAlgorithms">Elementary Graph Algorithms</a>:
+##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/ElementaryGraphAlgorithms">Elementary Graph Algorithms</a>
 
 *   BFS
 *   DFS
 *   Topological sort
 *   Strongly connected components
 
-##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/MST">Minimum Spanning Trees</a> (MST):
+##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/MST">Minimum Spanning Trees</a> (MST)
 
 *   Kruskal
 *   Prim
 
-##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/SingleSourceShortestPaths">Single Source Shortest Paths</a>:
+##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/SingleSourceShortestPaths">Single Source Shortest Paths</a>
 
 *   Bellman-Ford
 *   DAG
