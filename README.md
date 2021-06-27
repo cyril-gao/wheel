@@ -46,8 +46,6 @@
 
 #### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/matrix">Matrix</a>
 
-*   algorithms about matrix
-
 ### Graph
 
 ##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/ElementaryGraphAlgorithms">Elementary Graph Algorithms</a>
