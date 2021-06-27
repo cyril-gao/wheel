@@ -175,4 +175,4 @@ class BSTTester(unittest.TestCase):
         self.request_queue.close()
         self.response_queue.close()
 
-        assert not wrong
+        self.assertFalse(wrong)
