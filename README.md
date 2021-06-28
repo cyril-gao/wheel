@@ -9,8 +9,8 @@
 *   MSD string sort and three-way string quicksort
 
 #### String matching/Substring searching
-*   <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/Java/AlgorithmsStudy/src/main/java/com/example/KMPSearcher.java">The Knuth-Morris-Pratt algorithm</a>
-*   <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/Java/AlgorithmsStudy/src/main/java/com/example/RabinKarpSearcher.java">The Rabin-Karp algorithm</a>
+*   <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/Java/AlgorithmsStudy/src/main/java/com/example/KMPSearcher.java">the Knuth-Morris-Pratt algorithm</a>
+*   <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/Java/AlgorithmsStudy/src/main/java/com/example/RabinKarpSearcher.java">the Rabin-Karp algorithm</a>
 
 #### <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/Java/AlgorithmsStudy/src/main/java/com/example/NFA.java">Regular expressions</a>
 
@@ -42,8 +42,8 @@
 
 #### Segment tree
 
-*   <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/C%2B%2B/segment_tree_test.cpp">Use C++ to implement it</a>
-*   <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/TypeScript/src/segment.trees.ts">Use TypeScript to implement it</a>
+*   <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/C%2B%2B/segment_tree_test.cpp">use C++ to implement it</a>
+*   <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/TypeScript/src/segment.trees.ts">use TypeScript to implement it</a>
 
 #### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/number">Number-Theoretic Algorithms</a>
 
