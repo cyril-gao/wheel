@@ -10,6 +10,7 @@
 
 #### String matching/Substring searching
 *   <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/Java/AlgorithmsStudy/src/main/java/com/example/KMPSearcher.java">The Knuth-Morris-Pratt algorithm</a>
+*   <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/Java/AlgorithmsStudy/src/main/java/com/example/RabinKarpSearcher.java">The Rabin-Karp algorithm</a>
 
 #### <a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/leetcode/Java/AlgorithmsStudy/src/main/java/com/example/NFA.java">Regular expressions</a>
 
