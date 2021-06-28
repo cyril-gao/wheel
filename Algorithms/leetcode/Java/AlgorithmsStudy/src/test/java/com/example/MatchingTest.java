@@ -98,20 +98,6 @@ public class MatchingTest {
         assertTrue(dp.isMatch("mississippi", "mis*is*ip*."));
     }
 
-    @Test
-    public void testKMPSearcher() {
-        var kmp = new KMPSearcher();
-        assertEquals(kmp.find("", ""), 0);
-        assertEquals(kmp.find("DA", ""), 0);
-        assertEquals(kmp.find("11121112311", "11123"), 4);
-        assertEquals(kmp.find("ABAAAABAAAAAAAAA", "BAAAAAAAAA"), 6);
-        assertEquals(kmp.find("BCBAABACAABABACAA", "ABABAC"), 9);
-        assertEquals(kmp.find("AABRAACADABRAACAADABRA", "AACAA"), 12);
-        assertEquals(kmp.find("AAAAAAAAAAAAAAAAAAAAAAAAB", "AAAAAAAB"), 17);
-        assertEquals(kmp.find("ABABAAAAABABABABAABABAAAA", "ABABABAB"), 8);
-        assertEquals(kmp.find("ABABAAAAABABABABAABABAAAA", "ABABABABB"), -1);
-    }
-
     private boolean isValidIpv4(String input) {
         String strPattern = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$";
         return java.util.regex.Pattern.compile(strPattern).matcher(input).find();
@@ -133,5 +119,27 @@ public class MatchingTest {
         assertFalse(isValidIpv4("200-0.255.253"));
         assertFalse(isValidIpv4("10_2.2.3"));
         assertFalse(isValidIpv4("0.0.00.0"));
+    }
+
+    private void testSearcher(SubstringSearcher searcher) {
+        assertEquals(searcher.search("", ""), 0);
+        assertEquals(searcher.search("DA", ""), 0);
+        assertEquals(searcher.search("11121112311", "11123"), 4);
+        assertEquals(searcher.search("ABAAAABAAAAAAAAA", "BAAAAAAAAA"), 6);
+        assertEquals(searcher.search("BCBAABACAABABACAA", "ABABAC"), 9);
+        assertEquals(searcher.search("AABRAACADABRAACAADABRA", "AACAA"), 12);
+        assertEquals(searcher.search("AAAAAAAAAAAAAAAAAAAAAAAAB", "AAAAAAAB"), 17);
+        assertEquals(searcher.search("ABABAAAAABABABABAABABAAAA", "ABABABAB"), 8);
+        assertEquals(searcher.search("ABABAAAAABABABABAABABAAAA", "ABABABABB"), -1);
+    }
+
+    @Test
+    public void testKMPSearcher() {
+        testSearcher(new KMPSearcher());
+    }
+
+    @Test
+    public void testRabinKarpSearcher() {
+        testSearcher(new RabinKarpSearcher());
     }
 }

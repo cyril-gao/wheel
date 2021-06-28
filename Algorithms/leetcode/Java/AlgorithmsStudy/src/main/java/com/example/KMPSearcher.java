@@ -1,6 +1,6 @@
 package com.example;
 
-public class KMPSearcher {
+public class KMPSearcher implements SubstringSearcher {
     private int[] createSuffixArray(String p) {
         char[] pattern = p.toCharArray();
         int[] suffixArray = new int[pattern.length];
@@ -15,7 +15,7 @@ public class KMPSearcher {
         return suffixArray;
     }
 
-    public int find(String s, String p) {
+    public int search(String s, String p) {
         int retval = 0;
         if (s != p) {
             retval = -1;
