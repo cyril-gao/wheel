@@ -20,11 +20,13 @@
 
 *   traverse a binary tree: preorder, inorder, postorder, levelorder iteratively or recursively.
 
-#### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BST">Binary Search Tree</a> (BST)
-
-*   insert new node into or remove a node from a red-black/AVL tree
-*   documents about how to rebalance irregular red-black/AVL trees:
-
+#### Binary Search Tree (BST)
+*   code which reveals how to insert new node into or remove a node from a red-black/AVL tree:
+    <ul>
+        <li><a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BST">Python code which implements red-black/AVL trees</a></li>
+        <li><a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/BST/C%2B%2B">C++ code which implements red-black/AVL trees</a></li>
+    </ul>
+*   documents which discuss the invariant of the process to rebalance irregular red-black/AVL trees:
     <ul>
         <li><a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/BST/The%20rebalancing%20process%20of%20red-black%20trees.pdf">Red-black trees</a></li>
         <li><a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/BST/The%20rebalancing%20process%20of%20AVL%20trees.pdf">AVL trees</a></li>
