@@ -1,4 +1,4 @@
-import { Observable, range } from 'rxjs';
+import { Observable } from 'rxjs';
 
 export const skip = (k: number = 1) => (source: Observable<any>) => new Observable<any>(
     subscriber => {
