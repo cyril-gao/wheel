@@ -72,11 +72,9 @@
 ##### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/graph/AllPairsShortestPaths">All Pairs Shortest Paths</a>
 
 ### Coding exercises
-
 *   <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/leetcode/C%2B%2B">C++</a>: use C++ to resolve those problems
-
 *   <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/leetcode/Java/AlgorithmsStudy">Java</a>: use Java to resolve those problems
-
 *   <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/leetcode/Python">Python</a>: use Python to resolve those problems
-
 *   <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/leetcode/TypeScript">TypeScript</a>: use TypeScript to resolve those problems
+
+### <a href="https://github.com/cyril-gao/wheel/tree/master/Reactive">Reactive programming</a>
