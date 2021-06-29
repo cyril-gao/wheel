@@ -45,14 +45,13 @@ int main()
             #endif
             }
         };
-        std::vector<std::thread> threads;
+        std::vector<std::jthread> threads;
         {
             threads.reserve(n);
             for (size_t i = 0; i < n; ++i) {
-                threads.emplace_back(std::thread(task, i));
+                threads.emplace_back(task, i);
             }
         }
-        std::for_each(std::begin(threads), std::end(threads), [](auto& t) { t.join(); });
     } catch (std::exception const & e) {
         fprintf(stderr, "%s\n", e.what());
         return 1;

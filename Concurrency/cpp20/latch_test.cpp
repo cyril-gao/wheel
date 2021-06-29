@@ -16,7 +16,7 @@ int main()
 {
     try {
         size_t n = std::thread::hardware_concurrency() * 8;
-        std::atomic<int> count(0);
+        std::atomic<size_t> count(0);
         latch l(n);
         auto task = [&]() {
             for (int i = 0; i < 100; ++i) {
@@ -26,18 +26,17 @@ int main()
             }
             l.count_down();
         };
-        std::vector<std::thread> threads;
+        std::vector<std::jthread> threads;
         {
             threads.reserve(n);
             for (size_t i = 0; i < n; ++i) {
-                threads.emplace_back(std::thread(task));
+                threads.emplace_back(task);
             }
         }
         l.wait();
         if (count.load(std::memory_order_relaxed) != 100 * n) {
             printf("A bug has been found\n");
         }
-        std::for_each(std::begin(threads), std::end(threads), [](auto& t) { t.join(); });
     } catch (std::exception const & e) {
         fprintf(stderr, "%s\n", e.what());
         return 1;

@@ -19,6 +19,7 @@ using Error=int;
 #include <assert.h>
 #include <limits.h>
 #include <stddef.h>
+#include <string.h>
 #include <chrono>
 
 namespace experimental
@@ -169,7 +170,8 @@ namespace experimental
             }
             return retval;
         #else
-            struct timespec timeout = {0};
+            struct timespec timeout;
+            memset(&timeout, 0, sizeof(timeout));
             timeout.tv_sec = milliseconds / 1000;
             timeout.tv_nsec = (milliseconds % 1000) * 1000;
             return sem_timedwait(&m_handle, &timeout) == 0;
