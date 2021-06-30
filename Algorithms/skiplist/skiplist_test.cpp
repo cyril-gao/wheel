@@ -106,7 +106,7 @@ void set_vs_skiplist(bool testing)
                     break;
                 case Operation<size_t>::FINDING:
                 {
-                    auto r = list.find(o.key);
+                    [[maybe_unused]] auto r = list.find(o.key);
                     break;
                 }
                 }

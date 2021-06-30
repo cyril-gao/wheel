@@ -126,6 +126,7 @@ public:
     Skiplist(Skiplist<T>&& other) : m_gen(m_rd()), m_dis(0, 1.0), m_size(other.m_size)
     {
         swap(other.m_header);
+        other.m_size = 0;
     }
     void swap(Skiplist<T>& other)
     {
