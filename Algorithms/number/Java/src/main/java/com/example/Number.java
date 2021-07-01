@@ -57,21 +57,26 @@ public class Number {
             return new BigInteger[]{a, BigInteger.ONE, BigInteger.ZERO};
         } else {
             var result = _euclid(b, a.mod(b));
-            return new BigInteger[]{
+            var retval = new BigInteger[] {
                 result[0], result[2], result[1].subtract(a.divide(b).multiply(result[2]))
             };
         }
     }
 
     public static BigInteger[] euclid(BigInteger a, BigInteger b) {
+        BigInteger[] retval;
         if (a.compareTo(b) >= 0) {
-            return _euclid(a, b);
+            retval = _euclid(a, b);
         } else {
-            var result = _euclid(b, a);
-            var tmp = result[1];
-            result[1] = result[2];
-            result[2] = tmp;
-            return result;
+            retval = _euclid(b, a);
+            var tmp = retval[1];
+            retval[1] = retval[2];
+            retval[2] = tmp;
         }
+        while (retval[1].compareTo(BigInteger.ZERO) < 0) {
+            retval[1] = retval[1].add(b);
+            retval[2] = retval[2].sub(a);
+        }
+        return retval;
     }
 }

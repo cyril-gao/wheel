@@ -129,7 +129,7 @@ class BigInteger
         if (!b.is_zero()) {
             auto dr = a.div(b);
             auto result = euclid(b, dr[1]);
-            return std::array<BigInteger, 3>{
+            return std::array<BigInteger, 3> {
                 result[0], result[2], result[1] - dr[0] * result[2]
             };
         } else {
@@ -1195,12 +1195,19 @@ public:
      */
     friend std::array<BigInteger, 3> euclid(const BigInteger& a, const BigInteger& b)
     {
+        auto make_sure_x_is_positive = [](const BigInteger& a, const BigInteger& b, std::array<BigInteger, 3>&& result) {
+            while (result[1].is_negative()) {
+                result[1] += b;
+                result[2] -= a;
+            }
+            return result;
+        };
         if (a >= b) {
-            return BigInteger::euclid(a, b);
+            return make_sure_x_is_positive(a, b, BigInteger::euclid(a, b));
         } else {
             auto result = BigInteger::euclid(b, a);
             result[1].swap(result[2]);
-            return result;
+            return make_sure_x_is_positive(a, b, std::move(result));
         }
     }
 

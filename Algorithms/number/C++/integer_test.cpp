@@ -95,6 +95,8 @@ int main()
             BigInteger a("34635273562734523754236542837913"), b("97354325452334239584563476534655321967");
             auto result = euclid(a, b);
             examine(result[0] == a * result[1] + b * result[2], "euclid is failed\n");
+            auto inverse = mod_inverse(a, b);
+            examine(result[1] == inverse, "euclid is failed\n");
         }
     } catch (std::exception const& e) {
         fprintf(stderr, "%s\n", e.what());
