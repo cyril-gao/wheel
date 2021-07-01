@@ -1,0 +1,37 @@
+cmake_minimum_required(VERSION 3.5)
+project(NumberStudy)
+
+set(CXX_STANDARD_VERSION 20)
+
+if (WIN32)
+    set(CXX_LATEST_VERSION_ENABLED 0)
+    if (MSVC_VERSION GREATER_EQUAL "1900")
+        include(CheckCXXCompilerFlag)
+        CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
+        if (_cpp_latest_flag_supported)
+            add_compile_options("/std:c++latest")
+            set(CXX_LATEST_VERSION_ENABLED 1)
+        endif()
+    endif()
+    if (NOT ${CXX_LATEST_VERSION_ENABLED})
+        set(CXX_STANDARD_VERSION 17)
+    endif()
+endif()
+add_compile_definitions(CXX_STANDARD_VERSION=${CXX_STANDARD_VERSION})
+
+set(CMAKE_CXX_STANDARD ${CXX_STANDARD_VERSION})
+if (WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /FA")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Wall")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra -Wconversion -Wpedantic")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -Wall -Wextra")
+endif()
+
+enable_testing()
+
+find_package(OpenSSL REQUIRED)
+
+add_executable(integer_test integer_test.cpp integer.h check.h)
+target_link_libraries(integer_test OpenSSL::Crypto)
+add_test(NAME integer_test COMMAND integer_test "test")
