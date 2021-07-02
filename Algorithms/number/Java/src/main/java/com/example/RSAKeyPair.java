@@ -23,12 +23,7 @@ public class RSAKeyPair {
         this.e = e;
         this.N = p.multiply(q);
         BigInteger M = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
-        var result = Number.euclid(e, M);
-        if (result[0].equals(BigInteger.ONE)) {
-            this.d = result[1];
-        } else {
-            throw new IllegalArgumentException("Bad e: " + e.toString());
-        }
+        this.d = Number.modInverse(e, M);
     }
 
     private RSAKeyPair(BigInteger p, BigInteger q) throws IllegalArgumentException {

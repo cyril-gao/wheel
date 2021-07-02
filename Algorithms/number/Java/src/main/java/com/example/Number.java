@@ -79,4 +79,17 @@ public class Number {
         }
         return retval;
     }
+
+    public static BigInteger modInverse(BigInteger a, BigInteger m)
+    throws IllegalArgumentException {
+        var result = euclid(a, m);
+        if (result[0].compareTo(BigInteger.ONE) == 0) {
+            if (result[1].compareTo(m) >= 0) {
+                result[1] = result[1].mod(m);
+            }
+            return result[1];
+        } else {
+            throw new IllegalArgumentException("No mod inverse for a modulo m");
+        }
+    }
 }
