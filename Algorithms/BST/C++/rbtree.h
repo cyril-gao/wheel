@@ -3,13 +3,24 @@
 
 #include <assert.h>
 #include <stdint.h>
+#include <cstddef>
 #include <memory>
+#include <memory_resource>
 #include <utility>
+//#include <stdexcept>
 
 
 template <typename T>
 class RedBlackTree
 {
+public:
+    using value_type      = T;
+    using reference       = value_type&;
+    using const_reference = value_type const&;
+    using difference_type = std::ptrdiff_t;
+    using size_type       = std::size_t;
+    using allocator_type  = std::pmr::polymorphic_allocator<std::byte>;
+private:
     struct Node;
 
     enum Color : uintptr_t { BLACK = 0, RED = 1 };
@@ -33,9 +44,23 @@ class RedBlackTree
             return reinterpret_cast<Node*>(color & (~v));
         }
 
-        void set_parent(Node* p)
+        Node * get_parent()
+        {
+            const uintptr_t v = 1;
+            return reinterpret_cast<Node*>(color & (~v));
+        }
+
+        void set_parent_and_black_color(Node* p)
         {
             this->parent = p;
+        }
+        void set_parent_and_color(Node* p, Color color)
+        {
+            this->color = reinterpret_cast<uintptr_t>(p) | color;
+        }
+        void set_color_with_no_parent(Color color)
+        {
+            this->color = color;
         }
         void set_parent_and_reserve_color(Node* p)
         {
@@ -58,31 +83,17 @@ class RedBlackTree
         }
     };
 
-    struct Node
+    struct NodeBase
     {
-        T data;
         ColorAndParentPointer color_and_parent;
         Node * left_child;
         Node * right_child;
 
-        Node(const T& d, Node * parent, Color c, Node * lc = nullptr, Node * rc = nullptr):
-            data(d), color_and_parent(parent, c), left_child(lc), right_child(rc)
-        {
-        }
-
-        Node(const Node& other):
-            data(other.data),
-            color_and_parent(nullptr, other.get_color()),
-            left_child(nullptr),
-            right_child(nullptr)
-        {
-        }
-
-        void exchange_content(Node* other)
-        {
-            using std::swap;
-            swap(data, other->data);
-        }
+        NodeBase() = delete;
+        NodeBase(const NodeBase& other) = delete;
+        NodeBase(NodeBase&&) = delete;
+        NodeBase& operator=(const NodeBase&) = delete;
+        NodeBase& operator=(NodeBase&&) = delete;
 
         const Node * get_parent() const
         {
@@ -90,12 +101,22 @@ class RedBlackTree
         }
         Node * get_parent()
         {
-            return const_cast<Node*>(const_cast<const Node*>(this)->get_parent());
+            return color_and_parent.get_parent();
         }
 
-        void set_parent(Node* parent)
+        void set_parent_and_black_color(Node* parent)
         {
-            color_and_parent.set_parent(parent);
+            color_and_parent.set_parent_and_black_color(parent);
+        }
+
+        void set_parent_and_color(Node* p, Color color)
+        {
+            color_and_parent.set_parent_and_color(p, color);
+        }
+
+        void set_color_with_no_parent(Color color)
+        {
+            color_and_parent.set_color_with_no_parent(color);
         }
 
         void set_parent_and_reserve_color(Node* parent)
@@ -109,12 +130,31 @@ class RedBlackTree
         }
         Color get_color()
         {
-            return const_cast<const Node*>(this)->get_color();
+            return const_cast<const NodeBase*>(this)->get_color();
         }
 
         void set_color(Color c)
         {
             color_and_parent.set_color(c);
+        }
+
+        void set_no_children()
+        {
+            left_child = right_child = nullptr;
+        }
+    };
+
+    struct Node : NodeBase
+    {
+        union
+        {
+            T data;
+        };
+
+        void exchange_content(Node* other)
+        {
+            using std::swap;
+            swap(data, other->data);
         }
     };
 
@@ -140,31 +180,63 @@ class RedBlackTree
         return std::make_pair(parent_or_self, position);
     }
 
-    static void free(Node* node)
+    template <typename... Args>
+    static Node* allocate_node(allocator_type& allocator, Args&&... args)
     {
-        if (node != nullptr) {
-            free(node->left_child);
-            free(node->right_child);
-            delete node;
+        Node* retval = static_cast<Node*>(
+            allocator.resource()->allocate(sizeof(Node), alignof(Node))
+        );
+        try {
+            allocator.construct(std::addressof(retval->data), std::forward<Args>(args)...);
+        } catch (...) {
+            allocator.resource()->deallocate(retval, sizeof(Node), alignof(Node));
+            throw;
         }
+        retval->set_no_children();
+        // must set its parent and color manually
+        return retval;
     }
-
-    static Node* copy(Node* node)
+    static Node* copy_node(allocator_type& allocator, const Node* node)
     {
         Node* retval = nullptr;
         if (node != nullptr) {
+            retval = allocate_node(allocator, node->data);
+            retval->set_color_with_no_parent(node->get_color());
+        }
+        return retval;
+    }
+
+    static void deallocate_node(allocator_type& allocator, Node* node)
+    {
+        allocator.destroy(std::addressof(node->data));
+        allocator.resource()->deallocate(node, sizeof(Node), alignof(Node));
+    }
+
+    static void deallocate_tree(allocator_type& allocator, Node* root)
+    {
+        if (root != nullptr) {
+            deallocate_tree(allocator, root->left_child);
+            deallocate_tree(allocator, root->right_child);
+            deallocate_node(allocator, root);
+        }
+    }
+
+    static Node* copy_tree(allocator_type& allocator, const Node* root)
+    {
+        Node* retval = nullptr;
+        if (root != nullptr) {
             try {
-                retval = new Node(*node);
-                retval->left_child = copy(node->left_child);
+                retval = copy_node(allocator, root);
+                retval->left_child = copy_tree(allocator, root->left_child);
                 if (retval->left_child != nullptr) {
                     retval->left_child->set_parent_and_reserve_color(retval);
                 }
-                retval->right_child = copy(node->right_child);
+                retval->right_child = copy_tree(allocator, root->right_child);
                 if (retval->right_child != nullptr) {
                     retval->right_child->set_parent_and_reserve_color(retval);
                 }
             } catch (...) {
-                free(retval);
+                deallocate_tree(allocator, retval);
                 throw;
             }
         }
@@ -180,7 +252,7 @@ class RedBlackTree
         return color;
     }
 
-    static bool equals(Node* n1, Node * n2)
+    static bool equals(const Node* n1, const Node * n2)
     {
         bool retval = (n1 == n2);
         if (!retval) {
@@ -271,12 +343,12 @@ class RedBlackTree
                 parent->right_child = the_new_one;
             }
             if (the_new_one != nullptr) {
-                the_new_one->set_parent(parent);
+                the_new_one->set_parent_and_black_color(parent);
             }
         } else {
             assert(m_root == to_be_replaced);
             m_root = the_new_one;
-            m_root->set_parent(nullptr);
+            m_root->set_parent_and_black_color(nullptr);
         }
     }
 
@@ -310,7 +382,7 @@ class RedBlackTree
                 m_root = nullptr;
             }
         }
-        delete node;
+        deallocate_node(m_allocator, node);
         --m_count;
     }
 
@@ -366,9 +438,9 @@ class RedBlackTree
                     auto right_child_of_nephew = left_nephew->right_child;
                     replace_father_son_relationship(parent, left_nephew);
                     left_nephew->left_child = parent;
-                    parent->set_parent(left_nephew);
+                    parent->set_parent_and_black_color(left_nephew);
                     left_nephew->right_child = sibling;
-                    sibling->set_parent(left_nephew);
+                    sibling->set_parent_and_black_color(left_nephew);
                     parent->right_child = left_child_of_nephew;
                     if (left_child_of_nephew != nullptr) {
                         left_child_of_nephew->set_parent_and_reserve_color(parent);
@@ -383,9 +455,9 @@ class RedBlackTree
                     auto right_child_of_nephew = right_nephew->right_child;
                     replace_father_son_relationship(parent, right_nephew);
                     right_nephew->left_child = sibling;
-                    sibling->set_parent(right_nephew);
+                    sibling->set_parent_and_black_color(right_nephew);
                     right_nephew->right_child = parent;
-                    parent->set_parent(right_nephew);
+                    parent->set_parent_and_black_color(right_nephew);
                     sibling->right_child = left_child_of_nephew;
                     if (left_child_of_nephew != nullptr) {
                         left_child_of_nephew->set_parent_and_reserve_color(sibling);
@@ -402,7 +474,7 @@ class RedBlackTree
                 replace_father_son_relationship(parent, sibling);
                 if (position == LEFT_CHILD) {
                     sibling->left_child = parent;
-                    parent->set_parent(sibling);
+                    parent->set_parent_and_black_color(sibling);
                     parent->right_child = left_nephew;
                     if (left_nephew != nullptr) {
                         left_nephew->set_parent_and_reserve_color(parent);
@@ -410,7 +482,7 @@ class RedBlackTree
                     right_nephew->set_color(BLACK);
                 } else {
                     sibling->right_child = parent;
-                    parent->set_parent(sibling);
+                    parent->set_parent_and_black_color(sibling);
                     parent->left_child = right_nephew;
                     if (right_nephew != nullptr) {
                         right_nephew->set_parent_and_reserve_color(parent);
@@ -452,9 +524,8 @@ class RedBlackTree
                         if (sibling != nullptr) {
                             sibling->set_parent_and_reserve_color(grandparent);
                         }
-                        grandparent->set_parent(parent);
+                        grandparent->set_parent_and_color(parent, RED);
                         parent->set_color(BLACK);
-                        grandparent->set_color(RED);
                     } else {
                         auto left_child = node->left_child;
                         auto right_child = node->right_child;
@@ -482,10 +553,8 @@ class RedBlackTree
                                 right_child->set_parent_and_reserve_color(grandparent);
                             }
                         }
-                        grandparent->set_parent(node);
-                        parent->set_parent(node);
-                        grandparent->set_color(RED);
-                        parent->set_color(RED);
+                        grandparent->set_parent_and_color(node, RED);
+                        parent->set_parent_and_color(node, RED);
                         node->set_color(BLACK);
                     }
                     break;
@@ -495,39 +564,78 @@ class RedBlackTree
                 break;
             }
         }
-        m_root->set_parent(nullptr);
+        m_root->set_parent_and_black_color(nullptr);
+    }
+
+    void insert_new_node(std::pair<Node*, ExpectedPosition> parent_and_position, Node* new_node)
+    {
+        assert(parent_and_position.second != CURRENT);
+        switch (parent_and_position.second) {
+        case ROOT:
+            assert(m_root == nullptr);
+            assert(m_count == 0);
+            m_root = new_node;
+            new_node = nullptr;
+            m_root->set_parent_and_black_color(nullptr);
+            break;
+        case LEFT_CHILD:
+            new_node->set_parent_and_color(parent_and_position.first, RED);
+            parent_and_position.first->left_child = new_node;
+            break;
+        case RIGHT_CHILD:
+            new_node->set_parent_and_color(parent_and_position.first, RED);
+            parent_and_position.first->right_child = new_node;
+            break;
+        default:
+            assert(false);
+            break;
+        }
+        ++m_count;
+        if (new_node != nullptr) {
+            reblance_after_inserting(new_node);
+        }
     }
 
     Node * m_root;
     size_t m_count;
+    allocator_type m_allocator;
 public:
-    RedBlackTree(): m_root(nullptr), m_count(0) {}
+    RedBlackTree(allocator_type a = {}) :
+        m_root(nullptr), m_count(0), m_allocator(a)
+    {
+    }
     ~RedBlackTree()
     {
-        free(m_root);
+        deallocate_tree(m_allocator, m_root);
     }
-    RedBlackTree(const RedBlackTree<T>& other):
-        m_root(copy(other.m_root)), m_count(other.m_count)
+    RedBlackTree(const RedBlackTree<T>& other, allocator_type a = {}):
+        RedBlackTree(a)
     {
+        operator=(other);
     }
     RedBlackTree(RedBlackTree<T>&& other):
-        m_root(other.m_root), m_count(other.m_count)
+        RedBlackTree(other.m_allocator)
     {
-        other.m_root = nullptr;
-        other.m_count = 0;
+        operator=(std::move(other));
     }
+#if 0
     void swap(RedBlackTree<T>& other)
+    noexcept(m_allocator == other.m_allocator)
     {
-        if (this != &other) {
-            std::swap(m_root, other.m_root);
-            std::swap(m_count, other.m_count);
+        if (m_allocator == other.m_allocator) {
+            using std::swap;
+            swap(m_root, other.m_root);
+            swap(m_count, other.m_count);
+        } else {
+            throw std::logic_error("Their allocators are different");
         }
     }
+#endif
     RedBlackTree& operator=(RedBlackTree<T> const& other)
     {
         if (this != &other) {
-            free(m_root);
-            m_root = copy(other.m_root);
+            deallocate_tree(m_allocator, m_root);
+            m_root = copy_tree(m_allocator, other.m_root);
             m_count = other.m_count;
         }
         return *this;
@@ -535,11 +643,15 @@ public:
     RedBlackTree& operator=(RedBlackTree<T>&& other)
     {
         if (this != &other) {
-            free(m_root);
-            m_root = other.m_root;
-            m_count = other.m_count;
-            other.m_root = nullptr;
-            other.m_count = 0;
+            if (m_allocator == other.m_allocator) {
+                deallocate_tree(m_allocator, m_root);
+                m_root = other.m_root;
+                m_count = other.m_count;
+                other.m_root = nullptr;
+                other.m_count = 0;
+            } else {
+                operator=(other); // copy assignment
+            }
         }
         return *this;
     }
@@ -558,35 +670,28 @@ public:
         return (internal.valid && get_color(m_root) == BLACK);
     }
 
+    template <typename... Args>
+    void emplace(Args&&... args)
+    {
+        Node* new_node = allocate_node(m_allocator, std::forward<Args>(args)...);
+        auto result = find(m_root, new_node->data);
+        if (result.second != CURRENT) {
+            insert_new_node(result, new_node);
+        } else {
+            deallocate_node(m_allocator, new_node);
+            m_allocator.destroy(std::addressof(result.first->data));
+            m_allocator.construct(std::addressof(result.first->data), std::forward<Args>(args)...);
+        }
+    }
+
     void insert(const T& t)
     {
         auto result = find(m_root, t);
         if (result.second != CURRENT) {
-            Node * new_node = nullptr;
-            switch (result.second) {
-            case ROOT:
-                assert(m_root == nullptr);
-                assert(m_count == 0);
-                m_root = new Node(t, nullptr, BLACK);
-                break;
-            case LEFT_CHILD:
-                new_node = new Node(t, result.first, RED);
-                result.first->left_child = new_node;
-                break;
-            case RIGHT_CHILD:
-                new_node = new Node(t, result.first, RED);
-                result.first->right_child = new_node;
-                break;
-            default:
-                assert(false);
-                break;
-            }
-            ++m_count;
-            if (new_node != nullptr) {
-                reblance_after_inserting(new_node);
-            }
+            insert_new_node(result, allocate_node(m_allocator, t));
         } else {
-            result.first->data = t;
+            m_allocator.destroy(std::addressof(result.first->data));
+            m_allocator.construct(std::addressof(result.first->data), t);
         }
     }
 

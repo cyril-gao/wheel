@@ -29,10 +29,6 @@ else()
 endif()
 
 enable_testing()
-find_package(Boost REQUIRED)
 
-if(Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS}) 
-    add_executable(bst_test bst_test.cpp rbtree.h avltree.h check.h)
-    add_test(NAME bst_test COMMAND bst_test "test")
-endif()
+add_executable(bst_test bst_test.cpp rbtree.h avltree.h check.h)
+add_test(NAME bst_test COMMAND bst_test "verify")

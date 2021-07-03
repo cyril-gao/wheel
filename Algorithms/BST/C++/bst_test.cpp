@@ -15,9 +15,6 @@
 #include <algorithm>
 #include <string>
 
-#include <boost/type_index.hpp>
-using boost::typeindex::type_id_with_cvr;
-
 #include "check.h"
 #include "rbtree.h"
 #include "avltree.h"
@@ -86,29 +83,6 @@ void tree_test()
             examine(tree.valid(), "after removing %zu, the tree is illegal\n", n);
         }
     }
-}
-
-template <typename T>
-std::string to_string()
-{
-    std::string retval;
-    std::string result = type_id_with_cvr<T>().pretty_name();
-    auto n = result.size();
-    retval.reserve(n);
-    auto i = result.find_last_of(' ');
-    if (i != std::string::npos) {
-        ++i;
-    } else {
-        i = 0;
-    }
-    while (result[i] == '_') {
-        ++i;
-    }
-    while (i < n) {
-        retval.push_back(static_cast<char>(tolower(result[i])));
-        ++i;
-    }
-    return retval;
 }
 
 template <typename T>
@@ -188,7 +162,7 @@ template <typename T>
 inline double run(const std::vector<Operation<T>>& operations)
 {
     auto begin = std::chrono::system_clock::now();
-    std::set<T> tree;
+    std::pmr::set<T> tree;
     for (auto const& o : operations) {
         switch (o.opertion) {
         case Operation<T>::INSERTING:
@@ -231,10 +205,10 @@ inline double run(const std::vector<Operation<T>>& operations)
 }
 
 template <typename T>
-void performance_test(bool testing, std::vector<T>& input)
+void performance_test(const char* name, bool verifying, std::vector<T>& input)
 {
     int times = 100;
-    if (testing) {
+    if (verifying) {
         times = 3;
     }
 
@@ -251,13 +225,14 @@ void performance_test(bool testing, std::vector<T>& input)
     }
     printf(
         "%7zu %7ss (sizeof: %3zu)\tstd set: %fs\tred-black tree: %fs (%4.2f%%)\tavl tree: %fs (%4.2f%%)\n",
-        input.size(), to_string<T>().c_str(), sizeof(T),
+        input.size(), name, sizeof(T),
         set_duration,
         rdtree_duration, (rdtree_duration/set_duration) * 100,
         avltree_duration, (avltree_duration/set_duration) * 100
     );
 }
 
+template <typename Allocator = std::pmr::polymorphic_allocator<std::byte>>
 class Student
 {
 public:
@@ -265,16 +240,16 @@ public:
 
     Student(
         size_t _id,
-        std::string&& _name,
+        std::pmr::string&& _name,
         size_t _age,
         Gender _gender,
-        std::string&& _address
+        std::pmr::string&& _address
     ) :
         id(_id),
-        name(std::move(_name)),
+        name(std::move(_name), Allocator()),
         age(_age),
         gender(_gender),
-        address(std::move(_address))
+        address(std::move(_address), Allocator())
     {
     }
 
@@ -295,13 +270,13 @@ public:
 #endif
 private:
     size_t id;
-    std::string name;
+    std::pmr::string name;
     size_t age;
     Gender gender;
-    std::string address;
+    std::pmr::string address;
 };
 
-void performance_test_for_students(size_t limit, bool testing)
+void performance_test_for_students(size_t input_length, bool verifying)
 {
     const size_t longest_length = 128;
     std::array<char, longest_length + 1> buf;
@@ -311,21 +286,21 @@ void performance_test_for_students(size_t limit, bool testing)
             buf[i] = randnum('0', 'z');
         }
         buf[n] = '\0';
-        return std::string(&buf[0]);
+        return std::pmr::string(&buf[0]);
     };
 
-    std::vector<Student> input;
-    input.reserve(limit);
-    for (size_t i = 0; i < limit; ++i) {
+    std::vector<Student<>> input;
+    input.reserve(input_length);
+    for (size_t i = 0; i < input_length; ++i) {
         input.emplace_back(
             i,
             generate_random_string(4, longest_length/2),
             (static_cast<size_t>(rand()) % 20) + 6,
-            (rand() & 1) == 0 ? Student::MALE : Student::FEMALE,
+            (rand() & 1) == 0 ? Student<>::MALE : Student<>::FEMALE,
             generate_random_string(10, longest_length)
         );
     }
-    performance_test<Student>(testing, input);
+    performance_test<Student<>>("student", verifying, input);
 }
 
 inline void print_separator()
@@ -335,20 +310,21 @@ inline void print_separator()
     puts(&buf[0]);
 }
 
-void performance_test_for_numbers(size_t limit, bool testing)
+void performance_test_for_numbers(size_t input_length, bool verifying)
 {
     std::vector<int64_t> input;
-    input.reserve(limit);
-    for (int64_t i = 0, ie = static_cast<int64_t>(limit); i < ie; ++i) {
+    input.reserve(input_length);
+    for (int64_t i = 0, ie = static_cast<int64_t>(input_length); i < ie; ++i) {
         input.emplace_back(i);
     }
-    performance_test<int64_t>(testing, input);
+    performance_test<int64_t>("integer", verifying, input);
 }
 
 class Block
 {
 public:
     std::array<uint8_t, 256> data;
+
     bool operator==(const Block& rhs) const
     {
         return memcmp(&data[0], &rhs.data[0], data.size()) == 0;
@@ -359,7 +335,7 @@ public:
     }
 };
 
-void performance_test_for_blocks(size_t limit, bool testing)
+void performance_test_for_blocks(size_t input_length, bool verifying)
 {
     auto generate_block = []() {
         Block retval;
@@ -370,43 +346,41 @@ void performance_test_for_blocks(size_t limit, bool testing)
     };
 
     std::vector<Block> input;
-    input.reserve(limit);
-    for (size_t i = 0; i < limit; ++i) {
+    input.reserve(input_length);
+    for (size_t i = 0; i < input_length; ++i) {
         input.emplace_back(generate_block());
     }
-    performance_test<Block>(testing, input);
+    performance_test<Block>("block", verifying, input);
+}
+
+template <typename F>
+void performance_test(const std::vector<size_t>& input_lengths, F f, bool verifying)
+{
+    size_t n = input_lengths.size();
+    if (verifying) {
+        if (n > 4) {
+            n = 4;
+        }
+    }
+    for (size_t i = 0; i < n; ++i) {
+        f(input_lengths[i], verifying);
+    }
+    print_separator();
 }
 
 int main(int argc, char* argv[])
 {
-    bool testing = false;
-    if (argc > 1 && strcmp(argv[1], "test") == 0) {
-        testing = true;
+    bool verifying = false;
+    if (argc > 1 && strcmp(argv[1], "verify") == 0) {
+        verifying = true;
     }
     try {
         tree_test<RedBlackTree>();
         tree_test<AVLTree>();
-        performance_test_for_numbers(12, testing);
-        performance_test_for_numbers(123, testing);
-        performance_test_for_numbers(1234, testing);
-        performance_test_for_numbers(12345, testing);
-        performance_test_for_numbers(123456, testing);
-        performance_test_for_numbers(1234567, testing);
-        print_separator();
-        performance_test_for_blocks(12, testing);
-        performance_test_for_blocks(123, testing);
-        performance_test_for_blocks(1234, testing);
-        performance_test_for_blocks(12345, testing);
-        performance_test_for_blocks(123456, testing);
-        performance_test_for_blocks(1234567, testing);
-        print_separator();
-        performance_test_for_students(12, testing);
-        performance_test_for_students(123, testing);
-        performance_test_for_students(1234, testing);
-        performance_test_for_students(12345, testing);
-        performance_test_for_students(123456, testing);
-        performance_test_for_students(1234567, testing);
-        print_separator();
+        std::vector<size_t> input_lengths = {19, 127, 1237, 12349, 123457, 1234567, 4876541};
+        performance_test(input_lengths, performance_test_for_numbers, verifying);
+        performance_test(input_lengths, performance_test_for_blocks, verifying);
+        performance_test(input_lengths, performance_test_for_students, verifying);
         return 0;
     } catch (std::exception const& e) {
         fprintf(stderr, "%s\n", e.what());
