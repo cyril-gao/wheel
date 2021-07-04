@@ -224,8 +224,8 @@ void performance_test(const char* name, bool verifying, std::vector<T>& input)
         std::shuffle(std::begin(input), std::end(input), g);
     }
     printf(
-        "%7zu %7ss (sizeof: %3zu)\tstd set: %fs\tred-black tree: %fs (%4.2f%%)\tavl tree: %fs (%4.2f%%)\n",
-        input.size(), name, sizeof(T),
+        "%7zu %7ss (sizeof: %3zu bytes) %d times\tstd set: %fs\tred-black tree: %fs (%4.2f%%)\tavl tree: %fs (%4.2f%%)\n",
+        input.size(), name, sizeof(T), times,
         set_duration,
         rdtree_duration, (rdtree_duration/set_duration) * 100,
         avltree_duration, (avltree_duration/set_duration) * 100
@@ -279,14 +279,20 @@ private:
 void performance_test_for_students(size_t input_length, bool verifying)
 {
     const size_t longest_length = 128;
-    std::array<char, longest_length + 1> buf;
-    auto generate_random_string = [&buf](size_t shortest_length, size_t longest_length) {
+    //std::array<char, longest_length + 1> buf;
+    auto generate_random_string = [/*&buf*/](size_t shortest_length, size_t longest_length) {
+    #if 0
         size_t n = randnum(shortest_length, longest_length);
         for (size_t i = 0; i < n; ++i) {
             buf[i] = randnum('0', 'z');
         }
         buf[n] = '\0';
         return std::pmr::string(&buf[0]);
+    #else
+        const char * template_string = "This is a series of interactive exercises for learning Microsoft's Reactive Extensions (Rx) Library for Javascript. So why is the title \"Functional Programming in Javascript\"?";
+        size_t n = randnum(shortest_length, longest_length);
+        return std::pmr::string(template_string, template_string + n);
+    #endif
     };
 
     std::vector<Student<>> input;
@@ -305,12 +311,12 @@ void performance_test_for_students(size_t input_length, bool verifying)
 
 inline void print_separator()
 {
-    std::vector<char> buf(124, '_');
+    std::vector<char> buf(142, '_');
     buf.push_back('\0');
     puts(&buf[0]);
 }
 
-void performance_test_for_numbers(size_t input_length, bool verifying)
+void performance_test_for_integers(size_t input_length, bool verifying)
 {
     std::vector<int64_t> input;
     input.reserve(input_length);
@@ -339,8 +345,9 @@ void performance_test_for_blocks(size_t input_length, bool verifying)
 {
     auto generate_block = []() {
         Block retval;
-        for (auto& v : retval.data) {
-            v = static_cast<uint8_t>(rand());
+        int * pi = reinterpret_cast<int*>(&retval.data[0]);
+        for (size_t i = 0, ie = 256 / sizeof(int); i < ie; ++i, ++pi) {
+            *pi = rand();
         }
         return retval;
     };
@@ -378,7 +385,7 @@ int main(int argc, char* argv[])
         tree_test<RedBlackTree>();
         tree_test<AVLTree>();
         std::vector<size_t> input_lengths = {19, 127, 1237, 12349, 123457, 1234567, 4876541};
-        performance_test(input_lengths, performance_test_for_numbers, verifying);
+        performance_test(input_lengths, performance_test_for_integers, verifying);
         performance_test(input_lengths, performance_test_for_blocks, verifying);
         performance_test(input_lengths, performance_test_for_students, verifying);
         return 0;
