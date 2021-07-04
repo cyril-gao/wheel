@@ -207,7 +207,7 @@ inline double run(const std::vector<Operation<T>>& operations)
 template <typename T>
 void performance_test(const char* name, bool verifying, std::vector<T>& input)
 {
-    int times = 100;
+    int times = 200;
     if (verifying) {
         times = 3;
     }
@@ -224,7 +224,7 @@ void performance_test(const char* name, bool verifying, std::vector<T>& input)
         std::shuffle(std::begin(input), std::end(input), g);
     }
     printf(
-        "%7zu %7ss (sizeof: %3zu bytes) %d times\tstd set: %fs\tred-black tree: %fs (%4.2f%%)\tavl tree: %fs (%4.2f%%)\n",
+        "insert/erase/find %7zu %7ss (sizeof: %3zu bytes) %d times\tstd set: %fs\tred-black tree: %fs (%4.2f%%)\tavl tree: %fs (%4.2f%%)\n",
         input.size(), name, sizeof(T), times,
         set_duration,
         rdtree_duration, (rdtree_duration/set_duration) * 100,
@@ -311,7 +311,7 @@ void performance_test_for_students(size_t input_length, bool verifying)
 
 inline void print_separator()
 {
-    std::vector<char> buf(142, '_');
+    std::vector<char> buf(166, '_');
     buf.push_back('\0');
     puts(&buf[0]);
 }
@@ -384,7 +384,7 @@ int main(int argc, char* argv[])
     try {
         tree_test<RedBlackTree>();
         tree_test<AVLTree>();
-        std::vector<size_t> input_lengths = {19, 127, 1237, 12349, 123457, 1234567, 4876541};
+        std::vector<size_t> input_lengths = {13, 149, 1597, 15679, 178979, 1956789, 3934567};
         performance_test(input_lengths, performance_test_for_integers, verifying);
         performance_test(input_lengths, performance_test_for_blocks, verifying);
         performance_test(input_lengths, performance_test_for_students, verifying);

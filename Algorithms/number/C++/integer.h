@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <openssl/bn.h>
+#include <openssl/err.h>
 
 #include <array>
 #include <concepts>
@@ -228,7 +229,7 @@ public:
         }
         return *this;
     }
-    void swap(BigInteger& other)
+    void swap(BigInteger& other) noexcept
     {
         BN_swap(m_bignum, other.m_bignum);
         m_ctx.swap(other.m_ctx);
@@ -1195,19 +1196,12 @@ public:
      */
     friend std::array<BigInteger, 3> euclid(const BigInteger& a, const BigInteger& b)
     {
-        auto make_sure_x_is_positive = [](const BigInteger& a, const BigInteger& b, std::array<BigInteger, 3>&& result) {
-            while (result[1].is_negative()) {
-                result[1] += b;
-                result[2] -= a;
-            }
-            return result;
-        };
         if (a >= b) {
-            return make_sure_x_is_positive(a, b, BigInteger::euclid(a, b));
+            return BigInteger::euclid(a, b);
         } else {
             auto result = BigInteger::euclid(b, a);
             result[1].swap(result[2]);
-            return make_sure_x_is_positive(a, b, std::move(result));
+            return result;
         }
     }
 
@@ -1215,6 +1209,18 @@ public:
     friend std::string to_string(const BigInteger& n)
     {
         return static_cast<std::string>(n);
+    }
+
+    static BigInteger generate_prime(size_t bigs)
+    {
+        AutoBigNum retval;
+        if (BN_generate_prime_ex(retval.value, static_cast<int>(bigs), 0, nullptr, nullptr, nullptr) != 0) {
+            return BigInteger(retval.release());
+        } else {
+            std::string error_message = "Failed to generate a prime, the error code is ";
+            error_message += std::to_string(ERR_get_error());
+            throw std::runtime_error(error_message);
+        }
     }
 };
 
