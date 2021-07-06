@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <openssl/rand.h>
 #include "integer.h"
 #include "check.h"
 
@@ -118,6 +119,12 @@ int main()
             auto e = BigInteger(65537);
             auto d = mod_inverse(e, M);
             printf("private key: %s\n", to_string(d).c_str());
+            std::vector<uint8_t> random_data(bits >> 3);
+            RAND_bytes(&random_data[0], static_cast<int>(random_data.size()));
+            auto data = BigInteger(&random_data[0], random_data.size() - 1);
+            auto encrypted_data = mod_exp(data, e, N);
+            auto decrypted_data = mod_exp(encrypted_data, d, N);
+            examine(data == decrypted_data, "my RSA encrypt/decrypt implementation is wrong\n");
         }
     } catch (std::exception const& e) {
         fprintf(stderr, "%s\n", e.what());

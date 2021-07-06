@@ -1162,7 +1162,7 @@ public:
         if (BN_mod_exp(result.value, a.m_bignum, p.m_bignum, m.m_bignum, ctx_ptr) != 0) {
             return BigInteger(result.release());
         } else {
-            throw std::runtime_error("Failed to do (a ** b) % m");
+            throw std::runtime_error("Failed to do (a ** p) % m");
         }
     }
 
@@ -1211,10 +1211,10 @@ public:
         return static_cast<std::string>(n);
     }
 
-    static BigInteger generate_prime(size_t bigs)
+    static BigInteger generate_prime(size_t bits)
     {
         AutoBigNum retval;
-        if (BN_generate_prime_ex(retval.value, static_cast<int>(bigs), 0, nullptr, nullptr, nullptr) != 0) {
+        if (BN_generate_prime_ex(retval.value, static_cast<int>(bits), 0, nullptr, nullptr, nullptr) != 0) {
             return BigInteger(retval.release());
         } else {
             std::string error_message = "Failed to generate a prime, the error code is ";
