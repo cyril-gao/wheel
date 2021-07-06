@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <limits.h>
 #include <string.h>
-#include <time.h>
 #include <assert.h>
 
 #include <array>
@@ -94,27 +93,31 @@ struct Operation
     Operation(T k = 0, Op i = INSERTING) : key(k), opertion(i) {}
 };
 
-template <typename N>
-N randnum(N start, N end)
+class RandomNumber
 {
-    assert(start <= end);
-    N diff = static_cast<N>(end - start + 1);
-    N r = static_cast<N>(rand());
-    r %= diff;
-    return r + start;
-}
+    mutable std::random_device m_rd;
+    mutable std::mt19937 m_g;
+public:
+    RandomNumber() : m_g(m_rd()) {}
+    template <typename N>
+    N operator()(N start, N last) const
+    {
+        std::uniform_int_distribution<N> dist(start, last);
+        return dist(m_g);
+    }
+};
 
 template <typename T>
 std::vector<Operation<T>> get_hybrid_operations(std::vector<T> const& input)
 {
     using difference_type = typename std::vector<T>::iterator::difference_type;
-    srand(static_cast<unsigned int>(time(nullptr)));
 
     std::vector<Operation<T>> retval;
     size_t upper_limit = input.size();
     retval.reserve(upper_limit);
     std::vector<T> deleting;
     size_t start = 0;
+    RandomNumber randnum;
     while (start < upper_limit) {
         auto end = std::min(start + 20, upper_limit);
         auto v = randnum(start, end);
@@ -142,7 +145,7 @@ std::vector<Operation<T>> get_hybrid_operations(std::vector<T> const& input)
 
         auto dl = deleting.size();
         if (dl > 0) {
-            v = randnum<decltype(dl)>(0, dl);
+            v = randnum(static_cast<decltype(dl)>(0), dl);
             if (v == 0) {
                 v = 1;
             }
@@ -280,7 +283,8 @@ void performance_test_for_students(size_t input_length, bool verifying)
 {
     const size_t longest_length = 128;
     //std::array<char, longest_length + 1> buf;
-    auto generate_random_string = [/*&buf*/](size_t shortest_length, size_t longest_length) {
+    RandomNumber randnum;
+    auto generate_random_string = [/*&buf, */&randnum](size_t shortest_length, size_t longest_length) {
     #if 0
         size_t n = randnum(shortest_length, longest_length);
         for (size_t i = 0; i < n; ++i) {
@@ -298,11 +302,12 @@ void performance_test_for_students(size_t input_length, bool verifying)
     std::vector<Student<>> input;
     input.reserve(input_length);
     for (size_t i = 0; i < input_length; ++i) {
+        auto age = randnum(static_cast<size_t>(5), static_cast<size_t>(40));
         input.emplace_back(
             i,
             generate_random_string(4, longest_length/2),
-            (static_cast<size_t>(rand()) % 20) + 6,
-            (rand() & 1) == 0 ? Student<>::MALE : Student<>::FEMALE,
+            age,
+            (age & 1) == 0 ? Student<>::MALE : Student<>::FEMALE,
             generate_random_string(10, longest_length)
         );
     }
@@ -343,11 +348,12 @@ public:
 
 void performance_test_for_blocks(size_t input_length, bool verifying)
 {
-    auto generate_block = []() {
+    RandomNumber randnum;
+    auto generate_block = [&randnum]() {
         Block retval;
         int * pi = reinterpret_cast<int*>(&retval.data[0]);
         for (size_t i = 0, ie = 256 / sizeof(int); i < ie; ++i, ++pi) {
-            *pi = rand();
+            *pi = randnum(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
         }
         return retval;
     };
