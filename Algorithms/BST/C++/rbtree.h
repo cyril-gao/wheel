@@ -54,13 +54,13 @@ private:
         {
             this->parent = p;
         }
-        void set_parent_and_color(Node* p, Color color)
+        void set_parent_and_color(Node* p, Color c)
         {
-            this->color = reinterpret_cast<uintptr_t>(p) | color;
+            this->color = reinterpret_cast<uintptr_t>(p) | c;
         }
-        void set_color_with_no_parent(Color color)
+        void set_color_with_no_parent(Color c)
         {
-            this->color = color;
+            this->color = c;
         }
         void set_parent_and_reserve_color(Node* p)
         {
@@ -150,6 +150,7 @@ private:
         {
             T data;
         };
+        ~Node() = delete;
 
         void exchange_content(Node* other)
         {
@@ -208,7 +209,7 @@ private:
 
     static void deallocate_node(allocator_type& allocator, Node* node)
     {
-        allocator.destroy(std::addressof(node->data));
+        std::allocator_traits<allocator_type>::destroy(allocator, std::addressof(node->data));
         allocator.resource()->deallocate(node, sizeof(Node), alignof(Node));
     }
 
@@ -679,7 +680,7 @@ public:
             insert_new_node(result, new_node);
         } else {
             deallocate_node(m_allocator, new_node);
-            m_allocator.destroy(std::addressof(result.first->data));
+            std::allocator_traits<allocator_type>::destroy(m_allocator, std::addressof(result.first->data));
             m_allocator.construct(std::addressof(result.first->data), std::forward<Args>(args)...);
         }
     }
@@ -690,7 +691,7 @@ public:
         if (result.second != CURRENT) {
             insert_new_node(result, allocate_node(m_allocator, t));
         } else {
-            m_allocator.destroy(std::addressof(result.first->data));
+            std::allocator_traits<allocator_type>::destroy(m_allocator, std::addressof(result.first->data));
             m_allocator.construct(std::addressof(result.first->data), t);
         }
     }
