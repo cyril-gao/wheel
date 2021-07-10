@@ -154,6 +154,12 @@ int main()
             auto decrypted_data = mod_exp(encrypted_data, d, N);
             examine(data == decrypted_data, "my RSA encrypt/decrypt implementation is wrong\n");
         }
+        {
+            for (int i = 0; i < 8; ++i) {
+                auto prime = BigInteger::generate_prime(2048);
+                examine(prime.is_probable_prime(), "fake prime problem\n");
+            }
+        }
     } catch (std::exception const& e) {
         fprintf(stderr, "%s\n", e.what());
         return 1;

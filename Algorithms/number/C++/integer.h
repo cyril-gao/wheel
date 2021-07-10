@@ -342,6 +342,18 @@ public:
     }
 
 
+    bool is_probable_prime(size_t certainty = 64) const
+    {
+        m_ctx.init();
+    #if 0
+        (void)certainty;
+        return BN_check_prime(m_bignum, m_ctx.value, nullptr) != 0;
+    #else
+        return BN_is_prime(m_bignum, static_cast<int>(certainty), nullptr, m_ctx.value, nullptr) != 0;
+    #endif
+    }
+
+
     bool operator==(const BigInteger& other) const noexcept
     {
         return (
