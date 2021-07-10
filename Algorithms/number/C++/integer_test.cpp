@@ -8,6 +8,7 @@
 int main()
 {
     try {
+        BigInteger bigInteger;
         for (int i = -100; i < 100; ++i) {
             BigInteger bi(i);
             examine((i < 0) == (bi < 0), "< operator is failed\n");
@@ -22,6 +23,20 @@ int main()
             examine(bi <= i, "<= operator is failed\n");
             examine((i > (i-1)) == (bi > (i-1)), "> operator is failed\n");
             examine(bi >= i, ">= operator is failed\n");
+
+            bigInteger = i;
+            examine((i < 0) == (bigInteger < 0), "< operator is failed\n");
+            examine((i <= 0) == (bigInteger <= 0), "<= operator is failed\n");
+            examine((i > 0) == (bigInteger > 0), "> operator is failed\n");
+            examine((i >= 0) == (bigInteger >= 0), ">= operator is failed\n");
+            examine((i == 0) == (bigInteger == 0), "== operator is failed\n");
+            examine((i != 0) == (bigInteger != 0), "!= operator is failed\n");
+            examine((i == 1) == (bigInteger == 1), "== operator is failed\n");
+            examine((i != 1) == (bigInteger != 1), "!= operator is failed\n");
+            examine((i < (i+1)) == (bigInteger < (i+1)), "< operator is failed\n");
+            examine(bigInteger <= i, "<= operator is failed\n");
+            examine((i > (i-1)) == (bigInteger > (i-1)), "> operator is failed\n");
+            examine(bigInteger >= i, ">= operator is failed\n");
 
             for (int j = -100; j < 100; ++j) {
                 BigInteger bj(j);

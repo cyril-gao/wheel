@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <type_traits>
 
 
 class BigInteger
@@ -246,13 +247,30 @@ public:
     }
     BigInteger& operator=(std::integral auto value)
     {
-        swap(BigInteger(value));
-        return *this;
+        assert(m_bignum != nullptr);
+        int flag = 1;
+        std::make_unsigned_t<decltype(value)> uvalue = value;
+        if (value < 0) {
+            uvalue = -value;
+            flag = -1;
+        }
+        if (BN_set_word(m_bignum, uvalue) != 0) {
+            if (flag < 0) {
+                BN_set_negative(m_bignum, 1);
+            }
+            return *this;
+        } else {
+            throw std::runtime_error("Failed to assign a small integer to the integer");
+        }
     }
     BigInteger& operator=(std::unsigned_integral auto value)
     {
-        swap(BigInteger(value));
-        return *this;
+        assert(m_bignum != nullptr);
+        if (BN_set_word(m_bignum, value) != 0) {
+            return *this;
+        } else {
+            throw std::runtime_error("Failed to assign a small integer to the integer");
+        }
     }
 
 
