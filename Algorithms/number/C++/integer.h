@@ -27,9 +27,9 @@ class BigInteger
                 throw std::bad_alloc();
             }
         }
-        AutoBigNum(BIGNUM* p) : value(p) {}
+        AutoBigNum(BIGNUM* p) noexcept : value(p) {}
         ~AutoBigNum() { BN_free(value); }
-        BIGNUM* release()
+        BIGNUM* release() noexcept
         {
             BIGNUM* retval = value;
             value = nullptr;
@@ -46,20 +46,20 @@ class BigInteger
                 throw std::bad_alloc();
             }
         }
-        explicit AutoCtx(BN_CTX* p) : value(p)
+        explicit AutoCtx(BN_CTX* p) noexcept : value(p)
         {
         }
         ~AutoCtx()
         {
             BN_CTX_free(value);
         }
-        AutoCtx(const AutoCtx&) : value(nullptr) {}
-        AutoCtx(AutoCtx&& other) : value(other.value)
+        AutoCtx(const AutoCtx&) noexcept : value(nullptr) {}
+        AutoCtx(AutoCtx&& other) noexcept : value(other.value)
         {
             other.value = nullptr;
         }
-        AutoCtx& operator=(const AutoCtx&) { return *this; }
-        AutoCtx& operator=(AutoCtx&& other)
+        AutoCtx& operator=(const AutoCtx&) noexcept { return *this; }
+        AutoCtx& operator=(AutoCtx&& other) noexcept
         {
             swap(other);
             return *this;
@@ -73,23 +73,23 @@ class BigInteger
                 }
             }
         }
-        void swap(AutoCtx& other) const
+        void swap(AutoCtx& other) const noexcept
         {
             using std::swap;
             swap(value, other.value);
         }
-        bool is_null() const { return value == nullptr; }
+        bool is_null() const noexcept { return value == nullptr; }
     };
 
     BIGNUM* m_bignum;
     mutable AutoCtx m_ctx;
 
-    BigInteger(BIGNUM* bignum) : m_bignum(bignum), m_ctx(nullptr)
+    BigInteger(BIGNUM* bignum) noexcept : m_bignum(bignum), m_ctx(nullptr)
     {
         assert(bignum != nullptr);
     }
 
-    void swap(BigInteger&& other)
+    void swap(BigInteger&& other) noexcept
     {
         BN_swap(m_bignum, other.m_bignum);
     }
@@ -209,18 +209,18 @@ public:
             throw std::bad_alloc();
         }
     }
-    BigInteger(BigInteger&& other) : m_bignum(other.m_bignum), m_ctx(other.m_ctx)
+    BigInteger(BigInteger&& other) noexcept : m_bignum(other.m_bignum), m_ctx(other.m_ctx)
     {
         other.m_bignum = nullptr;
     }
-    BigInteger& operator=(const BigInteger& other)
+    BigInteger& operator=(const BigInteger& other) noexcept
     {
         if (this != &other) {
             BN_copy(m_bignum, other.m_bignum);
         }
         return *this;
     }
-    BigInteger& operator=(BigInteger&& other)
+    BigInteger& operator=(BigInteger&& other) noexcept
     {
         if (this != &other) {
             BN_free(m_bignum);
@@ -274,13 +274,13 @@ public:
     }
 
 
-    size_t get_num_bytes() const
+    size_t get_num_bytes() const noexcept
     {
         return BN_num_bytes(m_bignum);
     }
 
 
-    size_t get_num_bits() const
+    size_t get_num_bits() const noexcept
     {
         return BN_num_bits(m_bignum);
     }
@@ -306,43 +306,43 @@ public:
     }
 
 
-    explicit operator size_t() const
+    explicit operator size_t() const noexcept
     {
         return static_cast<size_t>(BN_get_word(m_bignum));
     }
 
 
-    bool is_zero() const
+    bool is_zero() const noexcept
     {
         return BN_is_zero(m_bignum);
     }
 
 
-    bool is_one() const
+    bool is_one() const noexcept
     {
         return BN_is_one(m_bignum);
     }
 
 
-    bool is_odd() const
+    bool is_odd() const noexcept
     {
         return BN_is_odd(m_bignum);
     }
 
 
-    bool is_even() const
+    bool is_even() const noexcept
     {
         return !BN_is_odd(m_bignum);
     }
 
 
-    bool is_negative() const
+    bool is_negative() const noexcept
     {
         return BN_is_negative(m_bignum);
     }
 
 
-    bool operator==(const BigInteger& other) const
+    bool operator==(const BigInteger& other) const noexcept
     {
         return (
             m_bignum == other.m_bignum ||
@@ -382,7 +382,7 @@ public:
     }
 
 
-    bool operator!=(const BigInteger& other) const
+    bool operator!=(const BigInteger& other) const noexcept
     {
         return !operator==(other);
     }
@@ -404,7 +404,7 @@ public:
     }
 
 
-    bool operator>(const BigInteger& other) const
+    bool operator>(const BigInteger& other) const noexcept
     {
         return (m_bignum != other.m_bignum && BN_cmp(m_bignum, other.m_bignum) > 0);
     }
@@ -432,7 +432,7 @@ public:
     }
 
 
-    bool operator<=(const BigInteger& other) const
+    bool operator<=(const BigInteger& other) const noexcept
     {
         return !operator>(other);
     }
@@ -460,7 +460,7 @@ public:
     }
 
 
-    bool operator>=(const BigInteger& other) const
+    bool operator>=(const BigInteger& other) const noexcept
     {
         return (m_bignum == other.m_bignum || BN_cmp(m_bignum, other.m_bignum) >= 0);
     }
@@ -488,7 +488,7 @@ public:
     }
 
 
-    bool operator<(const BigInteger& other) const
+    bool operator<(const BigInteger& other) const noexcept
     {
         return (m_bignum != other.m_bignum || BN_cmp(m_bignum, other.m_bignum) < 0);
     }
@@ -909,7 +909,7 @@ public:
             throw std::runtime_error("Failed to set the n in the integer to 1");
         }
     }
-    bool is_bit_set(size_t n) const
+    bool is_bit_set(size_t n) const noexcept
     {
         return BN_is_bit_set(m_bignum, static_cast<int>(n));
     }
