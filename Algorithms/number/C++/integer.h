@@ -178,7 +178,7 @@ public:
             throw std::runtime_error("Failed to create an integral from the byte array");
         }
     }
-    explicit BigInteger(std::integral auto value) : m_bignum(BN_new()), m_ctx(nullptr)
+    BigInteger(std::integral auto value) : m_bignum(BN_new()), m_ctx(nullptr)
     {
         if (m_bignum != nullptr) {
             if (value >= 0) {
@@ -191,7 +191,7 @@ public:
             throw std::bad_alloc();
         }
     }
-    explicit BigInteger(std::unsigned_integral auto value) : m_bignum(BN_new()), m_ctx(nullptr)
+    BigInteger(std::unsigned_integral auto value) : m_bignum(BN_new()), m_ctx(nullptr)
     {
         if (m_bignum != nullptr) {
             BN_set_word(m_bignum, value);
@@ -342,11 +342,25 @@ public:
     }
     bool operator==(std::integral auto value) const
     {
-        return operator==(BigInteger(value));
+        switch (value) {
+        case 0:
+            return is_zero();
+        case 1:
+            return is_one();
+        default:
+            return operator==(BigInteger(value));
+        }
     }
     bool operator==(std::unsigned_integral auto value) const
     {
-        return operator==(BigInteger(value));
+        switch (value) {
+        case 0:
+            return is_zero();
+        case 1:
+            return is_one();
+        default:
+            return operator==(BigInteger(value));
+        }
     }
 
 
@@ -386,10 +400,16 @@ public:
     }
     bool operator>(std::integral auto value) const
     {
+        if (value == 0) {
+            return !is_zero() && !is_negative();
+        }
         return operator>(BigInteger(value));
     }
     bool operator>(std::unsigned_integral auto value) const
     {
+        if (value == 0) {
+            return !is_zero() && !is_negative();
+        }
         return operator>(BigInteger(value));
     }
 
@@ -408,10 +428,16 @@ public:
     }
     bool operator<=(std::integral auto value) const
     {
+        if (value == 0) {
+            return is_zero() || is_negative();
+        }
         return operator<=(BigInteger(value));
     }
     bool operator<=(std::unsigned_integral auto value) const
     {
+        if (value == 0) {
+            return is_zero() || is_negative();
+        }
         return operator<=(BigInteger(value));
     }
 
@@ -430,10 +456,16 @@ public:
     }
     bool operator>=(std::integral auto value) const
     {
+        if (value == 0) {
+            return is_zero() || !is_negative();
+        }
         return operator>=(BigInteger(value));
     }
     bool operator>=(std::unsigned_integral auto value) const
     {
+        if (value == 0) {
+            return is_zero() || !is_negative();
+        }
         return operator>=(BigInteger(value));
     }
 
@@ -452,10 +484,16 @@ public:
     }
     bool operator<(std::integral auto value) const
     {
+        if (value == 0) {
+            return is_negative();
+        }
         return operator<(BigInteger(value));
     }
     bool operator<(std::unsigned_integral auto value) const
     {
+        if (value == 0) {
+            return is_negative();
+        }
         return operator<(BigInteger(value));
     }
 

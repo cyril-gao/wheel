@@ -10,6 +10,19 @@ int main()
     try {
         for (int i = -100; i < 100; ++i) {
             BigInteger bi(i);
+            examine((i < 0) == (bi < 0), "< operator is failed\n");
+            examine((i <= 0) == (bi <= 0), "<= operator is failed\n");
+            examine((i > 0) == (bi > 0), "> operator is failed\n");
+            examine((i >= 0) == (bi >= 0), ">= operator is failed\n");
+            examine((i == 0) == (bi == 0), "== operator is failed\n");
+            examine((i != 0) == (bi != 0), "!= operator is failed\n");
+            examine((i == 1) == (bi == 1), "== operator is failed\n");
+            examine((i != 1) == (bi != 1), "!= operator is failed\n");
+            examine((i < (i+1)) == (bi < (i+1)), "< operator is failed\n");
+            examine(bi <= i, "<= operator is failed\n");
+            examine((i > (i-1)) == (bi > (i-1)), "> operator is failed\n");
+            examine(bi >= i, ">= operator is failed\n");
+
             for (int j = -100; j < 100; ++j) {
                 BigInteger bj(j);
                 examine(bi + bj == i + j, "add is failed\n");
@@ -116,7 +129,7 @@ int main()
             auto q = BigInteger::generate_prime(bits);
             auto N = p * q;
             auto M = (p - 1) * (q - 1);
-            auto e = BigInteger(65537);
+            BigInteger e = 65537U;
             auto d = mod_inverse(e, M);
             printf("private key: %s\n", to_string(d).c_str());
             std::vector<uint8_t> random_data(bits >> 3);
