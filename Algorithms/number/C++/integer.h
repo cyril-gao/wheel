@@ -923,17 +923,21 @@ public:
     }
     BigInteger operator<<(size_t n) const
     {
-        int errcode = 0;
-        AutoBigNum result;
-        if (n == 1) {
-            errcode = BN_lshift1(result.value, m_bignum);
+        if (n != 0) {
+            int errcode = 0;
+            AutoBigNum result;
+            if (n == 1) {
+                errcode = BN_lshift1(result.value, m_bignum);
+            } else {
+                errcode = BN_lshift(result.value, m_bignum, static_cast<int>(n));
+            }
+            if (errcode != 0) {
+                return BigInteger(result.release());
+            } else {
+                throw std::runtime_error("Failed to shift the integer left by n bits");
+            }
         } else {
-            errcode = BN_lshift(result.value, m_bignum, static_cast<int>(n));
-        }
-        if (errcode != 0) {
-            return BigInteger(result.release());
-        } else {
-            throw std::runtime_error("Failed to shift the integer left by n bits");
+            return BigInteger(*this);
         }
     }
     BigInteger& operator<<=(size_t n)
@@ -941,8 +945,10 @@ public:
         int errcode = 0;
         if (n == 1) {
             errcode = BN_lshift1(m_bignum, m_bignum);
-        } else {
+        } else if (n != 0) {
             errcode = BN_lshift(m_bignum, m_bignum, static_cast<int>(n));
+        } else {
+            errcode = 1;
         }
         if (errcode != 0) {
             return *this;
@@ -952,17 +958,21 @@ public:
     }
     BigInteger operator>>(size_t n) const //if it is negative, the result is a litter different
     {
-        int errcode = 0;
-        AutoBigNum result;
-        if (n == 1) {
-            errcode = BN_rshift1(result.value, m_bignum);
+        if (n != 0) {
+            int errcode = 0;
+            AutoBigNum result;
+            if (n == 1) {
+                errcode = BN_rshift1(result.value, m_bignum);
+            } else {
+                errcode = BN_rshift(result.value, m_bignum, static_cast<int>(n));
+            }
+            if (errcode != 0) {
+                return BigInteger(result.release());
+            } else {
+                throw std::runtime_error("Failed to shift the integer right by n bits");
+            }
         } else {
-            errcode = BN_rshift(result.value, m_bignum, static_cast<int>(n));
-        }
-        if (errcode != 0) {
-            return BigInteger(result.release());
-        } else {
-            throw std::runtime_error("Failed to shift the integer right by n bits");
+            return BigInteger(*this);
         }
     }
     BigInteger& operator>>=(size_t n)
@@ -971,8 +981,10 @@ public:
         AutoBigNum result;
         if (n == 1) {
             errcode = BN_rshift1(m_bignum, m_bignum);
-        } else {
+        } else if (n != 0) {
             errcode = BN_rshift(m_bignum, m_bignum, static_cast<int>(n));
+        } else {
+            errcode = 1;
         }
         if (errcode != 0) {
             return *this;
