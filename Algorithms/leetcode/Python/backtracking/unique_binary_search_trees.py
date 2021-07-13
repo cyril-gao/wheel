@@ -14,11 +14,11 @@ def number_of_unique_trees(n: int) -> int:
         cache[0] = 1
         cache[1] = 1
         index = 2
-        for i in range(index, n + 1):
+        while index <= n:
             left = 0
             v = 0
-            for _ in range(1, i + 1):
-                right = i - 1 - left
+            for _ in range(1, index + 1):
+                right = index - 1 - left
                 v += cache[left] * cache[right]
                 left += 1
             cache[index] = v
