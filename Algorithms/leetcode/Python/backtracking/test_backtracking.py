@@ -9,6 +9,7 @@ from combination import k_combination
 from additive_number import is_additive_number
 from binary_watch import read_binary_watch
 from subsets import subsets, subsets_without_dup
+from unique_binary_search_trees import number_of_unique_trees
 
 
 class BacktrackingTester(unittest.TestCase):
@@ -196,3 +197,8 @@ class BacktrackingTester(unittest.TestCase):
         self.assertEqual(len(result), 1)
         result = subsets_without_dup([0])
         self.assertEqual(len(result), 2)
+
+    def test_number_of_unique_trees(self):
+        self.assertEqual(number_of_unique_trees(1), 1)
+        self.assertEqual(number_of_unique_trees(2), 2)
+        self.assertEqual(number_of_unique_trees(3), 5)
