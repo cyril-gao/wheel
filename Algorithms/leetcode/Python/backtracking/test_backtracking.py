@@ -199,6 +199,6 @@ class BacktrackingTester(unittest.TestCase):
         self.assertEqual(len(result), 2)
 
     def test_number_of_unique_trees(self):
-        self.assertEqual(number_of_unique_trees(1), 1)
-        self.assertEqual(number_of_unique_trees(2), 2)
-        self.assertEqual(number_of_unique_trees(3), 5)
+        expectations = [1, 2, 5, 14, 42, 132, 429, 1430, 4862, 16796]
+        for i in range(len(expectations)):
+            self.assertEqual(number_of_unique_trees(i+1), expectations[i])
