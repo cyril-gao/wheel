@@ -234,4 +234,39 @@ public class Backtracking {
         nextStep(s, 0, result);
         return result[0];
     }
+
+
+    /*
+     * Given two strings s and t, return the number of distinct subsequences of s
+     * which equals t.
+     * 
+     * A string's subsequence is a new string formed from the original string by
+     * deleting some (can be none) of the characters without disturbing the
+     * remaining characters' relative positions. (i.e., "ACE" is a subsequence of
+     * "ABCDE" while "AEC" is not).
+     * 
+     * It is guaranteed the answer fits on a 32-bit signed integer.
+     */
+    private void nextSubsequences(String input, int current, int index, String target, int[] result) {
+        int n = target.length();
+        if (current < n) {
+            char c = target.charAt(current);
+            for (int i = index, ie = input.length() - n + 1 + current; i < ie; ++i) {
+                if (input.charAt(i) == c) {
+                    nextSubsequences(input, current + 1, i + 1, target, result);
+                }
+            }
+        } else {
+            ++result[0];
+        }
+    }
+
+    // the performance is not good enough
+    public int numDistinct(String s, String t) {
+        int[] result = new int[]{ 0 };
+        if (s.length() >= t.length()) {
+            nextSubsequences(s, 0, 0, t, result);
+        }
+        return result[0];
+    }
 }

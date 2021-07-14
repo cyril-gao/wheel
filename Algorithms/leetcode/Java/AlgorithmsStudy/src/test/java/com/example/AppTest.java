@@ -266,4 +266,18 @@ public class AppTest {
         result = dp.numDecodings("207");
         assertEquals(result, 1);
     }
+
+    @Test
+    public void testNumDistinct() {
+        var b = new Backtracking();
+        var result = b.numDistinct("rabbbit", "rabbit");
+        assertEquals(result, 3);
+        result = b.numDistinct("babgbag", "bag");
+        assertEquals(result, 5);
+        /*
+        var s = "adbdadeecadeadeccaeaabdabdbcdabddddabcaaadbabaaedeeddeaeebcdeabcaaaeeaeeabcddcebddebeebedaecccbdcbcedbdaeaedcdebeecdaaedaacadbdccabddaddacdddc";
+        var t = "bcddceeeebecbc";
+        System.out.println(b.numDistinct(s, t));
+        */
+    }
 }
