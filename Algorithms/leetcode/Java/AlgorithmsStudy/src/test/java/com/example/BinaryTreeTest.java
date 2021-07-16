@@ -167,51 +167,12 @@ public class BinaryTreeTest {
         }
     }
 
-    private void printTree(BinaryTree.TreeNode root) {
-        assert (root != null);
-        List<List<String>> result = new LinkedList<>();
-        List<BinaryTree.TreeNode> current = new LinkedList<>();
-        {
-            current.add(root);
-            List<String> line = new LinkedList<>();
-            line.add(Integer.valueOf(root.val).toString());
-            result.add(line);
-        }
-        while (!current.isEmpty()) {
-            List<String> line = new LinkedList<>();
-            List<BinaryTree.TreeNode> next = new LinkedList<>();
-            for (var t : current) {
-                if (t.left != null) {
-                    next.add(t.left);
-                    line.add(Integer.valueOf(t.left.val).toString());
-                } else {
-                    line.add("null");
-                }
-                if (t.right != null) {
-                    next.add(t.right);
-                    line.add(Integer.valueOf(t.right.val).toString());
-                } else {
-                    line.add("null");
-                }
-            }
-            if (!next.isEmpty()) {
-                result.add(line);
-            }
-            current = next;
-        }
-        System.out.println(result);
-    }
-
     @Test
     public void testGenerateTrees() {
         BinaryTree bt = new BinaryTree();
         for (int n = 1; n < 9; ++n) {
             int l = bt.numTrees(n);
-            // System.out.println(l);
             var r = bt.generateTrees(n);
-            /*
-             * for (var t : r) { printTree(t); } System.out.println("\n\n");
-             */
             assertEquals(l, r.size());
         }
     }

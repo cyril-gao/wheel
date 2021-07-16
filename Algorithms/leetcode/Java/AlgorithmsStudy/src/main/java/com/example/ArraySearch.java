@@ -371,7 +371,7 @@ public class ArraySearch {
         return retval;
     }
 
-    private int hIndexNormal(int[] citations, int n) {
+    static int hIndexNormal(int[] citations, int n) {
         int retval = 0;
         if (citations[0] < n) {
             for (int i = 0, j = n; i < n; ++i, --j) {

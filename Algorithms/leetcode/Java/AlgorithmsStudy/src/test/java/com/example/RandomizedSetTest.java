@@ -2,7 +2,6 @@ package com.example;
 
 import java.util.*;
 
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertFalse;
 import org.testng.annotations.*;
@@ -30,10 +29,6 @@ public class RandomizedSetTest {
         }
     }
 
-    private String getAssertClause(boolean b) {
-        return b ? "assertTrue" : "assertFalse";
-    }
-
     @Test
     public void testCase2() {
         var rs = new RandomizedSet();
@@ -45,11 +40,6 @@ public class RandomizedSetTest {
             if ((d & 1) != 0) {
                 var r1 = hs.add(val);
                 var r2 = rs.insert(val);
-                /*
-                 * System.out.
-                 * printf("r = rs.insert(%d);%n%s(r);%nassertEquals(rs.size(), %d);%n", val,
-                 * getAssertClause(r1), hs.size());
-                 */
                 if (r1 != r2) {
                     System.err.println(i);
                     assertTrue(false);
@@ -58,11 +48,6 @@ public class RandomizedSetTest {
             } else {
                 var r1 = hs.remove(val);
                 var r2 = rs.remove(val);
-                /*
-                 * System.out.
-                 * printf("r = rs.remove(%d);%n%s(r);%nassertEquals(rs.size(), %d);%n", val,
-                 * getAssertClause(r1), hs.size());
-                 */
                 if (r1 != r2) {
                     System.err.println(i);
                     assertTrue(false);

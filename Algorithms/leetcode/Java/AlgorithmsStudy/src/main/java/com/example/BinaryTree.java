@@ -56,6 +56,41 @@ public class BinaryTree {
         return result.valid;
     }
 
+    static void printTree(TreeNode root, java.io.PrintStream stream) {
+        assert (root != null);
+        List<List<String>> result = new LinkedList<>();
+        List<BinaryTree.TreeNode> current = new LinkedList<>();
+        {
+            current.add(root);
+            List<String> line = new LinkedList<>();
+            line.add(Integer.valueOf(root.val).toString());
+            result.add(line);
+        }
+        while (!current.isEmpty()) {
+            List<String> line = new LinkedList<>();
+            List<BinaryTree.TreeNode> next = new LinkedList<>();
+            for (var t : current) {
+                if (t.left != null) {
+                    next.add(t.left);
+                    line.add(Integer.valueOf(t.left.val).toString());
+                } else {
+                    line.add("null");
+                }
+                if (t.right != null) {
+                    next.add(t.right);
+                    line.add(Integer.valueOf(t.right.val).toString());
+                } else {
+                    line.add("null");
+                }
+            }
+            if (!next.isEmpty()) {
+                result.add(line);
+            }
+            current = next;
+        }
+        stream.println(result);
+    }
+
     public List<List<Integer>> levelOrder(TreeNode root) {
         List<List<Integer>> retval = new LinkedList<>();
         if (root != null) {
@@ -461,7 +496,7 @@ public class BinaryTree {
         return retval;
     }
 
-    private int numTrees(int start, int count) {
+    static int numTrees(int start, int count) {
         assert (count > 0);
         if (count > 1) {
             int retval = 0;
