@@ -12,11 +12,10 @@ struct V1_1Partitioner
 {
     RandomIt operator()(RandomIt begin, RandomIt end)
     {
-        auto distance = std::distance(begin, end);
         auto sentinel = *begin;
-        RandomIt ge = begin + distance;
+        auto ge = end;
 
-        for (RandomIt i = ge; i != begin;)
+        for (RandomIt i = end; i != begin;)
         {
             RandomIt j = i - 1;
             if (sentinel <= *j)
@@ -53,8 +52,7 @@ struct V1_3Partitioner
 {
     RandomIt operator()(RandomIt begin, RandomIt end)
     {
-        auto distance = std::distance(begin, end);
-        RandomIt last = begin + distance - 1;
+        RandomIt last = end - 1;
         auto sentinel = *last;
 
         typename std::iterator_traits<RandomIt>::difference_type le = 0;
@@ -77,8 +75,7 @@ struct V1_4Partitioner
 {
     RandomIt operator()(RandomIt begin, RandomIt end)
     {
-        auto distance = std::distance(begin, end);
-        RandomIt last = begin + distance - 1;
+        RandomIt last = end - 1;
         auto sentinel = *last;
 
         RandomIt i = begin;
@@ -107,11 +104,10 @@ struct V2_1Partitioner
 {
     RandomIt operator()(RandomIt begin, RandomIt end)
     {
-        auto distance = std::distance(begin, end);
         auto sentinel = *begin;
 
         RandomIt smaller = begin;
-        RandomIt bigger = begin + distance;
+        RandomIt bigger = end;
         for (;;)
         {
             for (++smaller; smaller < bigger && *smaller < sentinel; ++smaller)
@@ -139,11 +135,10 @@ struct V2_2Partitioner
 {
     RandomIt operator()(RandomIt begin, RandomIt end)
     {
-        auto distance = std::distance(begin, end);
         auto sentinel = *begin;
 
         RandomIt smaller = begin;
-        RandomIt bigger = begin + distance - 1;
+        RandomIt bigger = end - 1;
         while (smaller < bigger)
         {
             while (bigger > smaller && sentinel <= *bigger)
@@ -189,11 +184,10 @@ struct V3_1Partitioner
 {
     std::pair<RandomIt, RandomIt> operator()(RandomIt begin, RandomIt end)
     {
-        auto distance = std::distance(begin, end);
         auto sentinel = *begin;
 
         RandomIt smaller = begin;
-        RandomIt bigger = begin + distance - 1;
+        RandomIt bigger = end - 1;
         for (RandomIt i = begin + 1; i <= bigger;)
         {
             if (*i < sentinel)
@@ -221,11 +215,10 @@ struct V3_2Partitioner
 {
     std::pair<RandomIt, RandomIt> operator()(RandomIt begin, RandomIt end)
     {
-        auto distance = std::distance(begin, end);
         auto sentinel = *begin;
 
         RandomIt equal = begin;
-        RandomIt bigger = begin + distance;
+        RandomIt bigger = end;
         for (RandomIt i = begin + 1; i != bigger;)
         {
             if (*i < sentinel)
@@ -250,11 +243,10 @@ struct V3_3Partitioner
 {
     std::pair<RandomIt, RandomIt> operator()(RandomIt begin, RandomIt end)
     {
-        auto distance = std::distance(begin, end);
-        assert(distance > 1);
+        assert(std::distance(begin, end) > 1);
         auto sentinel = *begin;
 
-        RandomIt p = begin + 1, i = p, j = begin + distance - 1, q = j + 1;
+        RandomIt p = begin + 1, i = p, j = end - 1, q = j + 1;
         while (i <= j)
         {
             while (*i <= sentinel)
@@ -305,11 +297,10 @@ struct V3_4Partitioner
 {
     std::pair<RandomIt, RandomIt> operator()(RandomIt begin, RandomIt end)
     {
-        auto distance = std::distance(begin, end);
-        assert(distance > 1);
+        assert(std::distance(begin, end) > 1);
         auto sentinel = *begin;
 
-        RandomIt equal = begin, i = begin + 1, bigger = begin + distance, j = bigger - 1;
+        RandomIt equal = begin, i = begin + 1, bigger = end, j = bigger - 1;
         while (i <= j)
         {
             while (*i <= sentinel)
@@ -345,10 +336,7 @@ struct V3_4Partitioner
                 std::iter_swap(--bigger, j--);
             }
         }
-        return std::make_pair(
-            equal,
-            bigger != (begin + distance) ? bigger : end
-        );
+        return std::make_pair(equal, bigger);
     }
 };
 
@@ -387,11 +375,10 @@ namespace v2
         template <typename RandomIt>
         RandomIt partition(RandomIt begin, RandomIt end)
         {
-            auto distance = std::distance(begin, end);
             auto sentinel = *begin;
 
             RandomIt smaller = begin;
-            RandomIt bigger = begin + distance;
+            RandomIt bigger = end;
             for (;;)
             {
                 for (++smaller; *smaller < sentinel; ++smaller)
@@ -479,9 +466,8 @@ namespace v4
         template <typename RandomIt>
         auto partition2(RandomIt begin, RandomIt end)
         {
-            auto distance = std::distance(begin, end);
             auto sentinel = *begin;
-            RandomIt ge = begin + distance;
+            RandomIt ge = end;
             size_t count = 0;
 
             for (RandomIt i = ge; i != begin;)
@@ -500,10 +486,9 @@ namespace v4
         template <typename RandomIt>
         auto partition3(RandomIt begin, RandomIt end)
         {
-            auto distance = std::distance(begin, end);
             auto sentinel = *begin;
 
-            RandomIt bigger = begin + distance;
+            RandomIt bigger = end;
             for (RandomIt i = begin + 1; i != bigger;)
             {
                 if (*i > sentinel)

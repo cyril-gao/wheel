@@ -288,8 +288,7 @@ namespace
             using std::iter_swap;
             RandomIt separator = end;
             if (end > begin) {
-                auto distance = end - begin;
-                auto ge = begin + distance;
+                auto ge = end;
                 for (auto i = ge; i != begin;) {
                     auto j = i - 1;
                     if (*j >= 0) {
