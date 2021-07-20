@@ -15,23 +15,19 @@ namespace
         {
             std::pair<RandomIt, RandomIt> operator()(RandomIt begin, RandomIt end, size_t d)
             {
-                auto distance = std::distance(begin, end);
                 auto sentinel = (*begin)[d];
 
                 RandomIt smaller = begin;
-                RandomIt bigger = begin + distance - 1;
-                for (RandomIt i = begin + 1; i <= bigger;)
-                {
+                RandomIt bigger = end - 1;
+                for (RandomIt i = begin + 1; i <= bigger;) {
                     if ((*i)[d] < sentinel) {
                         std::iter_swap(smaller, i);
                         ++smaller;
                         ++i;
-                    }
-                    else if (sentinel < (*i)[d]) {
+                    } else if (sentinel < (*i)[d]) {
                         std::iter_swap(i, bigger);
                         --bigger;
-                    }
-                    else {
+                    } else {
                         ++i;
                     }
                 }
@@ -44,11 +40,10 @@ namespace
         {
             std::pair<RandomIt, RandomIt> operator()(RandomIt begin, RandomIt end, size_t d)
             {
-                auto distance = std::distance(begin, end);
-                assert(distance > 1);
+                assert(std::distance(begin, end) > 1);
                 auto sentinel = (*begin)[d];
 
-                RandomIt equal = begin, i = begin + 1, bigger = begin + distance, j = bigger - 1;
+                RandomIt equal = begin, i = begin + 1, bigger = end, j = bigger - 1;
                 while (i <= j) {
                     while ((*i)[d] <= sentinel) {
                         if ((*i)[d] < sentinel) {
@@ -76,10 +71,7 @@ namespace
                         std::iter_swap(--bigger, j--);
                     }
                 }
-                return std::make_pair(
-                    equal,
-                    bigger != (begin + distance) ? bigger : end
-                );
+                return std::make_pair(equal, bigger);
             }
         };
 
