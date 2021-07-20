@@ -165,8 +165,7 @@ void two_way_quick_sort(RandomIt begin, RandomIt end, size_t factor)
             auto m = Partitioner<RandomIt>()(begin, end);
             two_way_quick_sort<Partitioner, RandomIt>(begin, m, factor);
             two_way_quick_sort<Partitioner, RandomIt>(m + 1, end, factor);
-        }
-        else {
+        } else {
             merge_sort<RandomIt>(begin, end);
         }
     };
@@ -355,21 +354,19 @@ namespace v2
 {
     namespace details
     {
+        // the return value is the iterator of the max element
         template <typename RandomIt>
         RandomIt max(RandomIt begin, RandomIt end)
         {
-            //auto sentinel = *begin;
-            RandomIt maxIndex = begin;
+            RandomIt imax = begin;
             for (RandomIt i = begin + 1; i != end; ++i)
             {
-                //if (sentinel < *i)
-                if (*maxIndex < *i)
+                if (*imax < *i)
                 {
-                    //sentinel = *i;
-                    maxIndex = i;
+                    imax = i;
                 }
             }
-            return maxIndex;
+            return imax;
         }
 
         template <typename RandomIt>
@@ -416,9 +413,8 @@ namespace v2
     void two_way_quick_sort(RandomIt begin, RandomIt end)
     {
         auto sorting = [](RandomIt begin, RandomIt end) {
-            RandomIt last = begin + (std::distance(begin, end) - 1);
-            RandomIt imax = details::max(begin, end);
-            std::iter_swap(imax, last);
+            RandomIt last = end - 1;
+            std::iter_swap(details::max(begin, end), last);
             details::two_way_quick_sort<RandomIt>(begin, last);
         };
         insertion_sort<decltype(sorting), RandomIt>(sorting, begin, end);
