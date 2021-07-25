@@ -1,11 +1,8 @@
-We can use CMake to make a build:
-   on Windows: I run:
-      1) mkdir winbuild
-      2) cd winbuild
-      3) cmake -G "Visual Studio 16 2019" -A X64 ..
-      4) cmake --build . --config Release
-   on Ubuntu: I run:
-      1) mkdir build
-      2) cd build
-      3) cmake ..
-      4) make
+How to compile the program:
+1) install the latest version of C++ compiler (g++, clang++ or Visual Studio C++)
+2) install the latest version of CMake
+3) run the following commands:
+   - mkdir build
+   - cd build
+   - cmake ..
+   - cmake --build . --config Release
