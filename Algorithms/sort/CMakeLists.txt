@@ -37,4 +37,4 @@ endif()
 enable_testing()
 
 add_executable(sort_test sort_test.cpp insertion_sort.h merge_sort.h heap_sort.h quick_sort.h counting_sort.h str_sort.h)
-add_test(NAME sort_test COMMAND sort_test "test")
+add_test(NAME sort_test COMMAND sort_test "verify")

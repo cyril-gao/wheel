@@ -274,15 +274,24 @@ void counting_sort_test(size_t buf_size)
     counting_sort_test_cast<uint64_t>(buf_size);
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+    bool verifying = false;
+    if (argc > 1 && strcmp(argv[1], "verify") == 0) {
+        verifying = true;
+    }
+
 #if ( defined( _DEBUG ) || defined( DEBUG ) || defined( DBG ) )
-    const size_t BUF_SIZE = 107;
+    size_t BUF_SIZE = 107;
 #else
-    const size_t BUF_SIZE = 1923437;
+    size_t BUF_SIZE = 1923437;
 #endif
-    try
-    {
+
+    if (verifying) {
+        BUF_SIZE = 21739;
+    }
+
+    try {
         {
             std::vector<std::string> data = {
                 "98764", "3745672", "1236347", "3", "38374356", "9476453", "39072534", "7456623",
@@ -311,14 +320,15 @@ int main()
         counting_sort_test(BUF_SIZE);
         printf("\n");
 
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_real_distribution<> dis(0.0, 1.0);
-        
-        for (double i = 0; i <= 16; i += 1.0)
-        {
-            performance_test<int64_t>(BUF_SIZE + static_cast<size_t>(i * 235437), i + dis(gen));
-            printf("\n");
+        if (!verifying) {
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::uniform_real_distribution<> dis(0.0, 1.0);
+            
+            for (double i = 0; i <= 16; i += 1.0) {
+                performance_test<int64_t>(BUF_SIZE + static_cast<size_t>(i * 235437), i + dis(gen));
+                printf("\n");
+            }
         }
 
         quick_sort_extreme_cases<int64_t>(BUF_SIZE / 10);
