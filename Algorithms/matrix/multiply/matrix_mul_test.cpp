@@ -15,9 +15,15 @@ matrix<int> run(F f, matrix<int> const& m1, matrix<int> const& m2, double& durat
     return result;
 }
 
-void matrix_mul_test()
+void matrix_mul_test(bool verifying)
 {
-    const size_t sizes[] = {63, 127, 257, 511, 1027, 2049, 4139, 8117, 11113};
+    std::vector<size_t> sizes = {63, 127, 257, 511, 1027, 2049, 4139, 8117, 11113};
+    if (verifying) {
+        sizes.pop_back();
+        sizes.pop_back();
+        sizes.pop_back();
+        sizes.pop_back();
+    }
     for (const auto N : sizes) {
         matrix<int> m1 = new_instance<int>(N, N), m2 = new_instance<int>(N, N);
         for (size_t i = 0; i < N; ++i) {
@@ -48,8 +54,12 @@ void matrix_mul_test()
     }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-    matrix_mul_test();
+    bool verifying = false;
+    if (argc > 1 && strcmp(argv[1], "verify") == 0) {
+        verifying = true;
+    }
+    matrix_mul_test(verifying);
     return 0;
 }

@@ -2,15 +2,15 @@
 #define MATRIX_MULTIPLY_H_1EA09AC6_A9BB_4D0F_BB17_28ED0242C21E
 
 #include <string.h>
-#include "matrix.h"
+#include "matrix_transpose.h"
 
 template <typename T>
 matrix<T> mul1(matrix<T> const& m1, matrix<T> const& m2)
 {
-    size_t M = row_number(m1);
-    size_t N = column_number(m1);
-    assert(N == row_number(m2));
-    size_t K = column_number(m2);
+    size_t M = rows(m1);
+    size_t N = cols(m1);
+    assert(N == rows(m2));
+    size_t K = cols(m2);
 
     auto result = new_instance<T>(M, K);
     for (size_t i = 0; i < M; ++i) {
@@ -28,10 +28,10 @@ matrix<T> mul1(matrix<T> const& m1, matrix<T> const& m2)
 template <typename T>
 matrix<T> mul2(matrix<T> const& m1, matrix<T> const& m2)
 {
-    size_t M = row_number(m1);
-    size_t N = column_number(m1);
-    assert(N == row_number(m2));
-    size_t K = column_number(m2);
+    size_t M = rows(m1);
+    size_t N = cols(m1);
+    assert(N == rows(m2));
+    size_t K = cols(m2);
 
     auto result = new_instance<T>(M, K);
     auto transposed = transpose<512, T>(m2);
@@ -50,10 +50,10 @@ matrix<T> mul2(matrix<T> const& m1, matrix<T> const& m2)
 template <size_t BATCH_SIZE, typename T>
 matrix<T> mul3(matrix<T> const& m1, matrix<T> const& m2)
 {
-    size_t M = row_number(m1);
-    size_t N = column_number(m1);
-    assert(N == row_number(m2));
-    size_t K = column_number(m2);
+    size_t M = rows(m1);
+    size_t N = cols(m1);
+    assert(N == rows(m2));
+    size_t K = cols(m2);
 
     auto result = new_instance<T>(M, K);
 
