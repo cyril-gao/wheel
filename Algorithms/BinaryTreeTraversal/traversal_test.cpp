@@ -147,7 +147,7 @@ void binary_tree_test()
                             int v = idis(eng);
                             auto retval = find(root, v);
                             if (retval.second != ExpectedPosition::CURRENT) {
-								assert(retval.second != ExpectedPosition::ROOT);
+                                assert(retval.second != ExpectedPosition::ROOT);
                                 if (retval.second == ExpectedPosition::RIGHT_CHILD) {
                                     retval.first->right = new TreeNode(v);
                                 } else {
