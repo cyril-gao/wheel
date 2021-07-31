@@ -67,3 +67,4 @@ void insertion_sort(Sorting sorting, Compare comp, RandomIt begin, RandomIt end,
 }
 
 #endif //INSERTION_SORT_H_F02ABCD3_2DDF_4127_815F_84FDF6A80E00
+
