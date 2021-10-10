@@ -10,12 +10,12 @@
     "author": "Yuanming Gao",
     "license": "ISC",
     "devDependencies": {
-        "@types/jest": "^27.0.1",
-        "jest": "^27.1.0",
+        "@types/jest": "^27.0.2",
+        "jest": "^27.2.5",
         "node-notifier": ">=10.0.0",
         "ts-jest": "^27.0.5",
         "tsc-watch": "^4.5.0",
-        "typescript": "^4.4.2"
+        "typescript": "^4.4.3"
     },
     "dependencies": {
         "npm-check-updates": "^11.8.5"
