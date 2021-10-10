@@ -892,4 +892,72 @@ public class ArrayOperations {
         }
         return retval;
     }
+
+    /*
+     * Assue you are working at a newspaper. Your task is to prepare a page
+     * with titles that weiters send you. Your cat was walking over your
+     * keyboard and accidentally added characters. Now you need to filter
+     * out the titles and prepare them for publishing.
+     * 
+     * Assume that titles are in an array of strings. You need to do the 
+     * following procedures on it:
+     *   - Create a single string by concatenating the strings in the array
+     *   - Delete all numeric symbols from the string
+     *   - Capitalize the first character of each word in the string
+     * 
+     * Don't forget to think through any cornet cases.
+     */
+    private boolean isLetter(char c) {
+        return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
+    }
+
+    private boolean isSpace(char c) {
+        return c == ' ' || c == '\t';
+    }
+
+    public String filter(String... args) {
+        StringBuilder line = new StringBuilder();
+        boolean newWord = false;
+        for (var s : args) {
+            StringBuilder word = new StringBuilder();
+            for (int i = 0, n = s.length(); i < n; ++i) {
+                char c = s.charAt(i);
+                if (Character.isDigit(c)) {
+                    // skip
+                } else if (isSpace(c)) {
+                    int l = word.length();
+                    if (l > 0) {
+                        if (newWord) {
+                            line.append(' ');
+                        }
+                        line.append(word.toString());
+                        word.delete(0, word.length());
+                    }
+                    newWord = line.length() > 0;
+                } else {
+                    boolean letter = isLetter(c);
+                    if (word.length() == 0 && letter) {
+                        c = Character.toUpperCase(c);
+                    }
+                    word.append(c);
+                    if (!letter) {
+                        if (newWord) {
+                            line.append(' ');
+                            newWord = false;
+                        }
+                        line.append(word.toString());
+                        word.delete(0, word.length());
+                    }
+                }
+            }
+            if (word.length() > 0) {
+                if (newWord) {
+                    line.append(' ');
+                }
+                line.append(word.toString());
+            }
+            newWord = line.length() > 0;
+        }
+        return line.toString();
+    }
 }

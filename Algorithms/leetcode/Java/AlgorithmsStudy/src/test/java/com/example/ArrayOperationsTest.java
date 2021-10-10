@@ -527,4 +527,29 @@ public class ArrayOperationsTest {
             assertEquals(result.get(5), "do                  ");
         }
     }
+
+    @Test
+    public void testStringFilter() {
+        var ao = new ArrayOperations();
+        {
+            String[] input = new String[]{ "break3ing news5:", "1A 1circle is round!" };
+            var r = ao.filter(input);
+            assertEquals(r, "Breaking News: A Circle Is Round!");
+        }
+        {
+            String[] input = new String[]{ " ", "Fresh fried fish - fish fresh fried" };
+            var r = ao.filter(input);
+            assertEquals(r, "Fresh Fried Fish - Fish Fresh Fried");
+        }
+        {
+            String[] input = new String[]{ "2Here2 ", "is", " our STRING" };
+            var r = ao.filter(input);
+            assertEquals(r, "Here Is Our STRING");
+        }
+        {
+            String[] input = new String[]{ "123 ", "eat;sleep;repeat", "321" };
+            var r = ao.filter(input);
+            assertEquals(r, "Eat;Sleep;Repeat");
+        }
+    }
 }
