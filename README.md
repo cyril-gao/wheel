@@ -28,8 +28,8 @@
     </ul>
 *   documents which discuss the invariant of the process to rebalance irregular red-black/AVL trees:
     <ul>
-        <li><a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/BST/The%20rebalancing%20process%20of%20red-black%20trees.pdf">the invariant of process to rebalance irregular red-black trees</a></li>
-        <li><a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/BST/The%20rebalancing%20process%20of%20AVL%20trees.pdf">the invariant of process to rebalance irregular AVL trees</a></li>
+        <li><a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/BST/The%20rebalancing%20process%20of%20red-black%20trees.pdf">the invariant of the process to rebalance irregular red-black trees</a></li>
+        <li><a href="https://github.com/cyril-gao/wheel/blob/master/Algorithms/BST/The%20rebalancing%20process%20of%20AVL%20trees.pdf">the invariant of the process to rebalance irregular AVL trees</a></li>
     </ul>
 
 #### <a href="https://github.com/cyril-gao/wheel/tree/master/Algorithms/skiplist">Skip list</a>
