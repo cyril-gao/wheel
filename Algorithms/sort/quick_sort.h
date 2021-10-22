@@ -4,10 +4,11 @@
 #include <assert.h>
 #include <iterator>
 #include <algorithm>
+#include <functional>
 #include <utility>
 #include "merge_sort.h"
 
-template <typename RandomIt>
+template <typename RandomIt, typename Less, typename Equal, typename LessOrEqual>
 struct V1_1Partitioner
 {
     RandomIt operator()(RandomIt begin, RandomIt end)
@@ -18,7 +19,8 @@ struct V1_1Partitioner
         for (RandomIt i = end; i != begin;)
         {
             RandomIt j = i - 1;
-            if (sentinel <= *j)
+            //if (sentinel <= *j)
+            if (LessOrEqual()(sentinel, *j))
             {
                 std::iter_swap(--ge, j);
             }
@@ -28,7 +30,7 @@ struct V1_1Partitioner
     }
 };
 
-template <typename RandomIt>
+template <typename RandomIt, typename Less, typename Equal, typename LessOrEqual>
 struct V1_2Partitioner
 {
     RandomIt operator()(RandomIt begin, RandomIt end)
@@ -37,7 +39,8 @@ struct V1_2Partitioner
         auto sentinel = *begin;
         for (RandomIt i = begin + 1; i != end; ++i)
         {
-            if (*i <= sentinel)
+            //if (*i <= sentinel)
+            if (LessOrEqual()(*i, sentinel))
             {
                 std::iter_swap(++le, i);
             }
@@ -47,7 +50,7 @@ struct V1_2Partitioner
     }
 };
 
-template <typename RandomIt>
+template <typename RandomIt, typename Less, typename Equal, typename LessOrEqual>
 struct V1_3Partitioner
 {
     RandomIt operator()(RandomIt begin, RandomIt end)
@@ -58,7 +61,8 @@ struct V1_3Partitioner
         typename std::iterator_traits<RandomIt>::difference_type le = 0;
         for (RandomIt i = begin; i != last; ++i)
         {
-            if (*i <= sentinel)
+            //if (*i <= sentinel)
+            if (LessOrEqual()(*i, sentinel))
             {
                 std::iter_swap(begin + le, i);
                 ++le;
@@ -70,7 +74,7 @@ struct V1_3Partitioner
     }
 };
 
-template <typename RandomIt>
+template <typename RandomIt, typename Less, typename Equal, typename LessOrEqual>
 struct V1_4Partitioner
 {
     RandomIt operator()(RandomIt begin, RandomIt end)
@@ -79,7 +83,8 @@ struct V1_4Partitioner
         auto sentinel = *last;
 
         RandomIt i = begin;
-        for (; *i < sentinel; ++i)
+        //for (; *i < sentinel; ++i)
+        for (; Less()(*i, sentinel); ++i)
         {
         }
         if (i != last)
@@ -87,7 +92,8 @@ struct V1_4Partitioner
             RandomIt bigger = i;
             for (++i; i != end; ++i)
             {
-                if (*i < sentinel)
+                //if (*i < sentinel)
+                if (Less()(*i, sentinel))
                 {
                     std::iter_swap(bigger++, i);
                 }
@@ -99,7 +105,7 @@ struct V1_4Partitioner
     }
 };
 
-template <typename RandomIt>
+template <typename RandomIt, typename Less, typename Equal, typename LessOrEqual>
 struct V2_1Partitioner
 {
     RandomIt operator()(RandomIt begin, RandomIt end)
@@ -110,10 +116,12 @@ struct V2_1Partitioner
         RandomIt bigger = end;
         for (;;)
         {
-            for (++smaller; smaller < bigger && *smaller < sentinel; ++smaller)
+            //for (++smaller; smaller < bigger && *smaller < sentinel; ++smaller)
+            for (++smaller; smaller < bigger && Less()(*smaller, sentinel); ++smaller)
             {
             }
-            for (--bigger; sentinel < *bigger; --bigger)
+            //for (--bigger; sentinel < *bigger; --bigger)
+            for (--bigger; Less()(sentinel, *bigger); --bigger)
             {
             }
             if (smaller < bigger)
@@ -130,7 +138,7 @@ struct V2_1Partitioner
     }
 };
 
-template <typename RandomIt>
+template <typename RandomIt, typename Less, typename Equal, typename LessOrEqual>
 struct V2_2Partitioner
 {
     RandomIt operator()(RandomIt begin, RandomIt end)
@@ -141,12 +149,14 @@ struct V2_2Partitioner
         RandomIt bigger = end - 1;
         while (smaller < bigger)
         {
-            while (bigger > smaller && sentinel <= *bigger)
+            //while (bigger > smaller && sentinel <= *bigger)
+            while (bigger > smaller && LessOrEqual()(sentinel, *bigger))
             {
                 --bigger;
             }
             std::iter_swap(smaller, bigger);
-            while (smaller < bigger && *smaller <= sentinel)
+            //while (smaller < bigger && *smaller <= sentinel)
+            while (smaller < bigger && LessOrEqual()(*smaller, sentinel))
             {
                 ++smaller;
             }
@@ -156,29 +166,60 @@ struct V2_2Partitioner
     }
 };
 
-template <template <typename> class Partitioner, typename RandomIt>
-void two_way_quick_sort(RandomIt begin, RandomIt end, size_t factor)
+template <
+    template <typename, typename, typename, typename> class Partitioner,
+    typename RandomIt,
+    typename Less = std::less<typename std::iterator_traits<RandomIt>::value_type>,
+    typename Equal = std::equal_to<typename std::iterator_traits<RandomIt>::value_type>,
+    typename LessOrEqual = std::less_equal<typename std::iterator_traits<RandomIt>::value_type>
+>
+void two_way_quick_sort(
+    RandomIt begin, RandomIt end,
+    size_t factor,
+    Less less = Less{}, Equal equal = Equal{}, LessOrEqual le = LessOrEqual{}
+)
 {
-    auto sorting = [](RandomIt begin, RandomIt end, size_t factor) {
-        if (factor != 0) {
+    auto sorting = [=](RandomIt begin, RandomIt end, size_t factor)
+    {
+        if (factor != 0)
+        {
             factor = (factor >> 1) + (factor >> 2);
-            auto m = Partitioner<RandomIt>()(begin, end);
-            two_way_quick_sort<Partitioner, RandomIt>(begin, m, factor);
-            two_way_quick_sort<Partitioner, RandomIt>(m + 1, end, factor);
-        } else {
-            merge_sort<RandomIt>(begin, end);
+            auto m = Partitioner<RandomIt, Less, Equal, LessOrEqual>()(begin, end);
+            two_way_quick_sort<Partitioner, RandomIt, Less, Equal, LessOrEqual>(
+                begin, m, factor, less, equal, le
+            );
+            two_way_quick_sort<Partitioner, RandomIt, Less, Equal, LessOrEqual>(
+                m + 1, end, factor, less, equal, le
+            );
+        }
+        else
+        {
+            merge_sort<RandomIt, LessOrEqual>(begin, end, le);
         }
     };
-    insertion_sort<decltype(sorting), RandomIt, size_t>(sorting, begin, end, factor);
+    insertion_sort<decltype(sorting), LessOrEqual, RandomIt, size_t>(
+        sorting, le, begin, end, factor
+    );
 }
 
-template <template <typename> class Partitioner, typename RandomIt>
-void two_way_quick_sort(RandomIt begin, RandomIt end)
+template <
+    template <typename, typename, typename, typename> class Partitioner,
+    typename RandomIt,
+    typename Less = std::less<typename std::iterator_traits<RandomIt>::value_type>,
+    typename Equal = std::equal_to<typename std::iterator_traits<RandomIt>::value_type>,
+    typename LessOrEqual = std::less_equal<typename std::iterator_traits<RandomIt>::value_type>
+>
+void two_way_quick_sort(
+    RandomIt begin, RandomIt end,
+    Less less = Less{}, Equal equal = Equal{}, LessOrEqual le = LessOrEqual{}
+)
 {
-    two_way_quick_sort<Partitioner, RandomIt>(begin, end, static_cast<size_t>(end - begin));
+    two_way_quick_sort<Partitioner, RandomIt, Less, Equal>(
+        begin, end, static_cast<size_t>(end - begin), less, equal, le
+    );
 }
 
-template <typename RandomIt>
+template <typename RandomIt, typename Less, typename Equal, typename LessOrEqual>
 struct V3_1Partitioner
 {
     std::pair<RandomIt, RandomIt> operator()(RandomIt begin, RandomIt end)
@@ -189,13 +230,15 @@ struct V3_1Partitioner
         RandomIt bigger = end - 1;
         for (RandomIt i = begin + 1; i <= bigger;)
         {
-            if (*i < sentinel)
+            //if (*i < sentinel)
+            if (Less()(*i, sentinel))
             {
                 std::iter_swap(smaller, i);
                 ++smaller;
                 ++i;
             }
-            else if (sentinel < *i)
+            //else if (sentinel < *i)
+            else if (Less()(sentinel, *i))
             {
                 std::iter_swap(i, bigger);
                 --bigger;
@@ -209,7 +252,7 @@ struct V3_1Partitioner
     }
 };
 
-template <typename RandomIt>
+template <typename RandomIt, typename Less, typename Equal, typename LessOrEqual>
 struct V3_2Partitioner
 {
     std::pair<RandomIt, RandomIt> operator()(RandomIt begin, RandomIt end)
@@ -220,11 +263,13 @@ struct V3_2Partitioner
         RandomIt bigger = end;
         for (RandomIt i = begin + 1; i != bigger;)
         {
-            if (*i < sentinel)
+            //if (*i < sentinel)
+            if (Less()(*i, sentinel))
             {
                 std::iter_swap(equal++, i++);
             }
-            else if (sentinel < *i)
+            //else if (sentinel < *i)
+            else if (Less()(sentinel, *i))
             {
                 std::iter_swap(--bigger, i);
             }
@@ -237,7 +282,7 @@ struct V3_2Partitioner
     }
 };
 
-template <typename RandomIt>
+template <typename RandomIt, typename Less, typename Equal, typename LessOrEqual>
 struct V3_3Partitioner
 {
     std::pair<RandomIt, RandomIt> operator()(RandomIt begin, RandomIt end)
@@ -248,9 +293,11 @@ struct V3_3Partitioner
         RandomIt p = begin + 1, i = p, j = end - 1, q = j + 1;
         while (i <= j)
         {
-            while (*i <= sentinel)
+            //while (*i <= sentinel)
+            while (LessOrEqual()(*i, sentinel))
             {
-                if (*i == sentinel)
+                //if (*i == sentinel)
+                if (Equal()(*i, sentinel))
                 {
                     std::iter_swap(p++, i);
                 }
@@ -261,9 +308,11 @@ struct V3_3Partitioner
                 }
             }
 
-            while (*j >= sentinel)
+            //while (*j >= sentinel)
+            while (LessOrEqual()(sentinel, *j))
             {
-                if (*j == sentinel)
+                //if (*j == sentinel)
+                if (Equal()(*j, sentinel))
                 {
                     std::iter_swap(--q, j);
                 }
@@ -291,7 +340,7 @@ struct V3_3Partitioner
     }
 };
 
-template <typename RandomIt>
+template <typename RandomIt, typename Less, typename Equal, typename LessOrEqual>
 struct V3_4Partitioner
 {
     std::pair<RandomIt, RandomIt> operator()(RandomIt begin, RandomIt end)
@@ -302,9 +351,11 @@ struct V3_4Partitioner
         RandomIt equal = begin, i = begin + 1, bigger = end, j = bigger - 1;
         while (i <= j)
         {
-            while (*i <= sentinel)
+            //while (*i <= sentinel)
+            while (LessOrEqual()(*i, sentinel))
             {
-                if (*i < sentinel)
+                //if (*i < sentinel)
+                if (Less()(*i, sentinel))
                 {
                     std::iter_swap(equal++, i);
                 }
@@ -315,9 +366,11 @@ struct V3_4Partitioner
                 }
             }
 
-            while (*j >= sentinel)
+            //while (*j >= sentinel)
+            while (LessOrEqual()(sentinel, *j))
             {
-                if (*j > sentinel)
+                //if (*j > sentinel)
+                if (Less()(sentinel, *j))
                 {
                     std::iter_swap(--bigger, j);
                 }
@@ -329,7 +382,8 @@ struct V3_4Partitioner
             }
             if (i < j)
             {
-                assert(*i > sentinel && *j < sentinel);
+                //assert(*i > sentinel && *j < sentinel);
+                assert(Less()(sentinel, *i) && Less()(*j, sentinel));
                 std::iter_swap(i, j);
                 std::iter_swap(equal++, i++);
                 std::iter_swap(--bigger, j--);
@@ -339,15 +393,30 @@ struct V3_4Partitioner
     }
 };
 
-template <template <typename> class Partitioner, typename RandomIt>
-void three_way_quick_sort(RandomIt begin, RandomIt end)
+template <
+    template <typename, typename, typename, typename> class Partitioner,
+    typename RandomIt,
+    typename Less = std::less<typename std::iterator_traits<RandomIt>::value_type>,
+    typename Equal = std::equal_to<typename std::iterator_traits<RandomIt>::value_type>,
+    typename LessOrEqual = std::less_equal<typename std::iterator_traits<RandomIt>::value_type>
+>
+void three_way_quick_sort(
+    RandomIt begin, RandomIt end,
+    Less less = Less{}, Equal equal = Equal{}, LessOrEqual le = LessOrEqual{}
+)
 {
-    auto sorting = [](RandomIt begin, RandomIt end) {
-        auto m = Partitioner<RandomIt>()(begin, end);
-        three_way_quick_sort<Partitioner, RandomIt>(begin, m.first);
-        three_way_quick_sort<Partitioner, RandomIt>(m.second, end);
+    auto sorting = [=](RandomIt begin, RandomIt end) {
+        auto m = Partitioner<RandomIt, Less, Equal, LessOrEqual>()(begin, end);
+        three_way_quick_sort<Partitioner, RandomIt, Less, Equal, LessOrEqual>(
+            begin, m.first, less, equal, le
+        );
+        three_way_quick_sort<Partitioner, RandomIt, Less, Equal, LessOrEqual>(
+            m.second, end, less, equal, le
+        );
     };
-    insertion_sort<decltype(sorting), RandomIt>(sorting, begin, end);
+    insertion_sort<decltype(sorting), LessOrEqual, RandomIt>(
+        sorting, le, begin, end
+    );
 }
 
 namespace v2
@@ -355,13 +424,14 @@ namespace v2
     namespace details
     {
         // the return value is the iterator of the max element
-        template <typename RandomIt>
+        template <typename RandomIt, typename Less>
         RandomIt max(RandomIt begin, RandomIt end)
         {
             RandomIt imax = begin;
             for (RandomIt i = begin + 1; i != end; ++i)
             {
-                if (*imax < *i)
+                //if (*imax < *i)
+                if (Less()(*imax, *i))
                 {
                     imax = i;
                 }
@@ -369,7 +439,7 @@ namespace v2
             return imax;
         }
 
-        template <typename RandomIt>
+        template <typename RandomIt, typename Less>
         RandomIt partition(RandomIt begin, RandomIt end)
         {
             auto sentinel = *begin;
@@ -378,10 +448,12 @@ namespace v2
             RandomIt bigger = end;
             for (;;)
             {
-                for (++smaller; *smaller < sentinel; ++smaller)
+                //for (++smaller; *smaller < sentinel; ++smaller)
+                for (++smaller; Less()(*smaller, sentinel); ++smaller)
                 {
                 }
-                for (--bigger; sentinel < *bigger; --bigger)
+                //for (--bigger; sentinel < *bigger; --bigger)
+                for (--bigger; Less()(sentinel, *bigger); --bigger)
                 {
                 }
                 if (smaller < bigger)
@@ -397,27 +469,41 @@ namespace v2
             return bigger;
         }
 
-        template <typename RandomIt>
-        void two_way_quick_sort(RandomIt begin, RandomIt end)
+        template <typename RandomIt, typename Less, typename Equal, typename LessOrEqual>
+        void two_way_quick_sort(RandomIt begin, RandomIt end, Less less, Equal equal, LessOrEqual le)
         {
-            auto sorting = [](RandomIt begin, RandomIt end) {
-                auto m = partition<RandomIt>(begin, end);
-                two_way_quick_sort<RandomIt>(begin, m);
-                two_way_quick_sort<RandomIt>(m + 1, end);
+            auto sorting = [=](RandomIt begin, RandomIt end) {
+                auto m = partition<RandomIt, Less>(begin, end);
+                two_way_quick_sort<RandomIt, Less, Equal, LessOrEqual>(begin, m, less, equal, le);
+                two_way_quick_sort<RandomIt, Less, Equal, LessOrEqual>(m + 1, end, less, equal, le);
             };
-            insertion_sort<decltype(sorting), RandomIt>(sorting, begin, end);
+            insertion_sort<decltype(sorting), LessOrEqual, RandomIt>(
+                sorting, le, begin, end
+            );
         }
     } // namespace details
 
-    template <typename RandomIt>
-    void two_way_quick_sort(RandomIt begin, RandomIt end)
+    template <
+        typename RandomIt,
+        typename Less = std::less<typename std::iterator_traits<RandomIt>::value_type>,
+        typename Equal = std::equal_to<typename std::iterator_traits<RandomIt>::value_type>,
+        typename LessOrEqual = std::less_equal<typename std::iterator_traits<RandomIt>::value_type>
+    >
+    void two_way_quick_sort(
+        RandomIt begin, RandomIt end,
+        Less less = Less{}, Equal equal = Equal{}, LessOrEqual le = LessOrEqual{}
+    )
     {
-        auto sorting = [](RandomIt begin, RandomIt end) {
+        auto sorting = [=](RandomIt begin, RandomIt end) {
             RandomIt last = end - 1;
-            std::iter_swap(details::max(begin, end), last);
-            details::two_way_quick_sort<RandomIt>(begin, last);
+            std::iter_swap(details::max<RandomIt, Less>(begin, end), last);
+            details::two_way_quick_sort<RandomIt, Less, Equal, LessOrEqual>(
+                begin, last, less, equal, le
+            );
         };
-        insertion_sort<decltype(sorting), RandomIt>(sorting, begin, end);
+        insertion_sort<decltype(sorting), LessOrEqual, RandomIt>(
+            sorting, le, begin, end
+        );
     }
 } // namespace v2
 
@@ -425,32 +511,56 @@ namespace v3
 {
     namespace details
     {
-        template <typename RandomIt, size_t THRESHOLD>
-        void three_way_quick_sort(RandomIt begin, RandomIt end, size_t trying)
+        template <
+            typename RandomIt,
+            size_t THRESHOLD,
+            typename Less,
+            typename Equal,
+            typename LessOrEqual
+        >
+        void three_way_quick_sort(
+            RandomIt begin, RandomIt end, size_t trying, Less less, Equal equal, LessOrEqual le
+        )
         {
-            auto sorting = [](RandomIt begin, RandomIt end, size_t trying) {
+            auto sorting = [=](RandomIt begin, RandomIt end, size_t trying) {
                 if (trying != 0) {
-                    auto m = V3_4Partitioner<RandomIt>()(begin, end);
+                    auto m = V3_4Partitioner<RandomIt, Less, Equal, LessOrEqual>()(begin, end);
                     if (static_cast<size_t>(m.second - m.first) < THRESHOLD) {
                         --trying;
                     }
-                    three_way_quick_sort<RandomIt, THRESHOLD>(begin, m.first, trying);
-                    three_way_quick_sort<RandomIt, THRESHOLD>(m.second, end, trying);
+                    three_way_quick_sort<RandomIt, THRESHOLD, Less, Equal, LessOrEqual>(
+                        begin, m.first, trying, less, equal, le
+                    );
+                    three_way_quick_sort<RandomIt, THRESHOLD, Less, Equal, LessOrEqual>(
+                        m.second, end, trying, less, equal, le
+                    );
                 } else {
-                    v2::two_way_quick_sort(begin, end);
+                    v2::two_way_quick_sort<RandomIt, Less, Equal, LessOrEqual>(begin, end, less, equal, le);
                 }
             };
-            insertion_sort<decltype(sorting), RandomIt, size_t>(sorting, begin, end, trying);
+            insertion_sort<decltype(sorting), LessOrEqual, RandomIt, size_t>(
+                sorting, le, begin, end, trying
+            );
         }
     }
 
     template <size_t THRESHOLD, size_t TRYING>
     struct ThreeWayQuickSort
     {
-        template <typename RandomIt>
-        void operator()(RandomIt begin, RandomIt end)
+        template <
+            typename RandomIt,
+            typename Less = std::less<typename std::iterator_traits<RandomIt>::value_type>,
+            typename Equal = std::equal_to<typename std::iterator_traits<RandomIt>::value_type>,
+            typename LessOrEqual = std::less_equal<typename std::iterator_traits<RandomIt>::value_type>
+        >
+        void operator()(
+            RandomIt begin, RandomIt end,
+            Less less = Less{}, Equal equal = Equal{}, LessOrEqual le = LessOrEqual{}
+        )
         {
-            details::three_way_quick_sort<RandomIt, THRESHOLD>(begin, end, TRYING);
+            details::three_way_quick_sort<RandomIt, THRESHOLD, Less, Equal, LessOrEqual>(
+                begin, end, TRYING, less, equal, le
+            );
         }
     };
 }
@@ -459,7 +569,7 @@ namespace v4
 {
     namespace details
     {
-        template <typename RandomIt>
+        template <typename RandomIt, typename Less, typename Equal, typename LessOrEqual>
         auto partition2(RandomIt begin, RandomIt end)
         {
             auto sentinel = *begin;
@@ -469,9 +579,11 @@ namespace v4
             for (RandomIt i = ge; i != begin;)
             {
                 RandomIt j = i - 1;
-                if (sentinel <= *j)
+                //if (sentinel <= *j)
+                if (LessOrEqual()(sentinel, *j))
                 {
-                    count += (sentinel == *j);
+                    //count += (sentinel == *j);
+                    count += Equal()(sentinel, *j);
                     std::iter_swap(--ge, j);
                 }
                 i = j;
@@ -479,7 +591,7 @@ namespace v4
             return std::make_pair(ge, count);
         }
 
-        template <typename RandomIt>
+        template <typename RandomIt, typename Less>
         auto partition3(RandomIt begin, RandomIt end)
         {
             auto sentinel = *begin;
@@ -487,7 +599,8 @@ namespace v4
             RandomIt bigger = end;
             for (RandomIt i = begin + 1; i != bigger;)
             {
-                if (*i > sentinel)
+                //if (*i > sentinel)
+                if (Less()(sentinel, *i))
                 {
                     std::iter_swap(--bigger, i);
                 }
@@ -500,21 +613,40 @@ namespace v4
         }
     }
 
-    template <size_t THRESHOLD, typename RandomIt>
-    void hybird_quick_sort(RandomIt begin, RandomIt end)
+    template <
+        size_t THRESHOLD,
+        typename RandomIt,
+        typename Less = std::less<typename std::iterator_traits<RandomIt>::value_type>,
+        typename Equal = std::equal_to<typename std::iterator_traits<RandomIt>::value_type>,
+        typename LessOrEqual = std::less_equal<typename std::iterator_traits<RandomIt>::value_type>
+    >
+    void hybird_quick_sort(
+        RandomIt begin, RandomIt end,
+        Less less = Less{}, Equal equal = Equal{}, LessOrEqual le = LessOrEqual{}
+    )
     {
-        auto sorting = [](RandomIt begin, RandomIt end) {
-            auto [separator, count] = details::partition2<RandomIt>(begin, end);
+        auto sorting = [=](RandomIt begin, RandomIt end) {
+            auto [separator, count] = details::partition2<RandomIt, Less, Equal, LessOrEqual>(
+                begin, end
+            );
             if (count < THRESHOLD) {
-                hybird_quick_sort<THRESHOLD, RandomIt>(begin, separator);
-                hybird_quick_sort<THRESHOLD, RandomIt>(separator + 1, end);
+                hybird_quick_sort<THRESHOLD, RandomIt, Less, Equal, LessOrEqual>(
+                    begin, separator, less, equal, le
+                );
+                hybird_quick_sort<THRESHOLD, RandomIt, Less, Equal, LessOrEqual>(
+                    separator + 1, end, less, equal, le
+                );
             } else {
-                hybird_quick_sort<THRESHOLD, RandomIt>(begin, separator);
-                auto m = details::partition3<RandomIt>(separator, end);
-                hybird_quick_sort<THRESHOLD, RandomIt>(m.second, end);
+                hybird_quick_sort<THRESHOLD, RandomIt, Less, Equal, LessOrEqual>(
+                    begin, separator, less, equal, le
+                );
+                auto m = details::partition3<RandomIt, Less>(separator, end);
+                hybird_quick_sort<THRESHOLD, RandomIt, Less, Equal, LessOrEqual>(
+                    m.second, end, less, equal, le
+                );
             }
         };
-        insertion_sort<decltype(sorting), RandomIt>(sorting, begin, end);
+        insertion_sort<decltype(sorting), LessOrEqual, RandomIt>(sorting, le, begin, end);
     }
 }
 
