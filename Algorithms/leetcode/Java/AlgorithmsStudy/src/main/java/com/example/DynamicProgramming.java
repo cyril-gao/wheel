@@ -58,9 +58,8 @@ public class DynamicProgramming {
 
     /*
      * Given an input string (s) and a pattern (p), implement regular expression
-     * matching with support for '.' and '*' where:
-     *   - '.' Matches any single character.​​​​
-     *   - '*' Matches zero or more of the preceding element.
+     * matching with support for '.' and '*' where: - '.' Matches any single
+     * character.​​​​ - '*' Matches zero or more of the preceding element.
      *
      * The matching should cover the entire input string (not partial).
      */
@@ -72,7 +71,7 @@ public class DynamicProgramming {
                 ++j;
             }
             if (j < n) {
-                assert((j - 1) >= 0);
+                assert ((j - 1) >= 0);
                 if (j - 1 - i > 0) {
                     retval.add(pattern.substring(i, j - 1));
                 }
@@ -110,7 +109,7 @@ public class DynamicProgramming {
     }
 
     private boolean isMatch(String s, int begin, int span, String p) {
-        assert(containsAsterisk(p) && p.length() == 2);
+        assert (containsAsterisk(p) && p.length() == 2);
         boolean retval = true;
         char c = p.charAt(0);
         if (c != '.') {
@@ -124,8 +123,7 @@ public class DynamicProgramming {
         return retval;
     }
 
-    private List<Integer> getCandidates(boolean[][] matchingInfo, int begin)
-    {
+    private List<Integer> getCandidates(boolean[][] matchingInfo, int begin) {
         List<Integer> retval = new ArrayList<Integer>();
         for (int i = 0; i < matchingInfo.length; ++i) {
             for (int j = 0; j < matchingInfo[i].length; ++j) {
@@ -161,7 +159,7 @@ public class DynamicProgramming {
         if (!patterns.isEmpty()) {
             int n = patterns.size();
             int m = s.length();
-            boolean[][][] matchingInfo = new boolean[n][m+1][m+1];
+            boolean[][][] matchingInfo = new boolean[n][m + 1][m + 1];
             for (int i = 0; i < n; ++i) {
                 String pattern = patterns.get(i);
                 if (containsAsterisk(pattern)) {
@@ -225,6 +223,100 @@ public class DynamicProgramming {
         } else {
             if (n == 1 && s.charAt(0) != '0') {
                 retval = 1;
+            }
+        }
+        return retval;
+    }
+
+    /*
+     * You are a professional robber planning to rob houses along a street. Each
+     * house has a certain amount of money stashed, the only constraint stopping you
+     * from robbing each of them is that adjacent houses have security systems
+     * connected and it will automatically contact the police if two adjacent houses
+     * were broken into on the same night.
+     * 
+     * Given an integer array nums representing the amount of money of each house,
+     * return the maximum amount of money you can rob tonight without alerting the
+     * police.
+     */
+    int rob(int[] nums, int begin, int end) {
+        int retval = 0;
+        int diff = end - begin;
+        if (diff > 2) {
+            int[] cache = new int[]{nums[end - 2], nums[end - 1]};
+            if (cache[0] < cache[1]) {
+                cache[0] = cache[1];
+            }
+            retval = Integer.max(cache[0], cache[1]);
+            for (int i = end - 3; i >= begin; --i) {
+                int v = Integer.max(nums[i] + cache[1], cache[0]);
+                retval = Integer.max(v, retval);
+                cache[1] = cache[0];
+                cache[0] = v;
+            }
+        } else {
+            if (diff == 2) {
+                retval = Integer.max(nums[begin], nums[begin + 1]);
+            } else if (diff == 1) {
+                retval = nums[begin];
+            }
+        }
+        return retval;
+    }
+
+    public int rob(int[] nums) {
+        return rob(nums, 0, nums.length);
+    }
+
+    /*
+     * You are a professional robber planning to rob houses along a street. Each
+     * house has a certain amount of money stashed. All houses at this place are
+     * arranged in a circle. That means the first house is the neighbor of the last
+     * one. Meanwhile, adjacent houses have a security system connected, and it will
+     * automatically contact the police if two adjacent houses were broken into on
+     * the same night.
+     * 
+     * Given an integer array nums representing the amount of money of each house,
+     * return the maximum amount of money you can rob tonight without alerting the
+     * police.
+     */
+    public int robInACircle(int[] nums) {
+        int retval = 0;
+        if (nums.length > 2) {
+            int[] cache = new int[]{nums[nums.length - 2], nums[nums.length - 1]};
+            int[] cache2 = new int[]{cache[0], 0};
+            boolean[] lastIsUsed = new boolean[]{false, true};
+            if (cache[0] < cache[1]) {
+                cache[0] = cache[1];
+                lastIsUsed[0] = true;
+            }
+            retval = Integer.max(cache[0], cache[1]);
+            for (int i = nums.length - 3; i > 0; --i) {
+                int v = nums[i] + cache[1];
+                boolean liu = lastIsUsed[1];
+                if (v < cache[0]) {
+                    v = cache[0];
+                    liu = lastIsUsed[0];
+                }
+                retval = Integer.max(retval, v);
+                cache[1] = cache[0];
+                cache[0] = v;
+                lastIsUsed[1] = lastIsUsed[0];
+                lastIsUsed[0] = liu;
+                v = Integer.max(nums[i] + cache2[1], cache2[0]);
+                assert(v <= retval);
+                cache2[1] = cache2[0];
+                cache2[0] = v;
+            }
+            if (!lastIsUsed[1]) {
+                retval = Integer.max(nums[0] + cache[1], cache[0]);
+            }
+            retval = Integer.max(Integer.max(nums[0] + cache2[1], cache2[0]), retval);
+        } else {
+            if (nums.length == 2) {
+                retval = Integer.max(nums[0], nums[1]);
+            } else if (nums.length == 1) {
+                retval = nums[0];
             }
         }
         return retval;
