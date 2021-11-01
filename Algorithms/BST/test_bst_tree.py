@@ -1,5 +1,6 @@
 import unittest
 import random
+import string
 from multiprocessing import Process, Queue, cpu_count
 from rbtree import RedBlackTree
 from avltree import AVLTree
@@ -176,3 +177,32 @@ class BSTTester(unittest.TestCase):
         self.response_queue.close()
 
         self.assertFalse(wrong)
+
+    def generate_random_strings(self):
+        N = 1024 * 2
+        L = 16
+        retval = set()
+        for _ in range(N):
+            letters = string.ascii_lowercase
+            retval.add(''.join(random.choice(letters) for i in range(L)))
+        return sorted(list(retval))
+
+    def test_indexable(self):
+        strings = self.generate_random_strings()
+        N = len(strings)
+        rdata = strings[:]
+        random.shuffle(rdata)
+        tree = RedBlackTree()
+        for r in rdata:
+            tree.put(r)
+            self.assertTrue(r in tree)
+            self.assertTrue(tree.valid())
+        for i in range(N):
+            self.assertEqual(tree[i], strings[i])
+        to_be_deleted = strings[:]
+        for i in range(N - 1):
+            j = random.randint(0, N - 1 - i)
+            s = to_be_deleted.pop(j)
+            self.assertEqual(tree[j], s)
+            del tree[s]
+            self.assertFalse(s in tree)

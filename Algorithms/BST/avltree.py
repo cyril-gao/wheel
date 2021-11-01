@@ -468,7 +468,7 @@ if __name__ == "__main__":
                 assert v not in tree
                 assert tree.valid()
             input = rdata
-    except AttributeError:
+    except AssertionError:
         print(input)
         print(rdata)
         print(v)

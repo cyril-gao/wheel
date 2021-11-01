@@ -18,6 +18,7 @@ class RedBlackTree:
             self.parent = parent
             self.left_child = left_child
             self.right_child = right_child
+            self.size = 1
 
         def exchange_content(self, other):
             self.key, other.key = other.key, self.key
@@ -37,6 +38,9 @@ class RedBlackTree:
         def __repr__(self):
             return "Node(%s, %s, ...)" % (self.key, "Black" if self.color == RedBlackTree.Color.BLACK else "Red")
 
+    def _get_size(self, node):
+        return node.size if node is not None else 0
+
     def _get_internal(self, node):
         class Internal:
             def __init__(self):
@@ -45,33 +49,45 @@ class RedBlackTree:
         internal = Internal()
         if node is not None:
             internal.valid = False
-            inc = -1
-            if node.color == RedBlackTree.Color.RED:
-                left_child_color = self._get_color(node.left_child)
-                right_child_color = self._get_color(node.right_child)
-                if left_child_color == right_child_color and left_child_color == RedBlackTree.Color.BLACK:
-                    inc = 0
-            else:
-                inc = 1
-            if inc >= 0:
-                li = self._get_internal(node.left_child)
-                ri = self._get_internal(node.right_child)
-                if li.valid and ri.valid and li.height == ri.height:
-                    if (
-                        (node.left_child is None or (node.left_child.key < node.key and node.left_child.parent is node)) and
-                        (node.right_child is None or (node.right_child.key > node.key and node.right_child.parent is node))
-                    ):
-                        internal.height = li.height + inc
-                        internal.valid = True
+            if node.size == (self._get_size(node.left_child) + self._get_size(node.right_child) + 1):
+                inc = -1
+                if node.color == RedBlackTree.Color.RED:
+                    left_child_color = self._get_color(node.left_child)
+                    right_child_color = self._get_color(node.right_child)
+                    if left_child_color == right_child_color and left_child_color == RedBlackTree.Color.BLACK:
+                        inc = 0
+                else:
+                    inc = 1
+                if inc >= 0:
+                    li = self._get_internal(node.left_child)
+                    ri = self._get_internal(node.right_child)
+                    if li.valid and ri.valid and li.height == ri.height:
+                        if (
+                            (node.left_child is None or (node.left_child.key < node.key and node.left_child.parent is node)) and
+                            (node.right_child is None or (node.right_child.key > node.key and node.right_child.parent is node))
+                        ):
+                            internal.height = li.height + inc
+                            internal.valid = True
         return internal
 
     def valid(self):
         internal = self._get_internal(self._root)
         return internal.valid and self._get_color(self._root) == RedBlackTree.Color.BLACK
 
-    def _find(self, key, node):
+    def _get(self, node, index):
+        assert node is not None
+        assert 0 <= index < self._get_size(node)
+        ls = self._get_size(node.left_child)
+        if index < ls:
+            return self._get(node.left_child, index)
+        if index == ls:
+            return node
+        return self._get(node.right_child, index - ls - 1)
+
+    def _find(self, key):
         parent_or_itself = None
         indicator = RedBlackTree.Position.ROOT
+        node = self._root
         while node is not None:
             parent_or_itself = node
             if key < node.key:
@@ -87,7 +103,6 @@ class RedBlackTree:
 
     def __init__(self):
         self._root = None
-        self._len = 0
 
     def _get_color(self, node):
         color = RedBlackTree.Color.BLACK
@@ -127,11 +142,15 @@ class RedBlackTree:
             self._root = the_new_one
             self._root.parent = None
 
+    def _decrease_size_by_one(self, parent):
+        while parent is not None:
+            parent.size -= 1
+            parent = parent.parent
+
     def _reblance_after_deleting(self, position, node, parent):
         assert parent is not None
         sibling = self._get_sibling(node, parent)
         if sibling.color == RedBlackTree.Color.RED:
-            #position = self._get_position(node, parent)
             left_nephew = sibling.left_child
             right_nephew = sibling.right_child
             self._replace_father_son_relationship(parent, sibling)
@@ -142,14 +161,20 @@ class RedBlackTree:
                 left_nephew.parent = parent
                 sibling.left_child = parent
                 parent.parent = sibling
+                sibling.size = parent.size
                 sibling = left_nephew
+                # parent's size field must then be decreased by one 
+                parent.size = (self._get_size(node) + 1 + self._get_size(sibling) + 1)
             else:
                 assert position == RedBlackTree.Position.RIGHT_CHILD
                 parent.left_child = right_nephew
                 right_nephew.parent = parent
                 sibling.right_child = parent
                 parent.parent = sibling
+                sibling.size = parent.size
                 sibling = right_nephew
+                # parent's size field must then be decreased by one 
+                parent.size = (self._get_size(node) + 1 + self._get_size(sibling) + 1)
         assert sibling.color == RedBlackTree.Color.BLACK
         left_nephew = sibling.left_child
         right_nephew = sibling.right_child
@@ -159,11 +184,13 @@ class RedBlackTree:
         if left_nephew_color == right_nephew_color and left_nephew_color == RedBlackTree.Color.BLACK:
             sibling.color = RedBlackTree.Color.RED
             if parent_color == RedBlackTree.Color.BLACK:
+                parent.size -= 1
                 grandparent = parent.parent
                 if grandparent is not None:
                     self._reblance_after_deleting(self._get_position(parent, grandparent), parent, grandparent)
             else:
                 parent.color = RedBlackTree.Color.BLACK
+                self._decrease_size_by_one(parent)
         else:
             position = self._get_position(node, parent)
             if (
@@ -185,6 +212,10 @@ class RedBlackTree:
                     if right_child_of_nephew is not None:
                         right_child_of_nephew.parent = sibling
                     left_nephew.color = parent_color
+                    parent.size = (self._get_size(parent.left_child) + self._get_size(parent.right_child) + 1)
+                    sibling.size = (self._get_size(sibling.left_child) + self._get_size(sibling.right_child) + 1)
+                    left_nephew.size = (self._get_size(left_nephew.left_child) + self._get_size(left_nephew.right_child) + 1)
+                    self._decrease_size_by_one(left_nephew.parent)
                 else:
                     left_child_of_nephew = right_nephew.left_child
                     right_child_of_nephew = right_nephew.right_child
@@ -200,6 +231,10 @@ class RedBlackTree:
                     if right_child_of_nephew is not None:
                         right_child_of_nephew.parent = parent
                     right_nephew.color = parent_color
+                    sibling.size = (self._get_size(sibling.left_child) + self._get_size(sibling.right_child) + 1)
+                    parent.size = (self._get_size(parent.left_child) + self._get_size(parent.right_child) + 1)
+                    right_nephew.size = (self._get_size(right_nephew.left_child) + self._get_size(right_nephew.right_child) + 1)
+                    self._decrease_size_by_one(right_nephew.parent)
                 parent.color = RedBlackTree.Color.BLACK
                 sibling.color = RedBlackTree.Color.BLACK
             else:
@@ -218,8 +253,11 @@ class RedBlackTree:
                     if right_nephew is not None:
                         right_nephew.parent = parent
                     left_nephew.color = RedBlackTree.Color.BLACK
+                parent.size = (self._get_size(parent.left_child) + self._get_size(parent.right_child) + 1)
+                sibling.size = (self._get_size(sibling.left_child) + self._get_size(sibling.right_child) + 1)
                 parent.color = RedBlackTree.Color.BLACK
                 sibling.color = parent_color
+                self._decrease_size_by_one(sibling.parent)
 
     def _delete(self, node):
         left_child = node.left_child
@@ -228,15 +266,19 @@ class RedBlackTree:
         if right_child is not None:
             assert right_child.color == RedBlackTree.Color.RED and right_child.left_child is None and right_child.right_child is None
             assert node.color == RedBlackTree.Color.BLACK
+            assert right_child.size == 1 and node.size == 2
             self._replace_father_son_relationship(node, right_child)
             right_child.color = RedBlackTree.Color.BLACK
             del node
+            self._decrease_size_by_one(right_child.parent)
         elif left_child is not None:
             assert left_child.color == RedBlackTree.Color.RED and left_child.left_child is None and left_child.right_child is None
             assert node.color == RedBlackTree.Color.BLACK
+            assert left_child.size == 1 and node.size == 2
             self._replace_father_son_relationship(node, left_child)
             left_child.color = RedBlackTree.Color.BLACK
             del node
+            self._decrease_size_by_one(left_child.parent)
         else:
             parent = node.parent
             if parent is not None:
@@ -246,8 +288,9 @@ class RedBlackTree:
                 del node
                 if color == RedBlackTree.Color.BLACK:
                     self._reblance_after_deleting(position, None, parent)
+                else:
+                    self._decrease_size_by_one(parent)
             else:
-                assert self._len == 0
                 self._root = None
                 del node
 
@@ -260,6 +303,8 @@ class RedBlackTree:
                 if self._get_color(uncle) == RedBlackTree.Color.RED:
                     uncle.color = parent.color = RedBlackTree.Color.BLACK
                     grandparent.color = RedBlackTree.Color.RED
+                    parent.size += 1
+                    grandparent.size += 1
                     node = grandparent
                     parent = node.parent
                 else:
@@ -279,6 +324,9 @@ class RedBlackTree:
                         grandparent.parent = parent
                         parent.color = RedBlackTree.Color.BLACK
                         grandparent.color = RedBlackTree.Color.RED
+                        grandparent.size = (self._get_size(grandparent.left_child) + self._get_size(grandparent.right_child) + 1)
+                        parent.size = (self._get_size(parent.left_child) + self._get_size(parent.right_child) + 1)
+                        parent = parent.parent
                     else:
                         left_child = node.left_child
                         right_child = node.right_child
@@ -306,6 +354,10 @@ class RedBlackTree:
                         grandparent.color = RedBlackTree.Color.RED
                         parent.color = RedBlackTree.Color.RED
                         node.color = RedBlackTree.Color.BLACK
+                        grandparent.size = (self._get_size(grandparent.left_child) + self._get_size(grandparent.right_child) + 1)
+                        parent.size = (self._get_size(parent.left_child) + self._get_size(parent.right_child) + 1)
+                        node.size = (self._get_size(node.left_child) + self._get_size(node.right_child) + 1)
+                        parent = node.parent
                     break
             else:
                 assert self._root is parent
@@ -313,10 +365,13 @@ class RedBlackTree:
         if self._root.color == RedBlackTree.Color.RED:
             self._root.color = RedBlackTree.Color.BLACK
         self._root.parent = None
+        while parent is not None:
+            parent.size += 1
+            parent = parent.parent
 
     def insert(self, key, value=None):
         new_node_added = False
-        parent_or_itself, indicator = self._find(key, self._root)
+        parent_or_itself, indicator = self._find(key)
         if indicator == RedBlackTree.Position.FOUND_IT:
             parent_or_itself.key = key
             if value is not None:
@@ -341,25 +396,53 @@ class RedBlackTree:
                 )
             else:
                 assert False, "Serious bug happened in the function insert"
-            self._len += 1
             if new_node != None:
                 self._reblance_after_inserting(new_node)
             new_node_added = True
         return new_node_added
 
     put = insert
+    add = insert
 
-    def __len__(self): return self._len
+    def __setitem__(self, key, value):
+        if self._root is None or type(key) == type(self._root.key):
+            self.insert(key, value)
+        elif type(key) is int:
+            assert key < self._get_size(self._root)
+            node = self._get(self._root, key)
+            assert node is not None
+            if value is not None:
+                node.value = value
+            else:
+                del node.value
+        else:
+            raise KeyError("Unsupported key type %s" % type(key))
+
+    def __getitem__(self, key):
+        if self._root is not None and type(key) == type(self._root.key):
+            parent_or_itself, indicator = self._find(key)
+            if indicator == RedBlackTree.Position.FOUND_IT:
+                return parent_or_itself.value
+            else:
+                raise IndexError("nonexistent")
+        elif type(key) is int:
+            node = self._get(self._root, key)
+            if hasattr(node, "value"):
+                return (node.key, node.value)
+            return node.key
+        else:
+            raise KeyError("Unsupported key type %s" % type(key))
+
+    def __len__(self): return self._get_size(self._root)
 
     def __contains__(self, key):
-        _, indicator = self._find(key, self._root)
+        _, indicator = self._find(key)
         return indicator == RedBlackTree.Position.FOUND_IT
 
     def __delitem__(self, key):
         item_deleted = False
-        node, indicator = self._find(key, self._root)
+        node, indicator = self._find(key)
         if indicator == RedBlackTree.Position.FOUND_IT:
-            self._len -= 1
             item_deleted = True
             right_child = node.right_child
             if right_child is not None:
@@ -413,7 +496,7 @@ if __name__ == "__main__":
                 assert v not in tree
                 assert tree.valid()
             input = rdata
-    except AttributeError:
+    except AssertionError:
         print(input)
         print(rdata)
         print(v)
