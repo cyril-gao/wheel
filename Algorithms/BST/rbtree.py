@@ -418,6 +418,12 @@ class RedBlackTree:
         else:
             raise KeyError("Unsupported key type %s" % type(key))
 
+    def at(self, index):
+        node = self._get(self._root, index)
+        if hasattr(node, "value"):
+            return (node.key, node.value)
+        return node.key
+
     def __getitem__(self, key):
         if self._root is not None and type(key) == type(self._root.key):
             parent_or_itself, indicator = self._find(key)
@@ -426,10 +432,7 @@ class RedBlackTree:
             else:
                 raise IndexError("nonexistent")
         elif type(key) is int:
-            node = self._get(self._root, key)
-            if hasattr(node, "value"):
-                return (node.key, node.value)
-            return node.key
+            return self.at(key)
         else:
             raise KeyError("Unsupported key type %s" % type(key))
 
@@ -479,7 +482,8 @@ class RedBlackTree:
 
 if __name__ == "__main__":
     import random
-    input = [_ for _ in range(1024)]
+    N = 1024
+    input = [_ for _ in range(N)]
     rdata = None
     v = None
     try:
@@ -489,6 +493,8 @@ if __name__ == "__main__":
                 tree.put(v)
                 assert v in tree
                 assert tree.valid()
+            for i in range(N):
+                assert tree.at(i) == i
             rdata = input[:]
             random.shuffle(rdata)
             for v in rdata:
