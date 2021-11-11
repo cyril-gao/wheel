@@ -58,7 +58,7 @@ namespace heap
 
     template <typename I, typename C, typename Indexer = NullObject<typename std::iterator_traits<I>::value_type, I>>
     void rise(
-        I begin, I end, I outer,
+        I begin, [[maybe_unused]] I end, I outer,
         C comp = std::greater_equal<typename std::iterator_traits<I>::value_type>(),
         Indexer * indexer = nullptr
     ) {

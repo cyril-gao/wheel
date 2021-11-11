@@ -233,7 +233,7 @@ namespace v2
             std::string const& s2,
             std::string const& s3, size_t ns3
         ) {
-            State state = { 0 };
+            State state;
             state.index_in_word = 0;
             state.index_in_another = -1;
             state.matched = false;

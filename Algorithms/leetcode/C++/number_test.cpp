@@ -454,7 +454,6 @@ template <typename I>
 typename std::iterator_traits<I>::value_type get_single(I begin, I end, size_t bit_position)
 {
     using value_type = typename std::iterator_traits<I>::value_type;
-    value_type retval = 0;
     value_type bit = 1;
     bit <<= bit_position;
     size_t zero_count = 0;
@@ -473,7 +472,7 @@ template <typename I>
 typename std::iterator_traits<I>::value_type get_single(I begin, I end)
 {
     using value_type = typename std::iterator_traits<I>::value_type;
-    auto size = std::distance(begin, end);
+    [[maybe_unused]] auto size = std::distance(begin, end);
     assert((size - 1) % 3 == 0);
     value_type retval = 0;
     for (size_t i = 0; i < sizeof(value_type) * 8; ++i) {

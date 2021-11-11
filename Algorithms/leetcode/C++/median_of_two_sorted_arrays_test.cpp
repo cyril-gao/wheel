@@ -123,11 +123,8 @@ namespace
         {
             return *(b1 + k);
         }
-        if (b2 < e2)
-        {
-            return *(b2 + k);
-        }
-        assert(false);
+        assert(b2 < e2);
+        return *(b2 + k);
     }
 }
 
@@ -156,7 +153,7 @@ double get_median_in_two_sorted_ranges(
     }
     else
     {
-        auto get_median = [](auto begin, auto end, auto n) {
+        auto get_median = [](auto begin, [[maybe_unused]] auto end, auto n) {
             if ((n & 1) == 0)
             {
                 auto i = n / 2, j = i - 1;

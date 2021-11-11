@@ -60,7 +60,6 @@ bool in_order(std::vector<int> const& array)
 
 bool valid(std::vector<int> const& array)
 {
-    bool retval = true;
     std::vector<int> copy(array);
     std::sort(copy.begin(), copy.end());
     return in_order(copy);

@@ -72,7 +72,7 @@ int min_overall_awkwardness(std::vector<int>& heights)
     return retval;
 }
 
-int main(int argc, char * argv[])
+int main()
 {
     try {
         {
