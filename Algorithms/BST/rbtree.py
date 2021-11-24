@@ -1,3 +1,11 @@
+from typing import TypeVar, Union, Tuple
+from collections import deque
+
+
+K = TypeVar('K')  # key type
+V = TypeVar('V')  # value type
+
+
 class RedBlackTree:
     class Position:
         ROOT = 0
@@ -37,6 +45,20 @@ class RedBlackTree:
 
         def __repr__(self):
             return "Node(%s, %s, ...)" % (self.key, "Black" if self.color == RedBlackTree.Color.BLACK else "Red")
+
+    def _inorder_visit(self, node):
+        stack = deque()
+        p = node
+        while p is not None or stack:
+            while p is not None:
+                stack.append(p)
+                p = p.left_child
+            p = stack.pop()
+            if hasattr(p, "value"):
+                yield (p.key, p.value)
+            else:
+                yield p.key
+            p = p.right_child
 
     def _get_size(self, node):
         return node.size if node is not None else 0
@@ -369,7 +391,7 @@ class RedBlackTree:
             parent.size += 1
             parent = parent.parent
 
-    def insert(self, key, value=None):
+    def insert(self, key: K, value: V=None) -> bool:
         new_node_added = False
         parent_or_itself, indicator = self._find(key)
         if indicator == RedBlackTree.Position.FOUND_IT:
@@ -404,7 +426,7 @@ class RedBlackTree:
     put = insert
     add = insert
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: K, value: V) -> None:
         if self._root is None or type(key) == type(self._root.key):
             self.insert(key, value)
         elif type(key) is int:
@@ -418,13 +440,13 @@ class RedBlackTree:
         else:
             raise KeyError("Unsupported key type %s" % type(key))
 
-    def at(self, index):
+    def at(self, index: int) -> Union[Tuple[K, V], K]:
         node = self._get(self._root, index)
         if hasattr(node, "value"):
             return (node.key, node.value)
         return node.key
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: Union[K, int]) -> Union[Tuple[K, V], K]:
         if self._root is not None and type(key) == type(self._root.key):
             parent_or_itself, indicator = self._find(key)
             if indicator == RedBlackTree.Position.FOUND_IT:
@@ -436,13 +458,13 @@ class RedBlackTree:
         else:
             raise KeyError("Unsupported key type %s" % type(key))
 
-    def __len__(self): return self._get_size(self._root)
+    def __len__(self) -> int: return self._get_size(self._root)
 
-    def __contains__(self, key):
+    def __contains__(self, key: K) -> bool:
         _, indicator = self._find(key)
         return indicator == RedBlackTree.Position.FOUND_IT
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: K) -> bool:
         item_deleted = False
         node, indicator = self._find(key)
         if indicator == RedBlackTree.Position.FOUND_IT:
@@ -462,7 +484,10 @@ class RedBlackTree:
                 self._delete(node)
         return item_deleted
 
-    def min(self):
+    def __iter__(self):
+        return self._inorder_visit(self._root)
+
+    def min(self) -> K:
         retval = None
         node = self._root
         if node is not None:
@@ -471,7 +496,7 @@ class RedBlackTree:
             retval = node.key
         return retval
 
-    def max(self):
+    def max(self) -> K:
         retval = None
         node = self._root
         if node is not None:
@@ -479,6 +504,7 @@ class RedBlackTree:
                 node = node.right_child
             retval = node.key
         return retval
+
 
 if __name__ == "__main__":
     import random
@@ -495,6 +521,9 @@ if __name__ == "__main__":
                 assert tree.valid()
             for i in range(N):
                 assert tree.at(i) == i
+            l1 = list(tree)
+            l2 = sorted(input)
+            assert l1 == l2
             rdata = input[:]
             random.shuffle(rdata)
             for v in rdata:

@@ -199,6 +199,7 @@ class BSTTester(unittest.TestCase):
             self.assertTrue(tree.valid())
         for i in range(N):
             self.assertEqual(tree[i], strings[i])
+        self.assertEqual(list(tree), strings)
         to_be_deleted = strings[:]
         for i in range(N - 1):
             j = random.randint(0, N - 1 - i)
