@@ -1,22 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 project(LeetcodeStudy)
 
+# only support C++ 20+
 set(CXX_STANDARD_VERSION 20)
 
-if (WIN32)
-    set(CXX_LATEST_VERSION_ENABLED 0)
-    if (MSVC_VERSION GREATER_EQUAL "1900")
-        include(CheckCXXCompilerFlag)
-        CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
-        if (_cpp_latest_flag_supported)
-            add_compile_options("/std:c++latest")
-            set(CXX_LATEST_VERSION_ENABLED 1)
-        endif()
-    endif()
-    if (NOT ${CXX_LATEST_VERSION_ENABLED})
-        set(CXX_STANDARD_VERSION 17)
-    endif()
-endif()
 add_compile_definitions(CXX_STANDARD_VERSION=${CXX_STANDARD_VERSION})
 
 set(CMAKE_CXX_STANDARD ${CXX_STANDARD_VERSION})
@@ -94,3 +81,7 @@ add_executable(minimizing_permutations_test minimizing_permutations_test.cpp che
 add_test(NAME minimizing_permutations_test COMMAND minimizing_permutations_test)
 add_executable(range_bitwise_and_test range_bitwise_and_test.cpp check.h)
 add_test(NAME range_bitwise_and_test COMMAND range_bitwise_and_test)
+#add_executable(evaluate_division_test evaluate_division_test.cpp check.h)
+#add_test(NAME evaluate_division_test COMMAND evaluate_division_test)
+#add_executable(remove_duplicate_letters_test remove_duplicate_letters_test.cpp check.h)
+#add_test(NAME remove_duplicate_letters_test COMMAND remove_duplicate_letters_test)

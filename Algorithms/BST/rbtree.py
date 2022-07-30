@@ -185,7 +185,7 @@ class RedBlackTree:
                 parent.parent = sibling
                 sibling.size = parent.size
                 sibling = left_nephew
-                # parent's size field must then be decreased by one 
+                # parent's size field must then be decreased by one
                 parent.size = (self._get_size(node) + 1 + self._get_size(sibling) + 1)
             else:
                 assert position == RedBlackTree.Position.RIGHT_CHILD
@@ -195,7 +195,7 @@ class RedBlackTree:
                 parent.parent = sibling
                 sibling.size = parent.size
                 sibling = right_nephew
-                # parent's size field must then be decreased by one 
+                # parent's size field must then be decreased by one
                 parent.size = (self._get_size(node) + 1 + self._get_size(sibling) + 1)
         assert sibling.color == RedBlackTree.Color.BLACK
         left_nephew = sibling.left_child
@@ -426,7 +426,7 @@ class RedBlackTree:
     put = insert
     add = insert
 
-    def __setitem__(self, key: K, value: V) -> None:
+    def __setitem__(self, key: Union[K, int], value: V) -> None:
         if self._root is None or type(key) == type(self._root.key):
             self.insert(key, value)
         elif type(key) is int:
@@ -446,7 +446,7 @@ class RedBlackTree:
             return (node.key, node.value)
         return node.key
 
-    def __getitem__(self, key: Union[K, int]) -> Union[Tuple[K, V], K]:
+    def __getitem__(self, key: Union[K, int]) -> Union[V, Tuple[K, V], K]:
         if self._root is not None and type(key) == type(self._root.key):
             parent_or_itself, indicator = self._find(key)
             if indicator == RedBlackTree.Position.FOUND_IT:

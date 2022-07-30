@@ -138,8 +138,7 @@ std::vector<Item> neighbours(
             if (*i == my_last_value) {
                 ++i;
                 --my_last_value;
-            }
-            else {
+            } else {
                 break;
             }
         }
@@ -148,8 +147,7 @@ std::vector<Item> neighbours(
             assert(j != end);
             reverse_array(i, j);
             --my_last_value;
-        }
-        else {
+        } else {
             auto j = begin + begin_index;
             while (j != begin && *(j - 1) == *j + 1) {
                 --j;
@@ -244,3 +242,4 @@ int main()
     }
     return 0;
 }
+

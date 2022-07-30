@@ -210,7 +210,7 @@ inline double run(const std::vector<Operation<T>>& operations)
 template <typename T>
 void performance_test(const char* name, bool verifying, std::vector<T>& input)
 {
-    int times = 200;
+    int times = 400;
     if (verifying) {
         times = 3;
     }
