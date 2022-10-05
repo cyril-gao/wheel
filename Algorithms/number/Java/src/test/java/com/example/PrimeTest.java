@@ -21,10 +21,13 @@ public class PrimeTest {
             assertFalse(Prime.isProbablePrime(BigInteger.valueOf(n)));
         }
         var random = new SecureRandom();
-        byte[] bytes = new byte[256];
-        for (int i = 0; i < 100;) {
+        byte[] bytes = new byte[512];
+        for (int i = 0; i < 200;) {
             random.nextBytes(bytes);
             BigInteger num = new BigInteger(bytes);
+            if (num.compareTo(BigInteger.ZERO) < 0) {
+                num = num.negate();
+            }
             if (num.compareTo(BigInteger.ZERO) > 0) {
                 assertTrue(
                     Prime.isProbablePrime(num, certainty) == num.isProbablePrime(certainty)
