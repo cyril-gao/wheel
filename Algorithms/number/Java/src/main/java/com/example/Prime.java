@@ -4,27 +4,60 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 
 public class Prime {
-    static final int DEFAULT_CERTAINTY = 40;
+    static final int DEFAULT_CERTAINTY = 80;
+
+    // n = (2**x) * y, the return value is [2**x, y]
+    private static long[] binarySimplify(long n)
+    {
+        assert(n >= 0);
+        long x, y;
+        long v = n ^ (n-1);
+        if (v != 0) {
+            x = (v >> 1) + 1;
+            y = n % x;
+        } else {
+            x = 1 << 63;
+            y = 1;
+        }
+        return new long[]{x, y};
+    }
+
+    private static BigInteger[] binarySimplify(BigInteger n)
+    {
+        assert(n.compareTo(BigInteger.ZERO) >= 0);
+        BigInteger x, y;
+        BigInteger v = n.xor(n.subtract(BigInteger.ONE));
+        x = v.shiftRight(1).add(BigInteger.ONE);
+        y = v.mod(x);
+        return new BigInteger[]{x, y};
+    }
 
     // if (a ** (n-1)) % n == 1, return true, or return false
     // carmichael numbers may make the function failed
     private static boolean canPassFermatLittleTheorem(long a, long n)
     {
         boolean retval = false;
-        assert(a > 1 && (a+1) < n);
-        assert((n&1) == 1); // n must be an odd
-        long loop = (n-1) >> 1;
+        assert(a > 1 && a < n);
+        assert(n > 2 && (n&1) == 1); // n must be an odd
 
-        long finalMod = (loop&1) == 1 ? a : 1, i = a;
-        for (loop >>= 1; loop != 0; loop >>= 1) {
-            i = (i*i) % n;
-            if ((loop&1) == 1) {
-                finalMod = (finalMod*i) % n;
+        long[] vs = binarySimplify(n-1);
+        assert(vs[0] > 1);
+        long v = Number.modexp(a, vs[1], n);
+        if (v != 1) {
+            long v2 = v;
+            BigInteger bn = BigInteger.valueOf(n);
+            for (long i = 1; i < vs[0]; i <<= 1) {
+                v2 = v;
+                BigInteger bv = BigInteger.valueOf(v);
+                v = bv.multiply(bv).mod(bn).longValue();
             }
+            if (v == 1) {
+                retval = (v2 != 1 && (v2+1) != n);
+            }
+        } else {
+            retval = true; // it may be wrong
         }
-        if (((finalMod*finalMod) % n) == 1) {
-            retval = (finalMod-1) == 0 || (finalMod+1) == n;
-        }
+
         return retval;
     }
 
@@ -33,23 +66,44 @@ public class Prime {
         boolean retval = false;
         assert(a.compareTo(BigInteger.ONE) > 0 && a.add(BigInteger.ONE).compareTo(n) < 0);
         assert(n.and(BigInteger.ONE).compareTo(BigInteger.ONE) == 0); // n must be an odd
-        BigInteger loop = n.subtract(BigInteger.ONE).shiftRight(1);
 
-        BigInteger finalMod = loop.and(BigInteger.ONE).compareTo(BigInteger.ONE) == 0 ? a : BigInteger.ONE;
-        BigInteger i = a;
-        for (loop = loop.shiftRight(1); loop.compareTo(BigInteger.ZERO) != 0; loop = loop.shiftRight(1)) {
-            i = i.multiply(i).mod(n);
-            if (loop.and(BigInteger.ONE).compareTo(BigInteger.ONE) == 0 ) {
-                finalMod = finalMod.multiply(i).mod(n);
+        BigInteger[] vs = binarySimplify(n.subtract(BigInteger.ONE));
+        assert(vs[0].compareTo(BigInteger.ONE) > 0);
+        BigInteger v = Number.modexp(a, vs[1], n);
+        if (v.compareTo(BigInteger.ONE) > 0) {
+            BigInteger v2 = v;
+            for (
+                BigInteger i = BigInteger.ONE;
+                i.compareTo(vs[0]) < 0;
+                i = i.shiftLeft(1)
+            ) {
+                v2 = v;
+                v = v.multiply(v).mod(n);
             }
-        }
-        if (finalMod.multiply(finalMod).mod(n).compareTo(BigInteger.ONE) == 0) {
-            retval = (
-                (finalMod.subtract(BigInteger.ONE).compareTo(BigInteger.ZERO) == 0) ||
-                (finalMod.add(BigInteger.ONE).compareTo(n) == 0)
-            );
+            if (v.compareTo(BigInteger.ONE) == 0) {
+                retval = (
+                    v2.compareTo(BigInteger.ONE) != 0 &&
+                    v2.add(BigInteger.ONE).compareTo(n) != 0
+                );
+            }
+        } else {
+            retval = true; // it may be wrong
         }
         return retval;
+    }
+
+    private static long gcd(long a, long b)
+    {
+        if (a >= b) {
+            assert(b >= 0);
+            if (b != 0) {
+                return gcd(b, a % b);
+            } else {
+                return a;
+            }
+        } else {
+            return gcd(b, a);
+        }
     }
 
     private static boolean _isProbablePrime(long num, int certainty) {
@@ -66,7 +120,8 @@ public class Prime {
                 }
                 a %= range;
                 a += 2;
-                if (!canPassFermatLittleTheorem(a, num)) {
+                long d = gcd(num, a);
+                if (d > 1 || !canPassFermatLittleTheorem(a, num)) {
                     retval = false;
                     break;
                 }
@@ -75,6 +130,20 @@ public class Prime {
             retval = (num == 2 || num == 3);
         }
         return retval;
+    }
+
+    private static BigInteger gcd(BigInteger a, BigInteger b)
+    {
+        if (a.compareTo(b) >= 0) {
+            assert(b.compareTo(BigInteger.ZERO) >= 0);
+            if (b.compareTo(BigInteger.ZERO) > 0) {
+                return gcd(b, a.mod(b));
+            } else {
+                return a;
+            }
+        } else {
+            return gcd(b, a);
+        }
     }
 
     private static boolean _isProbablePrime(BigInteger num, int certainty) {
@@ -86,17 +155,31 @@ public class Prime {
             retval = true;
             byte[] bytes = new byte[bits];
             for (int i = 0; i < certainty;) {
-                random.nextBytes(bytes);
-                BigInteger a = new BigInteger(bytes);
-                if (a.compareTo(BigInteger.ONE) > 0) {
-                    a = a.mod(num);
-                    if (a.compareTo(BigInteger.ONE) > 0 && a.add(BigInteger.ONE).compareTo(num) < 0) {
-                        if (!canPassFermatLittleTheorem(a, num)) {
-                            retval = false;
-                            break;
-                        }
-                        ++i;
+                BigInteger a = null;
+                for (;;) {
+                    random.nextBytes(bytes);
+                    a = new BigInteger(bytes);
+                    if (a.compareTo(BigInteger.ZERO) < 0) {
+                        a = a.negate();
                     }
+                    if (a.compareTo(num) >= 0) {
+                        a = a.mod(num);
+                    }
+                    if (
+                        a.compareTo(BigInteger.ZERO) > 0 &&
+                        a.compareTo(num) < 0
+                    ) {
+                        break;
+                    }
+                }
+
+                BigInteger d = gcd(num, a);
+                if (
+                    d.compareTo(BigInteger.ONE) > 0 ||
+                    !canPassFermatLittleTheorem(a, num)
+                ) {
+                    retval = false;
+                    break;
                 }
             }
         } else {

@@ -14,34 +14,42 @@ public class Number {
 
     public static BigInteger modexp(BigInteger x, long y, BigInteger N) {
         assert(y >= 0);
-        assert(x.compareTo(BigInteger.ZERO) > 0);
+        assert(x.compareTo(BigInteger.ZERO) >= 0);
         assert(N.compareTo(BigInteger.ZERO) > 0);
-        var v = x.mod(N);
-        var retval = (y & 1) != 0 ? v : BigInteger.ONE;
-        for (long i = 2; i <= y; i <<= 1) {
-            v = v.multiply(v).mod(N);
-            if ((i & y) != 0) {
-                retval = retval.multiply(v).mod(N);
+        BigInteger retval = BigInteger.ONE;
+        if (x.compareTo(BigInteger.ZERO) > 0) {
+            BigInteger i = x.mod(N);
+            long j = 1;
+            while (j > 0 && j <= y) {
+                if ((j&y) != 0) {
+                    retval = retval.multiply(i).mod(N);
+                }
+                j <<= 1;
+                i = i.multiply(i).mod(N);
             }
-            if (i == TWO_EXP_62) {
-                break;
-            }
+        } else {
+            retval = BigInteger.ZERO;
         }
         return retval;        
     }
 
     public static BigInteger modexp(BigInteger x, BigInteger y, BigInteger N) {
         assert(y.compareTo(BigInteger.ZERO) >= 0);
-        assert(x.compareTo(BigInteger.ZERO) > 0);
+        assert(x.compareTo(BigInteger.ZERO) >= 0);
         assert(N.compareTo(BigInteger.ZERO) > 0);
-        var v = x.mod(N);
-        var retval = y.and(BigInteger.ONE).compareTo(BigInteger.ZERO) != 0 ? v : BigInteger.ONE;
-        for (BigInteger i = BigInteger.TWO; i.compareTo(y) <= 0; i = i.shiftLeft(1)) {
-            v = v.multiply(v).mod(N);
-            if (i.and(y).compareTo(BigInteger.ZERO) != 0) {
-                retval = retval.multiply(v).mod(N);
+        BigInteger retval = BigInteger.ONE;
+        if (x.compareTo(BigInteger.ZERO) > 0) {
+            BigInteger i = x.mod(N);
+            BigInteger j = BigInteger.ONE;
+            while (j.compareTo(y) <= 0) {
+                if (j.and(y).compareTo(BigInteger.ZERO) != 0) {
+                    retval = retval.multiply(i).mod(N);
+                }
+                j = j.shiftLeft(1);
+                i = i.multiply(i).mod(N);
             }
-
+        } else {
+            retval = BigInteger.ZERO;
         }
         return retval;  
     }
@@ -56,9 +64,10 @@ public class Number {
         if (b.compareTo(BigInteger.ZERO) == 0) {
             return new BigInteger[]{a, BigInteger.ONE, BigInteger.ZERO};
         } else {
-            var result = _euclid(b, a.mod(b));
-            var retval = new BigInteger[] {
-                result[0], result[2], result[1].subtract(a.divide(b).multiply(result[2]))
+            BigInteger[] qr = a.divideAndRemainder(b);
+            var result = _euclid(b, qr[1]);
+            return new BigInteger[] {
+                result[0], result[2], result[1].subtract(qr[0].multiply(result[2]))
             };
         }
     }
@@ -75,7 +84,7 @@ public class Number {
         }
         while (retval[1].compareTo(BigInteger.ZERO) < 0) {
             retval[1] = retval[1].add(b);
-            retval[2] = retval[2].sub(a);
+            retval[2] = retval[2].subtract(a);
         }
         return retval;
     }
