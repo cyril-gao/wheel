@@ -14,7 +14,7 @@ public class Prime {
         long v = n ^ (n-1);
         if (v != 0) {
             x = (v >> 1) + 1;
-            y = n % x;
+            y = n / x;
         } else {
             x = 1 << 63;
             y = 1;
@@ -28,7 +28,7 @@ public class Prime {
         BigInteger x, y;
         BigInteger v = n.xor(n.subtract(BigInteger.ONE));
         x = v.shiftRight(1).add(BigInteger.ONE);
-        y = v.mod(x);
+        y = n.divide(x);
         return new BigInteger[]{x, y};
     }
 
@@ -73,11 +73,7 @@ public class Prime {
         BigInteger v = Number.modexp(a, vs[1], n);
         if (v.compareTo(BigInteger.ONE) > 0) {
             BigInteger v2 = v;
-            for (
-                BigInteger i = BigInteger.ONE;
-                i.compareTo(vs[0]) < 0;
-                i = i.shiftLeft(1)
-            ) {
+            for (BigInteger i = BigInteger.ONE; i.compareTo(vs[0]) < 0; i = i.shiftLeft(1)) {
                 v2 = v;
                 v = v.multiply(v).mod(n);
                 if (v.compareTo(BigInteger.ONE) == 0) {
@@ -149,11 +145,11 @@ public class Prime {
         var retval = false;
         if (num.and(BigInteger.ONE).compareTo(BigInteger.ONE) == 0) {
             var random = new SecureRandom();
-            var bits = num.bitLength();
+            var len = (num.bitLength() + 7) >> 3;
 
             retval = true;
-            byte[] bytes = new byte[bits];
-            for (int i = 0; i < certainty;) {
+            byte[] bytes = new byte[len];
+            for (int i = 0; i < certainty; ++i) {
                 BigInteger a = null;
                 for (;;) {
                     random.nextBytes(bytes);
@@ -164,10 +160,7 @@ public class Prime {
                     if (a.compareTo(num) >= 0) {
                         a = a.mod(num);
                     }
-                    if (
-                        a.compareTo(BigInteger.ZERO) > 0 &&
-                        a.compareTo(num) < 0
-                    ) {
+                    if (a.compareTo(BigInteger.ZERO) > 0) {
                         break;
                     }
                 }
