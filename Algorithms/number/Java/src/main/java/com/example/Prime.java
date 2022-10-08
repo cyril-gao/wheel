@@ -50,9 +50,10 @@ public class Prime {
                 v2 = v;
                 BigInteger bv = BigInteger.valueOf(v);
                 v = bv.multiply(bv).mod(bn).longValue();
-            }
-            if (v == 1) {
-                retval = (v2 != 1 && (v2+1) != n);
+                if (v == 1) {
+                    retval = (v2+1) == n;
+                    break;
+                }
             }
         } else {
             retval = true; // it may be wrong
@@ -79,12 +80,10 @@ public class Prime {
             ) {
                 v2 = v;
                 v = v.multiply(v).mod(n);
-            }
-            if (v.compareTo(BigInteger.ONE) == 0) {
-                retval = (
-                    v2.compareTo(BigInteger.ONE) != 0 &&
-                    v2.add(BigInteger.ONE).compareTo(n) != 0
-                );
+                if (v.compareTo(BigInteger.ONE) == 0) {
+                    retval = (v2.add(BigInteger.ONE).compareTo(n) == 0);
+                    break;
+                }
             }
         } else {
             retval = true; // it may be wrong
