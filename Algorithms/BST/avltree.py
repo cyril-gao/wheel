@@ -1,3 +1,8 @@
+'''
+This module implements AVL tree
+'''
+
+
 class AVLTree:
     class Node:
         def __init__(self, key, value, balance_factor, parent=None, left_child=None, right_child=None):
@@ -84,17 +89,15 @@ class AVLTree:
         assert parent is not None
         if parent.left_child is node:
             return parent.right_child
-        else:
-            assert parent.right_child is node
-            return parent.left_child
+        assert parent.right_child is node
+        return parent.left_child
 
     def _get_position(self, node, parent):
         assert parent is not None
         if parent.left_child is node:
             return AVLTree.Position.LEFT_CHILD
-        else:
-            assert parent.right_child is node
-            return AVLTree.Position.RIGHT_CHILD
+        assert parent.right_child is node
+        return AVLTree.Position.RIGHT_CHILD
 
     def _replace_father_son_relationship(self, to_be_replaced, the_new_one):
         parent = to_be_replaced.parent
@@ -414,7 +417,7 @@ class AVLTree:
             else:
                 assert False, "Serious bug happened in the function insert"
             self._len += 1
-            if new_node != None:
+            if new_node is not None:
                 self._reblance_after_inserting(new_node)
             new_node_added = True
         return new_node_added
@@ -451,23 +454,23 @@ class AVLTree:
 
 if __name__ == "__main__":
     import random
-    input = [_ for _ in range(1024)]
+    input_data = list(range(1024))
     rdata = None
     v = None
     try:
         for _ in range(4):
             tree = AVLTree()
-            for v in input:
+            for v in input_data:
                 tree.put(v)
                 assert v in tree
                 assert tree.valid()
-            rdata = input[:]
+            rdata = input_data[:]
             random.shuffle(rdata)
             for v in rdata:
                 del tree[v]
                 assert v not in tree
                 assert tree.valid()
-            input = rdata
+            input_data = rdata
     except AssertionError:
         print(input)
         print(rdata)

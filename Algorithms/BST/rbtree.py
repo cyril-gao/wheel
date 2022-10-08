@@ -1,3 +1,8 @@
+'''
+This module implements Red-Black tree
+'''
+
+
 from typing import TypeVar, Union, Tuple
 from collections import deque
 
@@ -509,28 +514,28 @@ class RedBlackTree:
 if __name__ == "__main__":
     import random
     N = 1024
-    input = [_ for _ in range(N)]
+    input_data = list(range(N))
     rdata = None
     v = None
     try:
         for _ in range(4):
             tree = RedBlackTree()
-            for v in input:
+            for v in input_data:
                 tree.put(v)
                 assert v in tree
                 assert tree.valid()
             for i in range(N):
                 assert tree.at(i) == i
             l1 = list(tree)
-            l2 = sorted(input)
+            l2 = sorted(input_data)
             assert l1 == l2
-            rdata = input[:]
+            rdata = input_data[:]
             random.shuffle(rdata)
             for v in rdata:
                 del tree[v]
                 assert v not in tree
                 assert tree.valid()
-            input = rdata
+            input_data = rdata
     except AssertionError:
         print(input)
         print(rdata)

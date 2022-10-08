@@ -1,3 +1,8 @@
+'''
+This module is used to test the implementation of the AVL tree and the Red-Black tree
+'''
+
+
 import unittest
 import random
 import string
