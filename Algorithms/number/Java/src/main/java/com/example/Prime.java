@@ -34,13 +34,15 @@ public class Prime {
 
     // if (a ** (n-1)) % n == 1, return true, or return false
     // carmichael numbers may make the function failed
+    // if the return value is true, it does not mean that n must be a prime
     private static boolean canPassFermatLittleTheorem(long a, long n)
     {
         boolean retval = false;
         assert(a > 1 && a < n);
         assert(n > 2 && (n&1) == 1); // n must be an odd
 
-        long[] vs = binarySimplify(n-1);
+        long n_1 = n - 1;
+        long[] vs = binarySimplify(n_1);
         assert(vs[0] > 1);
         long v = Number.modexp(a, vs[1], n);
         if (v != 1) {
@@ -51,12 +53,12 @@ public class Prime {
                 BigInteger bv = BigInteger.valueOf(v);
                 v = bv.multiply(bv).mod(bn).longValue();
                 if (v == 1) {
-                    retval = (v2+1) == n;
+                    retval = v2 == n_1;
                     break;
                 }
             }
         } else {
-            retval = true; // it may be wrong
+            retval = true;
         }
 
         return retval;
@@ -68,7 +70,8 @@ public class Prime {
         assert(a.compareTo(BigInteger.ONE) > 0 && a.add(BigInteger.ONE).compareTo(n) < 0);
         assert(n.and(BigInteger.ONE).compareTo(BigInteger.ONE) == 0); // n must be an odd
 
-        BigInteger[] vs = binarySimplify(n.subtract(BigInteger.ONE));
+        BigInteger n_1 = n.subtract(BigInteger.ONE);
+        BigInteger[] vs = binarySimplify(n_1);
         assert(vs[0].compareTo(BigInteger.ONE) > 0);
         BigInteger v = Number.modexp(a, vs[1], n);
         if (v.compareTo(BigInteger.ONE) > 0) {
@@ -77,12 +80,12 @@ public class Prime {
                 v2 = v;
                 v = v.multiply(v).mod(n);
                 if (v.compareTo(BigInteger.ONE) == 0) {
-                    retval = (v2.add(BigInteger.ONE).compareTo(n) == 0);
+                    retval = v2.compareTo(n_1) == 0;
                     break;
                 }
             }
         } else {
-            retval = true; // it may be wrong
+            retval = true;
         }
         return retval;
     }
