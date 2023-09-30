@@ -1,14 +1,21 @@
 cmake_minimum_required(VERSION 3.5)
 project(MatrixTest)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-if (NOT WIN32)
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra -Wconversion -Wpedantic")
+if (WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /FA")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Wall")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
 endif()
 
+set(CMAKE_DEBUG_POSTFIX d)
 enable_testing()
 
 add_executable(multest matrix_mul_test.cpp matrix_multiply.h matrix_transpose.h matrix.h)
+set_target_properties(multest PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 add_test(NAME multest COMMAND multest "verify")
